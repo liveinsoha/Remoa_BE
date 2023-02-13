@@ -1,8 +1,8 @@
 package Remoa.BE.category;
 
+import Remoa.BE.Member.Repository.MemberRepository;
 import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Member.Domain.Member;
-import Remoa.BE.Member.Repository.MemberRepository;
 import Remoa.BE.Post.Service.CategoryService;
 import Remoa.BE.Member.Service.SignupService;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class CategoryTest {
     SignupService signupService;
 
     @Autowired
-    MemberRepository memberRepository;
+    MemberRepository MemberRepository;
 
     @Test
     public void 카테고리_테스트() throws Exception {
@@ -45,7 +45,7 @@ public class CategoryTest {
 
 
         //email로 testMember를 찾은 후 category 찾아오기
-        Member findMember = memberRepository.findByEmail("tester@test.com").get(0);
+        Member findMember = MemberRepository.findByEmail("tester@test.com").get(0);
         List<Category> findMemberCategories = categoryService.findMemberCategory(findMember);
 
         //then

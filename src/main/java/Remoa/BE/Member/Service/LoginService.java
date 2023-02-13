@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LoginService {
 
-    private final MemberRepository memberRepository;
+    private final MemberRepository MemberRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
 
     public Member login(String email, String password) {
-        return memberRepository.findByEmail(email)
+        return MemberRepository.findByEmail(email)
                 .stream().filter(member -> bCryptPasswordEncoder.matches(password, member.getPassword())).findAny().orElse(null);
     }
 

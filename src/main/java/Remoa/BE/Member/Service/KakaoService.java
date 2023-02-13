@@ -24,7 +24,7 @@ public class KakaoService {
 
     //카카오 로그인시 접속해야 할 링크 : https://kauth.kakao.com/oauth/authorize?client_id=139febf9e13da4d124d1c1faafcf3f86&redirect_uri=http://localhost:8080/login/kakao&response_type=code
 
-    private final MemberRepository memberRepository;
+    private final MemberRepository MemberRepository;
 
     public String getToken(String code) throws IOException {
 
@@ -163,10 +163,10 @@ public class KakaoService {
 
     public Member distinguishKakaoId(Long kakaoId) {
 
-        if (!memberRepository.findByKakaoId(kakaoId).isPresent()) {
+        if (!MemberRepository.findByKakaoId(kakaoId).isPresent()) {
             return null;
         }
-        Member kakaoMember = memberRepository.findByKakaoId(kakaoId).get();
+        Member kakaoMember = MemberRepository.findByKakaoId(kakaoId).get();
 
         return kakaoMember;
     }
