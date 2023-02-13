@@ -48,7 +48,7 @@ public class DbInit {
             Category design = new Category("design");
             Category video = new Category("video");
             Category etc = new Category("etc");
-            this.categoryService.persistCategory(new Category[]{idea, marketing, design, video, etc});
+            this.categoryService.persistCategory(idea, marketing, design, video, etc);
         }
     }
 

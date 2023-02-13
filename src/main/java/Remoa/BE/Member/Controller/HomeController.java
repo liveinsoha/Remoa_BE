@@ -11,7 +11,6 @@ import javax.servlet.http.HttpSession;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "*")
 public class HomeController {
 
     @GetMapping("/")

@@ -15,7 +15,6 @@ import java.util.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins="*")
 public class FileController {
 
     private final FileService fileService;

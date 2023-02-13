@@ -25,7 +25,6 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin(origins="*")
 public class KakaoController {
 
     private final KakaoService ks;

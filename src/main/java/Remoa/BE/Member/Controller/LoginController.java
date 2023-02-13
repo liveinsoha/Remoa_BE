@@ -22,7 +22,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins="*")
 public class LoginController {
 
     private final LoginService loginService;

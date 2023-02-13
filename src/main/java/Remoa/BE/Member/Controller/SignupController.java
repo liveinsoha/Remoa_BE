@@ -12,7 +12,6 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins="*")
 public class SignupController {
 
     private final SignupService memberService;
