@@ -21,6 +21,11 @@ public class SignupController {
         return "회원가입 페이지 입니다.";
     }
 
+    /**
+     * front-end에서 회원가입을 위한 데이터를 넘겨 받아 회원가입 기능을 수행.
+     * @param form
+     * @return
+     */
     @PostMapping("/signup")
     public String create(@RequestBody @Valid SignupForm form) {
 

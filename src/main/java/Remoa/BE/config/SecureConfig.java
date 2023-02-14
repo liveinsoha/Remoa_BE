@@ -17,12 +17,17 @@ public class SecureConfig {
 
    private final CorsFilter corsFilter;
 
-
+    /**
+     * Spring Security에서 사용할 password encoder로 BCryptPasswordEncoder 지정
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Spring Security 설정
+     */
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 

@@ -15,18 +15,34 @@ public class Follow {
     @Column(name = "follow_id")
     private Long followId;
 
+    /**
+     * Follow 동작시 Follow를 하는 Member
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_member_id")
     private Member fromMember;
 
+    /**
+     * Follow 동작시 Follow를 당하는 Member
+     */
     @Column(name = "to_member_id")
     private Long toMemberId;
 
+    /**
+     * Follow를 신청한 Member의 follows 필드에 Follow 대상 Member를 세팅
+     * @param member
+     */
     public void setMember(Member member) {
         this.fromMember = member;
         member.getFollows().add(this);
     }
 
+    /**
+     *
+     * @param toMember
+     * @param fromMember
+     * @return
+     */
     public static Follow followSomeone(Member toMember, Member fromMember) {
         Follow follow = new Follow();
         follow.setFromMember(fromMember);

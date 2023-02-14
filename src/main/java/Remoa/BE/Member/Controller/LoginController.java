@@ -31,6 +31,14 @@ public class LoginController {
         return "로그인 페이지 입니다.";
     }
 
+    /**
+     * 이메일, 패스워드를 받아 일반 로그인을 하기 위해 사용.
+     * 카카오 로그인으로 통합되어 현재는 사용되지 않음.
+     * @param form
+     * @param request
+     * @return
+     */
+    @Deprecated
     @PostMapping("/login")
     public String login(@Valid @RequestBody LoginForm form, HttpServletRequest request) {
 
@@ -49,6 +57,12 @@ public class LoginController {
         return loginMember.getNickname();
     }
 
+    /**
+     * Spring Security가 기본값으로 form data를 사용해 로그인을 진행하는데, Rest API를 이용해 json을 주고받는 방식으로 로그인을 처리하기 위해
+     * 우회적인 방식으로 Spring Security를 이용할 수 있게 해주는 메서드.
+     * @param request
+     * @param member
+     */
     private void securityLoginWithoutLoginForm(HttpServletRequest request, Member member) {
 
         //로그인 세션에 들어갈 권한을 설정합니다.

@@ -4,9 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor
 @Getter
 public class Category {
@@ -20,9 +21,15 @@ public class Category {
     @Column(name = "category_id")
     private Long categoryId;
 
-    @OneToOne(mappedBy = "category", fetch = FetchType.LAZY)
-    private Post post;
+    /**
+     * Category별 작성되어진 Post
+     */
+    @OneToMany(mappedBy = "category")
+    private List<Post> posts = new ArrayList<>();
 
+    /**
+     * Category 이름
+     */
     private String name;
 
 }

@@ -17,6 +17,9 @@ public class DbInit {
     private final SignupService signupService;
     private final CategoryService categoryService;
 
+    /**
+     * @PostConstruct로 Admin 계정을 생성해주는 메서드
+     */
     @PostConstruct
     public void createAdminUser() {
         if (signupService.isAdminExist()) {
@@ -37,6 +40,9 @@ public class DbInit {
         }
     }
 
+    /**
+     * @PostConstruct로 Category를 세팅해주는 메서드
+     */
     @PostConstruct
     public void initCategories() {
         if (!categoryService.findAllCategories().isEmpty()) {
@@ -50,11 +56,6 @@ public class DbInit {
             Category etc = new Category("etc");
             this.categoryService.persistCategory(idea, marketing, design, video, etc);
         }
-    }
-
-    @PostConstruct
-    public void addCategories() {
-        /* 카페고리를 더 추가하고 싶을 때 사용할 예정. */
     }
 
 }

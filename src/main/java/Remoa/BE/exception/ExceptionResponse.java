@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Exception 발생시 해당 Exception에 관한 세부사항을 정리해주는 폼
+ */
 @Data
 @AllArgsConstructor
 public class ExceptionResponse {

@@ -7,6 +7,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+/**
+ * Member가 Comment를 Like할 때 사용
+ */
 @Getter
 @Setter
 @Entity
