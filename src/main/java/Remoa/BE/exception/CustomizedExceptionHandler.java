@@ -15,6 +15,12 @@ import java.time.LocalDateTime;
 @RestControllerAdvice //모든 컨트롤러가 호출되기 전에 사전 실행됨. -> 이를 통해 모든 예외가 처리되는 클래스가 만들어졌다.
 public class CustomizedExceptionHandler {
 
+    /**
+     * @Valid 어노테이션을 통과하지 못해 MethodArgumentNotValidException이 발생하면 해당 메서드가 실행됨.
+     * @param e
+     * @param request
+     * @return 오류 내용을 담은 ResponseEntity<ExceptionHandler> return.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> methodValidException(MethodArgumentNotValidException e, HttpServletRequest request){
         log.warn("MethodArgumentNotValidException 발생!!! url:{}, trace:{}", request.getRequestURI(), e.getStackTrace());
@@ -22,6 +28,11 @@ public class CustomizedExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * methodValidException에서 return 값으로 사용할 ExceptionResponse 객체를 만들어 줌.
+     * @param bindingResult
+     * @return Validation 결과별로 나누어 각 상황에 맞는 ExceptionResponse를 생성.
+     */
     private ExceptionResponse makeErrorResponse(BindingResult bindingResult) {
         String code = "";
         String description = "";

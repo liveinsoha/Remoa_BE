@@ -30,6 +30,14 @@ public class KakaoController {
     private final KakaoService ks;
     private final SignupService signupService;
 
+    /**
+     * 카카오 로그인을 통해 code를 query string으로 받아오면, 코드를 통해 토큰, 토큰을 통해 사용자 정보를 얻어와 db에 해당 사용자가 존재하는지 여부를
+     * 파악해 존재할 때는 로그인, 없을 땐 회원가입 페이지로 넘어가게 해줌.
+     * @param code
+     * @param response
+     * @param request
+     * @throws IOException
+     */
     @GetMapping("/login/kakao")
     public void getCI(@RequestParam String code, HttpServletResponse response, HttpServletRequest request) throws IOException {
         log.info("code = " + code);
@@ -56,6 +64,10 @@ public class KakaoController {
 
     }
 
+    /**
+     * front-end에서 회원가입에 필요한 정보를 넘겨주면 KakaoSignupForm으로 받아 회원가입을 진행시켜줌
+     * @param form
+     */
     @PostMapping("/signup/kakao")
     public void signupKakaoMember(KakaoSignupForm form) {
 
@@ -79,6 +91,12 @@ public class KakaoController {
         signupService.join(member);
     }
 
+    /**
+     * Spring Security가 기본값으로 form data를 사용해 로그인을 진행하는데, Rest API를 이용해 json을 주고받는 방식으로 로그인을 처리하기 위해
+     * 우회적인 방식으로 Spring Security를 이용할 수 있게 해주는 메서드.
+     * @param request
+     * @param member
+     */
     private void securityLoginWithoutLoginForm(HttpServletRequest request, Member member) {
 
         //로그인 세션에 들어갈 권한을 설정합니다.

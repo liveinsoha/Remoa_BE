@@ -16,12 +16,27 @@ public class Comment {
     @Column(name = "comment_id")
     private Long commentId;
 
+    /**
+     * Comment가 속해있는 Post
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
+    /**
+     * Comment의 내용
+     */
     private String comment;
 
+    /**
+     * Comment가 작성된 시간
+     */
     @Column(name = "commented_time")
     private String commentedTime;
+
+    /**
+     * Comment의 좋아요 숫자
+     */
+    @Column(name = "comment_like_count")
+    private Integer commentLikeCount;
 }
