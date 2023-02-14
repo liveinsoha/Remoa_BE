@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -16,6 +17,10 @@ import java.util.stream.Collectors;
 public class UploadFileRepository {
 
     private final EntityManager em;
+
+    public Optional<UploadFile> findById(Long fileId){
+        return Optional.ofNullable(em.find(UploadFile.class, fileId));
+    }
 
     public void saveFile(UploadFile file) {
         em.persist(file);
@@ -29,6 +34,4 @@ public class UploadFileRepository {
                 .map(file -> file.getSaveFileName())
                 .collect(Collectors.toList());
     }
-
-    
 }

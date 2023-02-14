@@ -39,7 +39,9 @@ public class UploadFile {
 
     /**
      * 파일이 저장된 시간 저장
+     * Lob 는 긴 문자열을 처리해 줍니다.
      */
+    @Lob
     @Column(name = "store_file_url")
     private String storeFileUrl;
 
