@@ -18,7 +18,7 @@ public class SignupService {
     private final MemberRepository MemberRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
 
-//    @Transactional
+    @Transactional
     public Long join(Member member) {
         this.validateDuplicateMember(member);
         member.hashPassword(this.bCryptPasswordEncoder);

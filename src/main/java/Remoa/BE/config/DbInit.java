@@ -37,6 +37,7 @@ public class DbInit {
             adminMember.setTermConsent(true);
             adminMember.setRole("ROLE_ADMIN");
             this.signupService.join(adminMember);
+            log.info("============Add Admin user completely============");
         }
     }
 
@@ -55,6 +56,7 @@ public class DbInit {
             Category video = new Category("video");
             Category etc = new Category("etc");
             this.categoryService.persistCategory(idea, marketing, design, video, etc);
+            log.info("==========Setting Categories completely==========");
         }
     }
 

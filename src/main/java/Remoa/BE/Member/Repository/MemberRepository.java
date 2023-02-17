@@ -18,6 +18,7 @@ public class MemberRepository {
 
     public void save(Member member) {
         this.em.persist(member);
+        log.info("member save ok = {}", member);
     }
 
     public Member findOne(Long id) {

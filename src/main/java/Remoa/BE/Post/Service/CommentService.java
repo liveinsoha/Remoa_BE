@@ -14,13 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
+    @Transactional
     public Long writeComment(Comment comment) {
         commentRepository.saveComment(comment);
         return comment.getCommentId();
@@ -31,12 +32,14 @@ public class CommentService {
         return commentRepository.findByPost(post);
     }
 
+    @Transactional
     public Long commentLikeAction(Comment comment, Member member) {
         CommentLike commentLike = CommentLike.createCommentLike(member, comment);
         commentRepository.saveCommentLike(commentLike);
         return commentLike.getCommentLikeId();
     }
 
+    @Transactional
     public Long commentBookmarkAction(Comment comment, Member member) {
         CommentBookmark commentBookmark = CommentBookmark.createCommentBookmark(member, comment);
         commentRepository.saveCommentBookmark(commentBookmark);

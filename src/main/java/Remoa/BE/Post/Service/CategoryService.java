@@ -13,12 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    @Transactional
     public void persistCategory(Category... categories) {
 
         for (Category category : categories) {
