@@ -39,7 +39,7 @@ public class KakaoController {
      * @throws IOException
      */
     @GetMapping("/login/kakao")
-    public void getCI(@RequestParam String code, HttpServletResponse response, HttpServletRequest request) throws IOException {
+    public Map<String, Object> getCI(@RequestParam String code, HttpServletResponse response, HttpServletRequest request) throws IOException {
         log.info("code = " + code);
 
         // 액세스 토큰과 유저정보 받기
@@ -55,13 +55,25 @@ public class KakaoController {
 
         if (kakaoMember == null) {
             //kakaoId가 db에 없으므로 kakaoMember가 null이므로 회원가입하지 않은 회원. 따라서 회원가입이 필요하므로 회원가입하는 uri로 redirect 시켜주어야 함.
-            response.sendRedirect("/signup/kakao"); //현재 api명세서가 미완성이라 임의로 카카오 회원가입 페이지를 정해서 써두었습니다.
+            return userInfo;
+            // response.sendRedirect("/signup/kakao");
+            //현재 api명세서가 미완성이라 임의로 카카오 회원가입 페이지를 정해서 써두었습니다.
             //현재는 편의상 위처럼 redirect를 써두었으나 이후 작업에서는 프론트에 카카오에서 받아온 사용자 정보를 넘겨야 하므로 return값으로 userInfo에서 닉네임와 이메일 등을 받아와야 합니다.
         } else {
             //if문에 걸리지 않았다면 이미 회원가입이 진행돼 db에 kakaoId가 있는 유저이므로 kakaoMember가 존재하므로 LoginController처럼 로그인 처리 하면 됩니다.
             securityLoginWithoutLoginForm(request, kakaoMember);
+            return null;
         }
+    }
 
+    // 약관 동의창 프론트에서 true/false로 값을 받아서 member의 동의 여부를 설정
+    @PostMapping("/kakao/terms")
+    public void termsAgree(@RequestBody Boolean agree){
+        Member member = new Member();
+        if (agree)
+        {member.setTermConsent(true);}
+        else
+        {member.setTermConsent(false);}
     }
 
     /**
