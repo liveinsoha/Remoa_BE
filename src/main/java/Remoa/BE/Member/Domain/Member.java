@@ -37,7 +37,6 @@ public class Member implements UserDetails {
     /**
      * 23.02.04 카카오 로그인 단독 개발로 인해 삭제 예정.
      */
-    @Deprecated
     private String password;
 
     /**

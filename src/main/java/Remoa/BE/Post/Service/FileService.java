@@ -29,6 +29,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FileService {
 
     private final AmazonS3 amazonS3;
@@ -130,7 +131,8 @@ public class FileService {
             byte[] bytes = IOUtils.toByteArray(objectInputStream);
 
             String fileOriginalName = file.get().getOriginalFileName();
-            String fileNameFix = URLEncoder.encode(fileOriginalName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+            //encode 메서드에 두 번째 파라메터에 StandardCharsets.UTF_8만 쓰면 오류가 나서 뒤에 name을 임사방편으로 붙임. 기능상 문제는 없을듯 함
+            String fileNameFix = URLEncoder.encode(fileOriginalName, StandardCharsets.UTF_8.name()).replaceAll("\\+", "%20");
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             httpHeaders.setContentLength(bytes.length);

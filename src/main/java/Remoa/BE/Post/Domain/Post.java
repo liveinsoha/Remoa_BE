@@ -80,7 +80,7 @@ public class Post {
     private List<Comment> comments = new ArrayList<>();
 
     /**
-     * Post에
+     * Post에서 쓰인 files
      */
     @OneToMany(mappedBy = "post")
     private List<UploadFile> uploadFiles = new ArrayList<>();
@@ -91,6 +91,9 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostLike> postLikes = new ArrayList<>();
 
+    /**
+     * 작성한 Post의 카테고리
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
