@@ -53,6 +53,9 @@ public class KakaoController {
 
         log.info("kakaoId = {}", kakaoId);
 
+        // 프론트에서 구현을 할 때 userInfo를 받아서 약관동의 값(true/false)이랑 같이 넘겨준다고 하셔서 일단은 그렇게 짜놨고
+        // 아직 프론트쪽 구현이 안됐다고 하셔서 연동을 확인하지 못해 그대로 두었습니다..
+        // 이 부분은 말씀해주신 것처럼 DB에 바로 저장을 하는 쪽으로 이야기 해보겠습니다.
         if (kakaoMember == null) {
             //kakaoId가 db에 없으므로 kakaoMember가 null이므로 회원가입하지 않은 회원. 따라서 회원가입이 필요하므로 회원가입하는 uri로 redirect 시켜주어야 함.
             return userInfo;
@@ -64,16 +67,6 @@ public class KakaoController {
             securityLoginWithoutLoginForm(request, kakaoMember);
             return null;
         }
-    }
-
-    // 약관 동의창 프론트에서 true/false로 값을 받아서 member의 동의 여부를 설정
-    @PostMapping("/kakao/terms")
-    public void termsAgree(@RequestBody Boolean agree){
-        Member member = new Member();
-        if (agree)
-        {member.setTermConsent(true);}
-        else
-        {member.setTermConsent(false);}
     }
 
     /**
@@ -99,6 +92,7 @@ public class KakaoController {
         member.setEmail(form.getEmail());
         member.setNickname(form.getNickname());
         member.setProfileImage(form.getProfileImage()); //사진 파일을 다운 받아서 저장해야할까..?
+        member.setTermConsent(form.getTermConsent());
 
         signupService.join(member);
     }
