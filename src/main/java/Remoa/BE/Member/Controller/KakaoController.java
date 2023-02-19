@@ -4,9 +4,10 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Form.KakaoSignupForm;
 import Remoa.BE.Member.Service.KakaoService;
 import Remoa.BE.Member.Service.SignupService;
+import Remoa.BE.exception.CustomBody;
+import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,12 +18,14 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static Remoa.BE.exception.CustomBody.*;
+
 
 @RestController
 @Slf4j
@@ -35,13 +38,9 @@ public class KakaoController {
     /**
      * 카카오 로그인을 통해 code를 query string으로 받아오면, 코드를 통해 토큰, 토큰을 통해 사용자 정보를 얻어와 db에 해당 사용자가 존재하는지 여부를
      * 파악해 존재할 때는 로그인, 없을 땐 회원가입 페이지로 넘어가게 해줌.
-     * @param code
-     * @param response
-     * @param request
-     * @throws IOException
      */
     @GetMapping("/login/kakao")
-    public ResponseEntity<Object> getCI(@RequestParam String code, HttpServletResponse response, HttpServletRequest request) throws IOException {
+    public ResponseEntity<Object> getCI(@RequestParam String code, HttpServletRequest request) throws IOException {
         log.info("code = " + code);
 
         // 액세스 토큰과 유저정보 받기
@@ -55,56 +54,41 @@ public class KakaoController {
 
         log.info("kakaoId = {}", kakaoId);
 
-    /**
-     * 백에서 보낼 게 없을 때에도 정상 처리됐다는 메세지 정도는 같이 보내주는 게 좋습니다.
-     * 상태메세지는 body에, 상태코드는 head에 들어갑니다.
-     * 에러메세지를 exception 패키지처럼 한곳에 모아놓고 쓰는 것도 좋습니다.
-     */
+        /*
+         * 백에서 보낼 게 없을 때에도 정상 처리됐다는 메세지 정도는 같이 보내주는 게 좋습니다.
+         * 상태메세지는 body에, 상태코드는 head에 들어갑니다.
+         * 에러메세지를 exception 패키지처럼 한곳에 모아놓고 쓰는 것도 좋습니다.
+         */
         if (kakaoMember == null) {
             //kakaoId가 db에 없으므로 kakaoMember가 null이므로 회원가입하지 않은 회원. 따라서 회원가입이 필요하므로 회원가입하는 uri로 redirect 시켜주어야 함.
-            return new ResponseEntity<>(userInfo, org.springframework.http.HttpStatus.valueOf(HttpStatus.SC_OK));
+            return successResponse(CustomMessage.OK, userInfo);
         } else {
             //if문에 걸리지 않았다면 이미 회원가입이 진행돼 db에 kakaoId가 있는 유저이므로 kakaoMember가 존재하므로 LoginController처럼 로그인 처리 하면 됩니다.
             securityLoginWithoutLoginForm(request, kakaoMember);
-            return null;
+            return successResponse(CustomMessage.OK_SIGNUP, userInfo);
         }
     }
 
     /**
      * front-end에서 회원가입에 필요한 정보를 넘겨주면 KakaoSignupForm으로 받아 회원가입을 진행시켜줌
-     * @param form
      */
     @PostMapping("/signup/kakao")
-    public void signupKakaoMember(KakaoSignupForm form) {
-
-        /*Member member = new Member();
-        member.setEmail(form.getEmail());
-        member.setKakaoId(form.getKakaoId());
-        member.setName(form.getName());
-        member.setBirth(form.getBirth());
-        member.setSex(form.getSex());
-        member.setPhoneNumber(form.getPhoneNumber());
-        member.setTermConsent(form.getTermConsent());
-
-        signupService.join(member);*/
+    public ResponseEntity<Object> signupKakaoMember(KakaoSignupForm form) {
 
         Member member = new Member();
         member.setKakaoId(form.getKakaoId());
         member.setEmail(form.getEmail());
         member.setNickname(form.getNickname());
-        member.setProfileImage(form.getProfileImage()); //사진 파일을 다운 받아서 저장해야할까..?
-        
-        // 약관동의 부분 추가
+        member.setProfileImage(form.getProfileImage());
         member.setTermConsent(form.getTermConsent());
 
         signupService.join(member);
+        return successResponse(CustomMessage.OK,member);
     }
 
     /**
      * Spring Security가 기본값으로 form data를 사용해 로그인을 진행하는데, Rest API를 이용해 json을 주고받는 방식으로 로그인을 처리하기 위해
      * 우회적인 방식으로 Spring Security를 이용할 수 있게 해주는 메서드.
-     * @param request
-     * @param member
      */
     private void securityLoginWithoutLoginForm(HttpServletRequest request, Member member) {
 
