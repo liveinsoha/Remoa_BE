@@ -3,6 +3,8 @@ package Remoa.BE.Member.Domain;
 import Remoa.BE.Post.Domain.Post;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Where(clause = "deleted = false")
 public class Member implements UserDetails {
 
     @Id
@@ -96,6 +99,8 @@ public class Member implements UserDetails {
      * ADMIN과 일반 USER를 구분하기 위해 존재. Spring Security 이용하기 위함
      */
     private String role;
+
+    private Boolean deleted = Boolean.FALSE;
 
     /**
      * SecureConfig를 통해 Bean에 등록된 passwordEncoder를 이용해 회원가입시 패스워드 암호화.

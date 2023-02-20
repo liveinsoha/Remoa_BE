@@ -2,6 +2,8 @@ package Remoa.BE.Post.Domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -9,6 +11,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "FILE")
+@Where(clause = "deleted = false")
 public class UploadFile {
 
     @Id
@@ -44,6 +47,8 @@ public class UploadFile {
     @Lob
     @Column(name = "store_file_url")
     private String storeFileUrl;
+
+    private Boolean deleted = Boolean.FALSE;
 
     //이후 업로드 날짜 및 시간, 컨텐츠 타입, 사이즈 등의 필드등이 필요할 때 손봐야할듯.
 }

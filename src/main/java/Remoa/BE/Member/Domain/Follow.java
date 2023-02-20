@@ -2,12 +2,15 @@ package Remoa.BE.Member.Domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
+@Where(clause = "deleted = false")
 public class Follow {
 
     @Id
@@ -50,5 +53,7 @@ public class Follow {
 
         return follow;
     }
+
+    private Boolean deleted = Boolean.FALSE;
 
 }
