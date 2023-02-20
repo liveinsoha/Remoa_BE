@@ -3,12 +3,15 @@ package Remoa.BE.Member.Domain;
 import Remoa.BE.Post.Domain.Post;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
+@Where(clause = "deleted = false")
 public class Comment {
 
     @Id
@@ -39,4 +42,6 @@ public class Comment {
      */
     @Column(name = "comment_like_count")
     private Integer commentLikeCount;
+
+    private Boolean deleted = Boolean.FALSE;
 }

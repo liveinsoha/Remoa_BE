@@ -4,6 +4,8 @@ import Remoa.BE.Member.Domain.Comment;
 import Remoa.BE.Member.Domain.Member;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @Entity
+@Where(clause = "deleted = false")
 public class Post {
 
     @Id
@@ -97,4 +100,6 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    private Boolean deleted = Boolean.FALSE;
 }
