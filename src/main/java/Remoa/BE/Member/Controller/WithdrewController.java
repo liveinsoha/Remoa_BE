@@ -44,7 +44,7 @@ public class WithdrewController {
         Member loginMember = (Member) session.getAttribute("loginMember");
 
         if (loginMember.getMemberId() != memberId) {
-            return new ResponseEntity<>("회원정보가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.UNAUTHORIZED);
         }
 
         withdrewService.withdrewRemoa(member);
@@ -76,14 +76,14 @@ public class WithdrewController {
     /**
      * 탈퇴 처리가 되어 deleted 필드가 true인 member가 조회되는지 확인하기 위한 테스트 uri.
      * @param memberId
-     * @return 조회 결과가 없으면 204(No Content), 있으면 200(OK)
+     * @return 조회 결과가 없으면 418(I am a tea pot), 있으면 200(OK)
      */
     @GetMapping("/find/{member_id}")
     public ResponseEntity<String> findMemberTest(@PathVariable("member_id") Long memberId) {
         Member member = signupService.findOne(memberId);
 
         if (member == null) {
-            return new ResponseEntity<>("회원 정보가 없습니다.", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("회원 정보가 없습니다.", HttpStatus.I_AM_A_TEAPOT);
         }
 
         return new ResponseEntity<>("memberId 번호 <" + memberId + ">는 " + member.getName() + "입니다.", HttpStatus.OK);
