@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -46,6 +47,10 @@ public class MemberService {
 
     public Member findOne(Long memberId) {
         return memberRepository.findOne(memberId);
+    }
+
+    public Optional<Member> findByKakaoId(Long kakaoId) {
+        return memberRepository.findByKakaoId(kakaoId);
     }
 
     public Boolean isAdminExist() {

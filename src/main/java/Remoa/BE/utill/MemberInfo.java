@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MemberInfo {
-    public static Long getMemberId() {
+    public static Long getKaKaoId() {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return member.getMemberId();
+        return member.getKakaoId();
     }
 
 

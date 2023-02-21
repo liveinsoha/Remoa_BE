@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 import static Remoa.BE.exception.CustomBody.*;
-import static Remoa.BE.utill.MemberInfo.getMemberId;
-import static Remoa.BE.utill.MemberInfo.securityLoginWithoutLoginForm;
+import static Remoa.BE.utill.MemberInfo.*;
 
 
 @RestController
@@ -44,7 +44,7 @@ public class KakaoController {
         log.info("userInfo = {}", userInfo.values());
 
         Long kakaoId = Long.parseLong((String) userInfo.get("id"));
-        Member kakaoMember = ks.distinguishKakaoId(kakaoId);
+        Optional<Member> member = memberService.findByKakaoId(kakaoId);
 
         log.info("kakaoId = {}", kakaoId);
 
@@ -53,11 +53,13 @@ public class KakaoController {
          * 상태메세지는 body에, 상태코드는 head에 들어갑니다.
          * 에러메세지를 exception 패키지처럼 한곳에 모아놓고 쓰는 것도 좋습니다.
          */
-        if (kakaoMember == null) {
-            //kakaoId가 db에 없으므로 kakaoMember가 null이므로 회원가입하지 않은 회원. 따라서 회원가입이 필요하므로 회원가입하는 uri로 redirect 시켜주어야 함.
-            return successResponse(CustomMessage.OK, userInfo);
-        } else {
+        if (member.isPresent()) {
+            securityLoginWithoutLoginForm(member.get());
             //if문에 걸리지 않았다면 이미 회원가입이 진행돼 db에 kakaoId가 있는 유저이므로 kakaoMember가 존재하므로 LoginController처럼 로그인 처리 하면 됩니다.
+            return successResponse(CustomMessage.OK, userInfo);
+
+        } else {
+            //kakaoId가 db에 없으므로 kakaoMember가 null이므로 회원가입하지 않은 회원. 따라서 회원가입이 필요하므로 회원가입하는 uri로 redirect 시켜주어야 함.
             return successResponse(CustomMessage.OK_SIGNUP, userInfo);
         }
     }
@@ -85,14 +87,15 @@ public class KakaoController {
      */
     @GetMapping("/login")
     public ResponseEntity<Object> autoLogin(){
-       Long memberId = getMemberId();
-        if (memberId == null){
-            return errorResponse(CustomMessage.UNAUTHORIZED);
-        }
-        else{
-           Member member = memberService.findOne(memberId);
+       Long kaKaoId = getKaKaoId();
+       Optional<Member> member = memberService.findByKakaoId(kaKaoId);
+       if(member.isPresent()){
            return successResponse(CustomMessage.OK,member);
-        }
+       }
+       else{
+           return errorResponse(CustomMessage.UNAUTHORIZED);
+       }
+
     }
 
 
