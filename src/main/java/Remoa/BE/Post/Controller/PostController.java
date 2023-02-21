@@ -3,6 +3,7 @@ package Remoa.BE.Post.Controller;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Service.FileService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,6 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static Remoa.BE.utill.MemberInfo.getMemberId;
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class PostController {

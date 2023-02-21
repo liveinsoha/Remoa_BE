@@ -14,7 +14,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Slf4j
 @RequiredArgsConstructor
-public class SignupService {
+public class MemberService {
     private final MemberRepository MemberRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
 

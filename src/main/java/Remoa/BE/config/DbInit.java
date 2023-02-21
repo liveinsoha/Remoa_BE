@@ -3,7 +3,7 @@ package Remoa.BE.config;
 import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Post.Service.CategoryService;
-import Remoa.BE.Member.Service.SignupService;
+import Remoa.BE.Member.Service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 @Component
 @RequiredArgsConstructor
 public class DbInit {
-    private final SignupService signupService;
+    private final MemberService memberService;
     private final CategoryService categoryService;
 
     /**
@@ -22,7 +22,7 @@ public class DbInit {
      */
     @PostConstruct
     public void createAdminUser() {
-        if (signupService.isAdminExist()) {
+        if (memberService.isAdminExist()) {
             //do nothing
             log.info("============Admin is already exist============");
         } else {
@@ -36,7 +36,7 @@ public class DbInit {
             adminMember.setOneLineIntroduction("관리자입니다.");
             adminMember.setTermConsent(true);
             adminMember.setRole("ROLE_ADMIN");
-            this.signupService.join(adminMember);
+            this.memberService.join(adminMember);
             log.info("============Add Admin user completely============");
         }
     }

@@ -4,7 +4,7 @@ import Remoa.BE.Member.Repository.MemberRepository;
 import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Post.Service.CategoryService;
-import Remoa.BE.Member.Service.SignupService;
+import Remoa.BE.Member.Service.MemberService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class CategoryTest {
     CategoryService categoryService;
 
     @Autowired
-    SignupService signupService;
+    MemberService memberService;
 
     @Autowired
     MemberRepository MemberRepository;
@@ -34,7 +34,7 @@ public class CategoryTest {
     public void 카테고리_테스트() throws Exception {
         //given
         Member testMember = createMember();
-        signupService.join(testMember);
+        memberService.join(testMember);
 
         String category1 = "idea";
         String category2 = "video";
