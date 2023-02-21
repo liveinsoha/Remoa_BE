@@ -15,21 +15,19 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class MemberService {
-    private final MemberRepository MemberRepository;
+    private final MemberRepository memberRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public Long join(Member member) {
-        this.validateDuplicateMember(member);
-        member.hashPassword(this.bCryptPasswordEncoder);
+    public void join(Member member) {
+        validateDuplicateMember(member);
         member.setRole("USER");
-        this.MemberRepository.save(member);
-        return member.getMemberId();
+        memberRepository.save(member);
     }
 
     private void validateDuplicateMember(Member member) {
         log.info("member={}", member.getEmail());
-        List<Member> findMembers = this.MemberRepository.findByEmail(member.getEmail());
+        List<Member> findMembers = memberRepository.findByEmail(member.getEmail());
         if (!findMembers.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
@@ -37,7 +35,7 @@ public class MemberService {
 
     public Boolean isNicknameDuplicate(Member member) {
         log.info("member={}", member.getNickname());
-        List<Member> findMembers = this.MemberRepository.findByNickname(member.getNickname());
+        List<Member> findMembers = memberRepository.findByNickname(member.getNickname());
         if (!findMembers.isEmpty()) {
             return false;
         } else {
@@ -47,10 +45,10 @@ public class MemberService {
 
 
     public Member findOne(Long memberId) {
-        return this.MemberRepository.findOne(memberId);
+        return memberRepository.findOne(memberId);
     }
 
     public Boolean isAdminExist() {
-        return !MemberRepository.findByEmail("spparta@gmail.com").isEmpty();
+        return !memberRepository.findByEmail("spparta@gmail.com").isEmpty();
     }
 }

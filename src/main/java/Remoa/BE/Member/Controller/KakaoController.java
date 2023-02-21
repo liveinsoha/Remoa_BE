@@ -58,7 +58,6 @@ public class KakaoController {
             return successResponse(CustomMessage.OK, userInfo);
         } else {
             //if문에 걸리지 않았다면 이미 회원가입이 진행돼 db에 kakaoId가 있는 유저이므로 kakaoMember가 존재하므로 LoginController처럼 로그인 처리 하면 됩니다.
-            securityLoginWithoutLoginForm(kakaoMember);
             return successResponse(CustomMessage.OK_SIGNUP, userInfo);
         }
     }
@@ -77,6 +76,7 @@ public class KakaoController {
         member.setTermConsent(form.getTermConsent());
 
         memberService.join(member);
+        securityLoginWithoutLoginForm(member);
         return successResponse(CustomMessage.OK,member);
     }
 

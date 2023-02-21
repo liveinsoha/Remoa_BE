@@ -33,6 +33,7 @@ public class SecureConfig {
 
         http.addFilter(corsFilter);
 
+        http.formLogin().disable();
 
         http
                 .authorizeRequests()

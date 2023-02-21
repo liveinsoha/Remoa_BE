@@ -36,7 +36,7 @@ public class DbInit {
             adminMember.setOneLineIntroduction("관리자입니다.");
             adminMember.setTermConsent(true);
             adminMember.setRole("ROLE_ADMIN");
-            this.memberService.join(adminMember);
+            memberService.join(adminMember);
             log.info("============Add Admin user completely============");
         }
     }
