@@ -38,7 +38,7 @@ public class LoginController {
      * @return
      */
 
-    @PostMapping("/login")
+   /* @PostMapping("/login")
     public String login(@RequestBody LoginForm form, HttpServletRequest request) {
 
         log.info("login process activate");
@@ -54,5 +54,5 @@ public class LoginController {
         securityLoginWithoutLoginForm(loginMember);
 
         return loginMember.getNickname();
-    }
+    }*/
 }

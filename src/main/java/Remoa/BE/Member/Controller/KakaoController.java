@@ -10,9 +10,13 @@ import Remoa.BE.exception.response.FailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +32,7 @@ public class KakaoController {
 
     private final KakaoService ks;
     private final MemberService memberService;
+    private final HttpSession httpSession;
 
     /**
      * 카카오 로그인을 통해 code를 query string으로 받아오면, 코드를 통해 토큰, 토큰을 통해 사용자 정보를 얻어와 db에 해당 사용자가 존재하는지 여부를
@@ -68,7 +73,7 @@ public class KakaoController {
      * front-end에서 회원가입에 필요한 정보를 넘겨주면 KakaoSignupForm으로 받아 회원가입을 진행시켜줌
      */
     @PostMapping("/signup/kakao")
-    public ResponseEntity<Object> signupKakaoMember(KakaoSignupForm form) {
+    public ResponseEntity<Object> signupKakaoMember(@RequestBody KakaoSignupForm form) {
 
         Member member = new Member();
         member.setKakaoId(form.getKakaoId());
@@ -83,8 +88,9 @@ public class KakaoController {
     }
 
     /**
-     *자동 로그인입니다 프론트에서 jsession 쿠키를 건내주면 로그인 검증을 해줍니다
+     *자동 로그인 추후에
      */
+/*
     @GetMapping("/login")
     public ResponseEntity<Object> autoLogin(){
        Long kaKaoId = getKaKaoId();
@@ -97,7 +103,24 @@ public class KakaoController {
        }
 
     }
+*/
 
+    /**
+     * 로그아웃 기능
+     세션무효화, jsession쿠키를 제거,
+     */
+    @PostMapping("/user/logout")
+    public ResponseEntity<Object> logout(HttpServletResponse response){
+
+        SecurityContextHolder.clearContext(); // 현재 SecurityContext를 제거합니다.
+        httpSession.invalidate(); // HttpSession을 무효화합니다.
+
+        Cookie myCookie = new Cookie("JSESSIONID", null);
+        myCookie.setMaxAge(0); // 쿠키의 expiration 타임을 0으로 하여 없앤다.
+        myCookie.setPath("/"); // 모든 경로에서 삭제 됬음을 알린다.
+        response.addCookie(myCookie);
+        return successResponse(CustomMessage.OK,myCookie);
+    }
 
 
 }

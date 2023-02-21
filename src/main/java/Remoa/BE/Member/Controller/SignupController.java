@@ -22,7 +22,7 @@ public class SignupController {
      * @param form
      * @return
      */
-    @Deprecated
+   /* @Deprecated
     @PostMapping("/signup")
     public String create(@RequestBody SignupForm form) {
 
@@ -43,5 +43,5 @@ public class SignupController {
         }
 
         return "signup success";
-    }
+    }*/
 }
