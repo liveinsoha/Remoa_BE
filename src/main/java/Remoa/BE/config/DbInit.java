@@ -1,5 +1,6 @@
 package Remoa.BE.config;
 
+import Remoa.BE.Member.Domain.Role;
 import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Post.Service.CategoryService;
@@ -35,8 +36,8 @@ public class DbInit {
             adminMember.setPhoneNumber("01000000000");
             adminMember.setOneLineIntroduction("관리자입니다.");
             adminMember.setTermConsent(true);
-            adminMember.setRole("ROLE_ADMIN");
-            this.signupService.join(adminMember);
+            adminMember.setRole(Role.ADMIN.getValue());
+            signupService.join(adminMember);
             log.info("============Add Admin user completely============");
         }
     }

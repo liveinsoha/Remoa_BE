@@ -113,11 +113,6 @@ public class Member implements UserDetails {
         return this;
     }
 
-    //이 밑으로는 Spring Security를 사용해 로그인하기 위해 UserDetails를 구현하며 생긴 사용하지 않는 메서드들입니다.
-    public Boolean checkPassword(String plainPassword, PasswordEncoder passwordEncoder) {
-        return passwordEncoder.matches(plainPassword, this.password);
-    }
-
     public void addMemberCategory(MemberCategory memberCategory) {
         memberCategories.add(memberCategory);
     }
@@ -128,6 +123,11 @@ public class Member implements UserDetails {
 
     public void addCommentLike(MemberCategory memberCategory) {
         memberCategories.add(memberCategory);
+    }
+
+    //이 밑으로는 Spring Security를 사용해 로그인하기 위해 UserDetails를 구현하며 생긴 사용하지 않는 메서드들입니다.
+    public Boolean checkPassword(String plainPassword, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(plainPassword, this.password);
     }
 
     @Override

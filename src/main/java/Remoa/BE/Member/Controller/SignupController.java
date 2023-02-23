@@ -1,5 +1,6 @@
 package Remoa.BE.Member.Controller;
 
+import Remoa.BE.Member.Domain.Role;
 import Remoa.BE.Member.Form.SignupForm;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.SignupService;
@@ -37,6 +38,7 @@ public class SignupController {
         member.setSex(form.getSex());
         member.setPhoneNumber(form.getPhoneNumber());
         member.setTermConsent(form.getTermConsent());
+        member.setRole(Role.USER.getValue());
 
         try{
             memberService.join(member);

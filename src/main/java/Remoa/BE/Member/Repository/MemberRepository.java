@@ -10,8 +10,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -71,13 +73,50 @@ public class MemberRepository {
                 .isEmpty();
     }
 
+    /**
+     * 두 멤버가 팔로우가 되어있으면 그에 맞는 Follow를 불러와줌.
+     * @param fromMember
+     * @param toMember
+     * @return
+     */
+    public Follow loadFollow(Member fromMember, Member toMember) {
+        return em.createQuery("select f from Follow f " +
+                        "where f.fromMember = :fromMember and f.toMemberId = :toMemberId", Follow.class)
+                .setParameter("fromMember", fromMember)
+                .setParameter("toMemberId", toMember.getMemberId())
+                .getResultList()
+                .get(0);
+    }
 
-    //soft delete 메소드로 사용하려 하였으나, 영속성 컨텍스트를 통한 엔티티의 deleted 필드값 교체만으로도 동작이 가능해서 현재 잠정 폐기
-/*    @Query("update Member m set m.deleted = true where m.memberId = :id")
-    @Modifying*/
-    /*public void deleteSoftlyById(Member member) {
-        log.info("delete member...");
-        em.createQuery("update Member m set m.deleted = true where m.memberId = :id")
-                .setParameter("id", member.getMemberId());
-    }*/
+    /**
+     * 멤버가 팔로우하는 모든 멤버를 불러와줌.
+     * @param member
+     * @return List<Member>
+     */
+    public List<Member> loadFollows(Member member) {
+        return em.createQuery("select f from Follow f " +
+                        "where f.fromMember = :member", Follow.class)
+                .setParameter("member", member)
+                .getResultList()
+                .stream()
+                .map(follow -> {
+                    Long toMemberId = follow.getToMemberId();
+                    return this.findOne(toMemberId);
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Follow/Unfollow는 빈번하게 일어나므로 Soft Delete를 쓰기보단 Hard Delete를 쓰는 게 나을 것 같아 Hard Delete를 적용.
+     * @param followId
+     */
+    public void unfollowByFollowId(Long followId) {
+        Follow followForDelete = em.find(Follow.class, followId);
+        if (followForDelete != null) {
+            em.remove(followForDelete);
+        } else {
+            throw new EntityNotFoundException("Entity with follow id : " + followId + " not found!");
+        }
+    }
+
 }
