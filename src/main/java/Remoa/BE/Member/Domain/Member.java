@@ -3,6 +3,8 @@ package Remoa.BE.Member.Domain;
 import Remoa.BE.Post.Domain.Post;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Where(clause = "deleted = false")
 public class Member implements UserDetails {
 
     @Id
@@ -80,6 +83,12 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Feedback> feedbacks = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL})
     private List<MemberCategory> memberCategories = new ArrayList();
 
@@ -97,6 +106,8 @@ public class Member implements UserDetails {
      */
     private String role;
 
+    private Boolean deleted = Boolean.FALSE;
+
     /**
      * SecureConfig를 통해 Bean에 등록된 passwordEncoder를 이용해 회원가입시 패스워드 암호화.
      * 현재(23.02.13 기준) 카카오 로그인으로 통합되어 kakaoId를 암호화 하는 방향으로 쓰이거나 사용하지 않을 예정
@@ -106,11 +117,6 @@ public class Member implements UserDetails {
     public Member hashPassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
         return this;
-    }
-
-    //이 밑으로는 Spring Security를 사용해 로그인하기 위해 UserDetails를 구현하며 생긴 사용하지 않는 메서드들입니다.
-    public Boolean checkPassword(String plainPassword, PasswordEncoder passwordEncoder) {
-        return passwordEncoder.matches(plainPassword, this.password);
     }
 
     public void addMemberCategory(MemberCategory memberCategory) {
@@ -123,6 +129,11 @@ public class Member implements UserDetails {
 
     public void addCommentLike(MemberCategory memberCategory) {
         memberCategories.add(memberCategory);
+    }
+
+    //이 밑으로는 Spring Security를 사용해 로그인하기 위해 UserDetails를 구현하며 생긴 사용하지 않는 메서드들입니다.
+    public Boolean checkPassword(String plainPassword, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(plainPassword, this.password);
     }
 
     @Override

@@ -20,10 +20,12 @@ public class MemberService {
     private final PasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public void join(Member member) {
-        validateDuplicateMember(member);
-        member.setRole("USER");
-        memberRepository.save(member);
+    public Long join(Member member) {
+        this.validateDuplicateMember(member);
+        member.hashPassword(this.bCryptPasswordEncoder);
+        this.memberRepository.save(member);
+        return member.getMemberId();
+
     }
 
     private void validateDuplicateMember(Member member) {
