@@ -34,6 +34,9 @@ public class Feedback {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(name = "page_number")
+    private Integer pageNumber;
+
     /**
      * Feedback의 내용
      */
