@@ -2,8 +2,7 @@ package Remoa.BE.Post.Domain;
 
 import Remoa.BE.Member.Domain.Comment;
 import Remoa.BE.Member.Domain.Member;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,6 +10,9 @@ import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
