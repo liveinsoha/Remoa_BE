@@ -3,28 +3,26 @@ package Remoa.BE.Member.Controller;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Form.KakaoSignupForm;
 import Remoa.BE.Member.Service.KakaoService;
-import Remoa.BE.Member.Service.SignupService;
-import Remoa.BE.exception.CustomBody;
+import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.exception.response.ErrorResponse;
+import Remoa.BE.exception.response.FailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static Remoa.BE.exception.CustomBody.*;
+import static Remoa.BE.utill.MemberInfo.*;
 
 
 @RestController
@@ -33,7 +31,8 @@ import static Remoa.BE.exception.CustomBody.*;
 public class KakaoController {
 
     private final KakaoService ks;
-    private final SignupService signupService;
+    private final MemberService memberService;
+    private final HttpSession httpSession;
 
     /**
      * 카카오 로그인을 통해 code를 query string으로 받아오면, 코드를 통해 토큰, 토큰을 통해 사용자 정보를 얻어와 db에 해당 사용자가 존재하는지 여부를
@@ -50,7 +49,7 @@ public class KakaoController {
         log.info("userInfo = {}", userInfo.values());
 
         Long kakaoId = Long.parseLong((String) userInfo.get("id"));
-        Member kakaoMember = ks.distinguishKakaoId(kakaoId);
+        Optional<Member> member = memberService.findByKakaoId(kakaoId);
 
         log.info("kakaoId = {}", kakaoId);
 
@@ -59,12 +58,13 @@ public class KakaoController {
          * 상태메세지는 body에, 상태코드는 head에 들어갑니다.
          * 에러메세지를 exception 패키지처럼 한곳에 모아놓고 쓰는 것도 좋습니다.
          */
-        if (kakaoMember == null) {
-            //kakaoId가 db에 없으므로 kakaoMember가 null이므로 회원가입하지 않은 회원. 따라서 회원가입이 필요하므로 회원가입하는 uri로 redirect 시켜주어야 함.
-            return successResponse(CustomMessage.OK, userInfo);
-        } else {
+        if (member.isPresent()) {
+            securityLoginWithoutLoginForm(member.get());
             //if문에 걸리지 않았다면 이미 회원가입이 진행돼 db에 kakaoId가 있는 유저이므로 kakaoMember가 존재하므로 LoginController처럼 로그인 처리 하면 됩니다.
-            securityLoginWithoutLoginForm(request, kakaoMember);
+            return successResponse(CustomMessage.OK, userInfo);
+
+        } else {
+            //kakaoId가 db에 없으므로 kakaoMember가 null이므로 회원가입하지 않은 회원. 따라서 회원가입이 필요하므로 회원가입하는 uri로 redirect 시켜주어야 함.
             return successResponse(CustomMessage.OK_SIGNUP, userInfo);
         }
     }
@@ -73,7 +73,7 @@ public class KakaoController {
      * front-end에서 회원가입에 필요한 정보를 넘겨주면 KakaoSignupForm으로 받아 회원가입을 진행시켜줌
      */
     @PostMapping("/signup/kakao")
-    public ResponseEntity<Object> signupKakaoMember(KakaoSignupForm form) {
+    public ResponseEntity<Object> signupKakaoMember(@RequestBody KakaoSignupForm form) {
 
         Member member = new Member();
         member.setKakaoId(form.getKakaoId());
@@ -82,28 +82,45 @@ public class KakaoController {
         member.setProfileImage(form.getProfileImage());
         member.setTermConsent(form.getTermConsent());
 
-        signupService.join(member);
+        memberService.join(member);
+        securityLoginWithoutLoginForm(member);
         return successResponse(CustomMessage.OK,member);
     }
 
     /**
-     * Spring Security가 기본값으로 form data를 사용해 로그인을 진행하는데, Rest API를 이용해 json을 주고받는 방식으로 로그인을 처리하기 위해
-     * 우회적인 방식으로 Spring Security를 이용할 수 있게 해주는 메서드.
+     *자동 로그인 추후에
      */
-    private void securityLoginWithoutLoginForm(HttpServletRequest request, Member member) {
+/*
+    @GetMapping("/login")
+    public ResponseEntity<Object> autoLogin(){
+       Long kaKaoId = getKaKaoId();
+       Optional<Member> member = memberService.findByKakaoId(kaKaoId);
+       if(member.isPresent()){
+           return successResponse(CustomMessage.OK,member);
+       }
+       else{
+           return errorResponse(CustomMessage.UNAUTHORIZED);
+       }
 
-        //로그인 세션에 들어갈 권한을 설정합니다.
-        List<GrantedAuthority> list = new ArrayList<>();
-        list.add(new SimpleGrantedAuthority("ROLE_USER"));
-
-        SecurityContext sc = SecurityContextHolder.getContext();
-        //아이디, 패스워드, 권한을 설정합니다. 아이디는 Object단위로 넣어도 무방하며
-        //패스워드는 null로 하여도 값이 생성됩니다.
-        sc.setAuthentication(new UsernamePasswordAuthenticationToken(member, null, list));
-        HttpSession session = request.getSession(true);
-        session.setAttribute("loginMember", member);
-
-        //위에서 설정한 값을 Spring security에서 사용할 수 있도록 세션에 설정해줍니다.
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
     }
+*/
+
+    /**
+     * 로그아웃 기능
+     세션무효화, jsession쿠키를 제거,
+     */
+    @PostMapping("/user/logout")
+    public ResponseEntity<Object> logout(HttpServletResponse response){
+
+        SecurityContextHolder.clearContext(); // 현재 SecurityContext를 제거합니다.
+        httpSession.invalidate(); // HttpSession을 무효화합니다.
+
+        Cookie myCookie = new Cookie("JSESSIONID", null);
+        myCookie.setMaxAge(0); // 쿠키의 expiration 타임을 0으로 하여 없앤다.
+        myCookie.setPath("/"); // 모든 경로에서 삭제 됬음을 알린다.
+        response.addCookie(myCookie);
+        return successResponse(CustomMessage.OK,myCookie);
+    }
+
+
 }

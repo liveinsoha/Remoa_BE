@@ -119,4 +119,12 @@ public class MemberRepository {
         }
     }
 
+    //soft delete 메소드로 사용하려 하였으나, 영속성 컨텍스트를 통한 엔티티의 deleted 필드값 교체만으로도 동작이 가능해서 현재 잠정 폐기
+/*    @Query("update Member m set m.deleted = true where m.memberId = :id")
+    @Modifying*/
+    /*public void deleteSoftlyById(Member member) {
+        log.info("delete member...");
+        em.createQuery("update Member m set m.deleted = true where m.memberId = :id")
+                .setParameter("id", member.getMemberId());
+    }*/
 }
