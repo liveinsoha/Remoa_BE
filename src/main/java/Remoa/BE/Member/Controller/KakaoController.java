@@ -28,6 +28,7 @@ import static Remoa.BE.utill.MemberInfo.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*") // 프론트에서 추가 요청
 public class KakaoController {
 
     private final KakaoService ks;
