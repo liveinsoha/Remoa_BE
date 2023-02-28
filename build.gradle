@@ -34,6 +34,9 @@ dependencies {
 
 	// S3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	// h2 db 추가
+	implementation "com.h2database:h2"
 }
 
 tasks.named('test') {

@@ -1,17 +1,20 @@
 package Remoa.BE.Post.Controller;
 
+import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Service.FileService;
+import Remoa.BE.Post.Service.PostService;
+import Remoa.BE.Post.form.UploadPostForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
-
-import static Remoa.BE.utill.MemberInfo.getMemberId;
 
 @Slf4j
 @RestController
@@ -19,6 +22,8 @@ import static Remoa.BE.utill.MemberInfo.getMemberId;
 public class PostController {
 
     private final FileService fileService;
+
+    private final PostService postService;
 
     //Todo 게시글 작성중 파일 업로드만 작성
     @PostMapping("/post")
@@ -42,6 +47,14 @@ public class PostController {
     @GetMapping("/post/file/{fileId}")
     public ResponseEntity<byte[]> getFileDownload(@PathVariable("fileId") Long fileId ) throws IOException {
         return fileService.getObject(fileId);
+    }
+
+    @PostMapping("/reference")  // 게시물 등록
+    public void share(@RequestPart UploadPostForm uploadPostForm,
+                      @RequestPart List<MultipartFile> uploadFiles, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Member member = (Member) session.getAttribute("loginMember");
+        postService.registPost(uploadPostForm, uploadFiles, member);
     }
 
 }

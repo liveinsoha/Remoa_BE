@@ -1,17 +1,25 @@
-package Remoa.BE.Member.Domain;
+package Remoa.BE.Member.Form.Request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberProfile {
+public class EditProfileForm {
 
-    // 프로필 수정 범위 : 닉네임(중복확인), 핸드폰번호, 대학교(대학교 리스트 검색하기), 한줄소개
+    @NotBlank(message = "닉네임은 비어있을 수 없습니다.")
     private String nickname;
+
     private String phoneNumber;
+
     private String university;
+
     private String oneLineIntroduction;
+
 }

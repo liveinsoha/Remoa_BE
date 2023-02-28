@@ -47,7 +47,7 @@ public class MemberRepository {
     }
 
     public Optional<Member> findByKakaoId(Long kakaoId) {
-        return this.em.createQuery("select k from Member k where k.kakaoId = :kakaoId", Member.class)
+        return em.createQuery("select m from Member m where m.kakaoId = :kakaoId", Member.class)
                 .setParameter("kakaoId", kakaoId)
                 .getResultStream()
                 .findAny();

@@ -104,7 +104,7 @@ public class Member implements UserDetails {
     /**
      * ADMIN과 일반 USER를 구분하기 위해 존재. Spring Security 이용하기 위함
      */
-    private String role;
+    private String role = "ROLE_USER";
 
     private Boolean deleted = Boolean.FALSE;
 

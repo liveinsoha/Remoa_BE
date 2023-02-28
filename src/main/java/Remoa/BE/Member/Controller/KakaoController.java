@@ -5,8 +5,6 @@ import Remoa.BE.Member.Form.KakaoSignupForm;
 import Remoa.BE.Member.Service.KakaoService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.exception.CustomMessage;
-import Remoa.BE.exception.response.ErrorResponse;
-import Remoa.BE.exception.response.FailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +58,7 @@ public class KakaoController {
          * 에러메세지를 exception 패키지처럼 한곳에 모아놓고 쓰는 것도 좋습니다.
          */
         if (member.isPresent()) {
-            securityLoginWithoutLoginForm(member.get());
+            securityLoginWithoutLoginForm(member.get(), request);
             //if문에 걸리지 않았다면 이미 회원가입이 진행돼 db에 kakaoId가 있는 유저이므로 kakaoMember가 존재하므로 LoginController처럼 로그인 처리 하면 됩니다.
             return successResponse(CustomMessage.OK, userInfo);
 
@@ -71,10 +69,27 @@ public class KakaoController {
     }
 
     /**
+     * 카카오 로그인을 우회해 테스트 하기 위한 용도로 추가됨.
+     * @param kakaoId
+     * @return ResponseEntity
+     */
+    @PostMapping("/login/kakao/test")
+    public ResponseEntity<Object> testLogin(@RequestBody Integer kakaoId, HttpServletRequest request) {
+        log.warn("kakaoId = {}", kakaoId);
+        Optional<Member> findMember = memberService.findByKakaoId(Long.valueOf(kakaoId));
+        if (findMember.isPresent()) {
+            Member member = findMember.get();
+            securityLoginWithoutLoginForm(member, request);
+            return successResponse(CustomMessage.OK, member);
+        }
+        return failResponse(CustomMessage.VALIDATED, "User Not Exist");
+    }
+
+    /**
      * front-end에서 회원가입에 필요한 정보를 넘겨주면 KakaoSignupForm으로 받아 회원가입을 진행시켜줌
      */
     @PostMapping("/signup/kakao")
-    public ResponseEntity<Object> signupKakaoMember(@RequestBody KakaoSignupForm form) {
+    public ResponseEntity<Object> signupKakaoMember(@RequestBody KakaoSignupForm form, HttpServletRequest request) {
 
         Member member = new Member();
         member.setKakaoId(form.getKakaoId());
@@ -84,7 +99,7 @@ public class KakaoController {
         member.setTermConsent(form.getTermConsent());
 
         memberService.join(member);
-        securityLoginWithoutLoginForm(member);
+        securityLoginWithoutLoginForm(member, request);
         return successResponse(CustomMessage.OK,member);
     }
 

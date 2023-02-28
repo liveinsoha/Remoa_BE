@@ -22,7 +22,7 @@ public class MemberService {
     @Transactional
     public Long join(Member member) {
         this.validateDuplicateMember(member);
-        member.hashPassword(this.bCryptPasswordEncoder);
+//        member.hashPassword(this.bCryptPasswordEncoder);
         this.memberRepository.save(member);
         return member.getMemberId();
 
@@ -36,10 +36,9 @@ public class MemberService {
         }
     }
 
-    public Boolean isNicknameDuplicate(Member member) {
-        log.info("member={}", member.getNickname());
-        List<Member> findMembers = memberRepository.findByNickname(member.getNickname());
-        if (!findMembers.isEmpty()) {
+    public Boolean isNicknameDuplicate(String nickname) {
+        List<Member> findMembers = memberRepository.findByNickname(nickname);
+        if (findMembers.isEmpty()) {
             return false;
         } else {
             return true;
