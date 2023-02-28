@@ -4,11 +4,12 @@ import Remoa.BE.Member.Repository.MemberRepository;
 import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Post.Service.CategoryService;
-import Remoa.BE.Member.Service.SignupService;
+import Remoa.BE.Member.Service.MemberService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,13 +20,14 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
+@TestPropertySource(locations="classpath:application.yml")
 public class CategoryTest {
 
     @Autowired
     CategoryService categoryService;
 
     @Autowired
-    SignupService signupService;
+    MemberService memberService;
 
     @Autowired
     MemberRepository MemberRepository;
@@ -34,7 +36,7 @@ public class CategoryTest {
     public void 카테고리_테스트() throws Exception {
         //given
         Member testMember = createMember();
-        signupService.join(testMember);
+        memberService.join(testMember);
 
         String category1 = "idea";
         String category2 = "video";

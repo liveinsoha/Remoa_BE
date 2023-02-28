@@ -50,7 +50,9 @@ public class KakaoService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=139febf9e13da4d124d1c1faafcf3f86");
-            sb.append("&redirect_uri=http://localhost:8080/login/kakao");
+
+            // 02.26. 프론트와 연동하는데 여기 3000으로 바꿔달라고 하셔서 바꿔놓았습니다 -광휘
+            sb.append("&redirect_uri=http://localhost:3000/login/kakao");
             sb.append("&code=" + code);
             sb.append("&client_secret=5IueqXws75WoH1e3gCSI2aNxQgOGMdBG");
 

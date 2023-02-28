@@ -33,6 +33,8 @@ public class SecureConfig {
 
         http.addFilter(corsFilter);
 
+        http.formLogin().disable();
+
         http
                 .authorizeRequests()
                 //api 명세 확정 후 재확인 핋요

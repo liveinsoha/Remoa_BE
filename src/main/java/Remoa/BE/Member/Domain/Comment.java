@@ -3,12 +3,17 @@ package Remoa.BE.Member.Domain;
 import Remoa.BE.Post.Domain.Post;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
 @Setter
+@Where(clause = "deleted = false")
 public class Comment {
 
     @Id
@@ -22,6 +27,13 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    /**
+     * Comment를 작성한 Member
+     */
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     /**
      * Comment의 내용
@@ -39,4 +51,6 @@ public class Comment {
      */
     @Column(name = "comment_like_count")
     private Integer commentLikeCount;
+
+    private Boolean deleted = Boolean.FALSE;
 }

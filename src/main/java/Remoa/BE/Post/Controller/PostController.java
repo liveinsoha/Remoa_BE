@@ -6,6 +6,7 @@ import Remoa.BE.Post.Service.FileService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.Post.form.UploadPostForm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class PostController {

@@ -1,33 +1,31 @@
 package Remoa.BE.Member.Controller;
 
+import Remoa.BE.Member.Domain.Role;
 import Remoa.BE.Member.Form.SignupForm;
 import Remoa.BE.Member.Domain.Member;
-import Remoa.BE.Member.Service.SignupService;
+import Remoa.BE.Member.Service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Deprecated
 public class SignupController {
 
-    private final SignupService memberService;
+    private final MemberService memberService;
 
-    @GetMapping("/signup")
-    public String createForm() {
-        return "회원가입 페이지 입니다.";
-    }
 
     /**
      * front-end에서 회원가입을 위한 데이터를 넘겨 받아 회원가입 기능을 수행.
+     * 카카오 로그인으로 통합되어 현재는 사용되지 않음.
      * @param form
      * @return
      */
+   /* @Deprecated
     @PostMapping("/signup")
-    public String create(@RequestBody @Valid SignupForm form) {
+    public String create(@RequestBody SignupForm form) {
 
         Member member = new Member();
         member.setEmail(form.getEmail());
@@ -37,6 +35,7 @@ public class SignupController {
         member.setSex(form.getSex());
         member.setPhoneNumber(form.getPhoneNumber());
         member.setTermConsent(form.getTermConsent());
+        member.setRole(Role.USER.getValue());
 
         try{
             memberService.join(member);
@@ -46,5 +45,5 @@ public class SignupController {
         }
 
         return "signup success";
-    }
+    }*/
 }
