@@ -1,4 +1,4 @@
-package Remoa.BE.Post.form;
+package Remoa.BE.Post.form.Request;
 
 import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Post.Domain.Post;

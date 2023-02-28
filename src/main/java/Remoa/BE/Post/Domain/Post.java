@@ -75,7 +75,7 @@ public class Post {
     /**
      * Post의 조회수
      */
-    private Integer views;
+    private Integer views = 0;
 
     /**
      * Post에 작성되어진 Comment

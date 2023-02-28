@@ -7,15 +7,13 @@ import Remoa.BE.Post.Domain.UploadFile;
 import Remoa.BE.Post.Repository.PostRepository;
 import Remoa.BE.Post.Repository.UploadFileRepository;
 import Remoa.BE.Post.Repository.CategoryRepository;
-import Remoa.BE.Post.form.UploadPostForm;
+import Remoa.BE.Post.form.Request.UploadPostForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Slf4j

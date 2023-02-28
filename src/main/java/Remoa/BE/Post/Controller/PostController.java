@@ -1,10 +1,11 @@
 package Remoa.BE.Post.Controller;
 
 import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Service.FileService;
 import Remoa.BE.Post.Service.PostService;
-import Remoa.BE.Post.form.UploadPostForm;
+import Remoa.BE.Post.form.Request.UploadPostForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,8 @@ public class PostController {
     private final FileService fileService;
 
     private final PostService postService;
+
+    private final MemberService memberService;
 
     //Todo 게시글 작성중 파일 업로드만 작성
     @PostMapping("/post")
@@ -52,8 +55,10 @@ public class PostController {
     @PostMapping("/reference")  // 게시물 등록
     public void share(@RequestPart UploadPostForm uploadPostForm,
                       @RequestPart List<MultipartFile> uploadFiles, HttpServletRequest request){
+        //TODO postingTime 설정. 로그인 여부 거르는 건 Spring Security 설정으로 가능해서 우선 없어도 괜찮을듯함.
         HttpSession session = request.getSession();
-        Member member = (Member) session.getAttribute("loginMember");
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        Member member = memberService.findOne(loginMember.getMemberId());
         postService.registPost(uploadPostForm, uploadFiles, member);
     }
 
