@@ -1,6 +1,7 @@
 package Remoa.BE.Member.Domain;
 
 import Remoa.BE.Post.Domain.Post;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -22,7 +23,7 @@ import java.util.List;
 public class Member implements UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long memberId;
 
@@ -98,6 +99,7 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL})
     private List<CommentLike> commentLikes = new ArrayList();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "fromMember")
     private List<Follow> follows = new ArrayList();
 

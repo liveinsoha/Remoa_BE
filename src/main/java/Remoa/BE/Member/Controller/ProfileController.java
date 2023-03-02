@@ -1,7 +1,7 @@
 package Remoa.BE.Member.Controller;
 
 import Remoa.BE.Member.Domain.Member;
-import Remoa.BE.Member.Form.Request.EditProfileForm;
+import Remoa.BE.Member.Dto.Req.EditProfileForm;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Member.Service.ProfileService;
 import Remoa.BE.exception.CustomMessage;

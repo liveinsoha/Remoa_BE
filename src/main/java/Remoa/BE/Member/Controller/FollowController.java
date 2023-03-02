@@ -2,10 +2,14 @@ package Remoa.BE.Member.Controller;
 
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.FollowService;
+import Remoa.BE.Member.Service.MemberService;
+import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.exception.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,12 +18,20 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import java.util.Objects;
+
+import static Remoa.BE.exception.CustomBody.errorResponse;
+import static Remoa.BE.exception.CustomBody.successResponse;
+import static Remoa.BE.utill.MemberInfo.authorized;
+import static Remoa.BE.utill.MemberInfo.getMemberId;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 public class FollowController {
 
     private final FollowService followService;
+    private final MemberService memberService;
 
     /**
      * Session에서 로그인한 사용자(Follow를 거는 사용자)의 Member와 Follow 받는 대상의 memberId를 통해
@@ -29,22 +41,32 @@ public class FollowController {
      * @return ResponseEntity<String>
      */
     @PostMapping("/follow/{member_id}")
-    public ResponseEntity<String> follow(@PathVariable("member_id") Long memberId, HttpServletRequest request) {
+    public ResponseEntity<Object> follow(@PathVariable("member_id") Long memberId, HttpServletRequest request) {
 
-        HttpSession session = request.getSession(false);
+        if(authorized(request)){
+            //나 자신을 팔로우 하는 경우
+            Long myMemberId = getMemberId();
+            if(Objects.equals(memberId, myMemberId)){
 
-        //추후 Spring Security 설정을 통해 비로그인 사용자는 403 forbidden으로 자동으로 감출 수 있게 가능.
-        if (session == null) {
-            return new ResponseEntity<>("잘못된 접근입니다.", HttpStatus.FORBIDDEN);
+                return errorResponse(CustomMessage.FOLLOWME);
+            }
+            else{
+                Member member = memberService.findOne(myMemberId);
+                boolean check = followService.followFunction(memberId, member);
+                //팔로우
+                if(check){
+                    return successResponse(CustomMessage.OK_FOLLOW,member);
+                }
+                //언팔로우
+                else{
+                    return successResponse(CustomMessage.OK_UNFOLLOW,member);
+                }
+
+            }
+
         }
-        Member fromMember = (Member) session.getAttribute("loginMember");
-        if (fromMember.getMemberId() == memberId) {
-            return new ResponseEntity<>("나 자신은 팔로우 할 수 없습니다.", HttpStatus.BAD_REQUEST);
-        }
 
-        String followMessage = followService.followFunction(memberId, fromMember);
-
-        return new ResponseEntity<>(followMessage, HttpStatus.OK);
+        return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
     /**

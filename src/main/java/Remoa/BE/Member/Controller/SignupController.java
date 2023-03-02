@@ -1,8 +1,5 @@
 package Remoa.BE.Member.Controller;
 
-import Remoa.BE.Member.Domain.Role;
-import Remoa.BE.Member.Form.SignupForm;
-import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package Remoa.BE.Member.Form.Request;
+package Remoa.BE.Member.Dto.Req;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

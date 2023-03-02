@@ -18,22 +18,23 @@ public class FollowService {
 
     private final MemberRepository memberRepository;
 
+    //false 언팔 true 팔로우
     @Transactional
-    public String followFunction(Long toMemberId, Member fromMember) {
+    public boolean followFunction(Long toMemberId, Member fromMember) {
 
         Member toMember = memberRepository.findOne(toMemberId);
 
         if (memberRepository.isFollow(fromMember, toMember)) {
             Follow follow = memberRepository.loadFollow(fromMember, toMember);
             memberRepository.unfollowByFollowId(follow.getFollowId());
-            return fromMember.getMemberId() + " unfollowed " + toMember.getMemberId();
+            return false;
         }
 
         Follow follow = Follow.followSomeone(toMember, fromMember);
 
         memberRepository.follow(follow);
 
-        return fromMember.getMemberId() + " followed " + toMember.getMemberId();
+        return true;
     }
 
     public List<Member> showFollows(Member fromMember) {

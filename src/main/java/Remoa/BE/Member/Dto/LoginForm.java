@@ -1,4 +1,4 @@
-package Remoa.BE.Member.Form;
+package Remoa.BE.Member.Dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
+@Deprecated
 public class LoginForm {
 
     @NotBlank(message = "이메일은 필수 입니다.")

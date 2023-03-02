@@ -21,17 +21,17 @@ public class MemberService {
 
     @Transactional
     public Long join(Member member) {
-        this.validateDuplicateMember(member);
+      //  validateDuplicateMember(member);
 //        member.hashPassword(this.bCryptPasswordEncoder);
-        this.memberRepository.save(member);
+        memberRepository.save(member);
         return member.getMemberId();
 
     }
 
     private void validateDuplicateMember(Member member) {
         log.info("member={}", member.getEmail());
-        List<Member> findMembers = memberRepository.findByEmail(member.getEmail());
-        if (!findMembers.isEmpty()) {
+        Optional<Member> findMembers = memberRepository.findByEmail(member.getEmail());
+        if (findMembers.isPresent()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
@@ -55,6 +55,6 @@ public class MemberService {
     }
 
     public Boolean isAdminExist() {
-        return !memberRepository.findByEmail("spparta@gmail.com").isEmpty();
+        return memberRepository.findByEmail("spparta@gmail.com").isPresent();
     }
 }

@@ -8,13 +8,23 @@ import org.springframework.http.ResponseEntity;
 public enum CustomMessage {
     //200 정상처리 상태코드
     OK(HttpStatus.OK,"올바른 요청","정상적으로 처리되었습니다"),
-    OK_SIGNUP(HttpStatus.OK,"올바른 요청","회원가입하는 회원입니다"),
+
+    OK_UNFOLLOW(HttpStatus.OK,"올바른 요청","회원을 언팔로잉 합니다"),
+
+    //201 한 api에서 정상처리상 구분이 필요할떄 사용
+    OK_FOLLOW(HttpStatus.CREATED,"올바른 요청","회원을 팔로잉 합니다"),
+
+    OK_SIGNUP(HttpStatus.CREATED,"올바른 요청","회원가입하는 회원입니다"),
 
     //400 잘못된 요청
     VALIDATED(HttpStatus.BAD_REQUEST,"잘못된 요청","요청한 값이 유효성검사를 통과하지 못했습니다"),
 
     //401권한오류
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"권한이 없습니다","인증에 대한 쿠키 정보가 없거나 유효하지 않습니다");
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"권한이 없습니다","인증에 필요한 쿠키 정보가 없습니다"),
+
+    //409 상태 충돌
+    FOLLOWME(HttpStatus.CONFLICT,"서비스 로직상 오류","자신을 팔로우할 수 없습니다");
+
 
     private final HttpStatus httpStatus;
     private final String message;

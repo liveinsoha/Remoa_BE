@@ -1,26 +1,9 @@
 package Remoa.BE.Member.Controller;
 
-import Remoa.BE.Member.Domain.Member;
-import Remoa.BE.Member.Form.LoginForm;
 import Remoa.BE.Member.Service.LoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-
-import static Remoa.BE.utill.MemberInfo.securityLoginWithoutLoginForm;
 
 @Slf4j
 @RestController

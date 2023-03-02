@@ -14,11 +14,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MemberInfo {
-    public static Long getKaKaoId() {
+    public static Long getMemberId() {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return member.getKakaoId();
+        return member.getMemberId();
+    }
+
+    public static boolean authorized(HttpServletRequest request){
+        SecurityContext context = SecurityContextHolder.getContext();
+        HttpSession session = request.getSession(false);
+        return session != null && context.getAuthentication() != null;
     }
 
 
@@ -37,10 +44,6 @@ public class MemberInfo {
         //아이디, 패스워드, 권한을 설정합니다. 아이디는 Object단위로 넣어도 무방하며
         //패스워드는 null로 하여도 값이 생성됩니다.
         sc.setAuthentication(new UsernamePasswordAuthenticationToken(member, null, list));
-        HttpSession session = request.getSession(true);
-        session.setAttribute("loginMember", member);
 
-        //위에서 설정한 값을 Spring security에서 사용할 수 있도록 세션에 설정해줍니다.
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
     }
 }

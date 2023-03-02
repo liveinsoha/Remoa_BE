@@ -1,7 +1,8 @@
 package Remoa.BE.Member.Controller;
 
 import Remoa.BE.Member.Domain.Member;
-import Remoa.BE.Member.Form.KakaoSignupForm;
+import Remoa.BE.Member.Dto.Req.ReqSignupDto;
+import Remoa.BE.Member.Dto.Res.ResSignupDto;
 import Remoa.BE.Member.Service.KakaoService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.exception.CustomMessage;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -89,7 +91,7 @@ public class KakaoController {
      * front-end에서 회원가입에 필요한 정보를 넘겨주면 KakaoSignupForm으로 받아 회원가입을 진행시켜줌
      */
     @PostMapping("/signup/kakao")
-    public ResponseEntity<Object> signupKakaoMember(@RequestBody KakaoSignupForm form, HttpServletRequest request) {
+    public ResponseEntity<Object> signupKakaoMember(@RequestBody @Validated ReqSignupDto form, HttpServletRequest request) {
 
         Member member = new Member();
         member.setKakaoId(form.getKakaoId());
@@ -100,7 +102,16 @@ public class KakaoController {
 
         memberService.join(member);
         securityLoginWithoutLoginForm(member, request);
-        return successResponse(CustomMessage.OK,member);
+
+        ResSignupDto result =  ResSignupDto.builder().
+                kakaoId(member.getKakaoId()).
+                email(member.getEmail()).
+                nickname(member.getNickname()).
+                profileImage(member.getProfileImage()).
+                termConsent(member.getTermConsent()).
+                build();
+
+        return successResponse(CustomMessage.OK,result);
     }
 
     /**
