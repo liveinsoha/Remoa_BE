@@ -57,11 +57,11 @@ public class FollowController {
                 boolean check = followService.followFunction(memberId, member);
                 //팔로우
                 if(check){
-                    return successResponse(CustomMessage.OK_FOLLOW,member.getFollows().stream().map(follow -> follow.getToMember().getNickname()));
+                    return successResponse(CustomMessage.OK_FOLLOW,followService.showFollowId(member));
                 }
                 //언팔로우
                 else{
-                    return successResponse(CustomMessage.OK_UNFOLLOW,member.getFollows().stream().map(follow -> follow.getToMember().getNickname()));
+                    return successResponse(CustomMessage.OK_UNFOLLOW,followService.showFollowId(member));
                 }
 
             }

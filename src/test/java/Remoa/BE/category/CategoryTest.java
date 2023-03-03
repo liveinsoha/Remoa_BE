@@ -47,7 +47,7 @@ public class CategoryTest {
 
 
         //email로 testMember를 찾은 후 category 찾아오기
-        Member findMember = MemberRepository.findByEmail("tester@test.com").get(0);
+        Member findMember = MemberRepository.findByEmail("tester@test.com").get();
         List<Category> findMemberCategories = categoryService.findMemberCategory(findMember);
 
         //then

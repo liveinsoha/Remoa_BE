@@ -31,7 +31,9 @@ public class FollowService {
             return false;
         }
 
-          Follow follow = Follow.followSomeone(fromMember,toMember);
+        Follow follow = new Follow();
+        follow.setFromMember(fromMember);
+        follow.setToMember(toMember);
 
         memberRepository.follow(follow);
 
@@ -41,5 +43,9 @@ public class FollowService {
 
     public List<Member> showFollows(Member fromMember) {
         return memberRepository.loadFollows(fromMember);
+    }
+
+    public List<Long> showFollowId(Member fromMember){
+        return memberRepository.loadFollowsId(fromMember);
     }
 }

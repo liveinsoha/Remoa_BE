@@ -101,6 +101,18 @@ public class MemberRepository {
     }
 
     /**
+     * 멤버가 팔로우하는 모든멤버의 아이디를 불러와줌
+     * @param member
+     * @return
+     */
+    public List<Long> loadFollowsId(Member member) {
+        return em.createQuery("select f.toMember.id from Follow f " +
+                        "where f.fromMember = :member", Long.class)
+                .setParameter("member", member)
+                .getResultList();
+    }
+
+    /**
      * Follow/Unfollow는 빈번하게 일어나므로 Soft Delete를 쓰기보단 Hard Delete를 쓰는 게 나을 것 같아 Hard Delete를 적용.
      * @param
      */

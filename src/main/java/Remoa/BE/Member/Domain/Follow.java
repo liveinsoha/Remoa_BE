@@ -41,19 +41,6 @@ public class Follow {
         member.getFollows().add(this);
     }
 
-    /**
-     * Follow를 신청하는 멤버와 Follow를 당하는 멤버를 받아와 팔로우 관계를 생성.
-     * @param toMember
-     * @param fromMember
-     * @return Follow
-     */
-    public static Follow followSomeone(Member fromMember,Member toMember) {
-        Follow follow = new Follow();
-        follow.setFromMember(fromMember);
-        follow.setToMember(toMember);
-
-        return follow;
-    }
 
     private Boolean deleted = Boolean.FALSE;
 
