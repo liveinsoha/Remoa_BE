@@ -91,17 +91,16 @@ public class Member implements UserDetails {
     private List<Feedback> feedbacks = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL})
-    private List<MemberCategory> memberCategories = new ArrayList();
+    private List<MemberCategory> memberCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL})
-    private List<CommentBookmark> commentBookmarks = new ArrayList();
+    private List<CommentBookmark> commentBookmarks = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL})
-    private List<CommentLike> commentLikes = new ArrayList();
+    private List<CommentLike> commentLikes = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "fromMember")
-    private List<Follow> follows = new ArrayList();
+    @OneToMany(mappedBy = "fromMember", cascade = {CascadeType.ALL})
+    private List<Follow> follows = new ArrayList<>();
 
     /**
      * ADMIN과 일반 USER를 구분하기 위해 존재. Spring Security 이용하기 위함

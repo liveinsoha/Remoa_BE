@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
@@ -48,18 +50,18 @@ public class FollowController {
             Long myMemberId = getMemberId();
             if(Objects.equals(memberId, myMemberId)){
 
-                return errorResponse(CustomMessage.FOLLOWME);
+                return errorResponse(CustomMessage.FOLLOW_ME);
             }
             else{
                 Member member = memberService.findOne(myMemberId);
                 boolean check = followService.followFunction(memberId, member);
                 //팔로우
                 if(check){
-                    return successResponse(CustomMessage.OK_FOLLOW,member);
+                    return successResponse(CustomMessage.OK_FOLLOW,member.getFollows().stream().map(follow -> follow.getToMember().getNickname()));
                 }
                 //언팔로우
                 else{
-                    return successResponse(CustomMessage.OK_UNFOLLOW,member);
+                    return successResponse(CustomMessage.OK_UNFOLLOW,member.getFollows().stream().map(follow -> follow.getToMember().getNickname()));
                 }
 
             }
@@ -77,15 +79,12 @@ public class FollowController {
      */
     @GetMapping("/user/follow")
     public ResponseEntity<Object> showFollowers(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-
-        //추후 Spring Security 설정을 통해 비로그인 사용자는 403 forbidden으로 자동으로 감출 수 있게 가능.
-        if (session == null) {
-            return new ResponseEntity<>("잘못된 접근입니다.", HttpStatus.FORBIDDEN);
+        if(authorized(request)){
+            Long myMemberId = getMemberId();
+            Member member = memberService.findOne(myMemberId);
+            List<Member> members = followService.showFollows(member);
+            return successResponse(CustomMessage.OK,members);
         }
-
-        Member fromMember = (Member) session.getAttribute("loginMember");
-
-        return new ResponseEntity<>(followService.showFollows(fromMember), HttpStatus.OK);
+        return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 }

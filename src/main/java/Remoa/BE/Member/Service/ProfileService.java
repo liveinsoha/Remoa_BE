@@ -17,12 +17,12 @@ import Remoa.BE.Member.Domain.Member;
 @Transactional(readOnly = true)
 public class ProfileService {
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
 
     @Transactional
     public void editProfile(Long memberId, EditProfileForm profile) {
-        Member member = memberRepository.findOne(memberId);
+        Member member = memberService.findOne(memberId);
 
         if (member == null) {
             throw new IllegalArgumentException("Invalid member id");

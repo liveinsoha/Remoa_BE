@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -17,25 +18,26 @@ import java.util.List;
 public class FollowService {
 
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     //false 언팔 true 팔로우
     @Transactional
     public boolean followFunction(Long toMemberId, Member fromMember) {
 
-        Member toMember = memberRepository.findOne(toMemberId);
+        Member toMember = memberService.findOne(toMemberId);
 
         if (memberRepository.isFollow(fromMember, toMember)) {
-            Follow follow = memberRepository.loadFollow(fromMember, toMember);
-            memberRepository.unfollowByFollowId(follow.getFollowId());
+            memberRepository.unfollowByFollowId(fromMember,toMember);
             return false;
         }
 
-        Follow follow = Follow.followSomeone(toMember, fromMember);
+          Follow follow = Follow.followSomeone(fromMember,toMember);
 
         memberRepository.follow(follow);
 
         return true;
     }
+
 
     public List<Member> showFollows(Member fromMember) {
         return memberRepository.loadFollows(fromMember);

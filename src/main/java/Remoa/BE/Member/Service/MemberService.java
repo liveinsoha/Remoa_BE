@@ -4,9 +4,11 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,12 +49,14 @@ public class MemberService {
 
 
     public Member findOne(Long memberId) {
-        return memberRepository.findOne(memberId);
+        Optional<Member> member = memberRepository.findOne(memberId);
+        return member.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
     }
 
     public Optional<Member> findByKakaoId(Long kakaoId) {
         return memberRepository.findByKakaoId(kakaoId);
     }
+
 
     public Boolean isAdminExist() {
         return memberRepository.findByEmail("spparta@gmail.com").isPresent();

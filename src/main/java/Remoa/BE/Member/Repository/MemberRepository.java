@@ -26,8 +26,8 @@ public class MemberRepository {
         log.info("member save ok = {}", member);
     }
 
-    public Member findOne(Long id) {
-        return em.find(Member.class, id);
+    public Optional<Member> findOne(Long id) {
+        return Optional.ofNullable(em.find(Member.class, id));
     }
 
     public List<Member> findAll() {
@@ -66,9 +66,9 @@ public class MemberRepository {
      */
     public Boolean isFollow(Member fromMember, Member toMember) {
         return !em.createQuery("select f from Follow f " +
-                        "where f.fromMember = :fromMember and f.toMemberId = :toMemberId", Follow.class)
+                        "where f.fromMember = :fromMember and f.toMember = :toMember", Follow.class)
                 .setParameter("fromMember", fromMember)
-                .setParameter("toMemberId", toMember.getMemberId())
+                .setParameter("toMember", toMember)
                 .getResultList()
                 .isEmpty();
     }
@@ -81,9 +81,9 @@ public class MemberRepository {
      */
     public Follow loadFollow(Member fromMember, Member toMember) {
         return em.createQuery("select f from Follow f " +
-                        "where f.fromMember = :fromMember and f.toMemberId = :toMemberId", Follow.class)
+                        "where f.fromMember = :fromMember and f.toMember = :toMember", Follow.class)
                 .setParameter("fromMember", fromMember)
-                .setParameter("toMemberId", toMember.getMemberId())
+                .setParameter("toMember", toMember)
                 .getResultList()
                 .get(0);
     }
@@ -94,30 +94,24 @@ public class MemberRepository {
      * @return List<Member>
      */
     public List<Member> loadFollows(Member member) {
-        return em.createQuery("select f from Follow f " +
-                        "where f.fromMember = :member", Follow.class)
+        return em.createQuery("select f.toMember from Follow f " +
+                        "where f.fromMember = :member", Member.class)
                 .setParameter("member", member)
-                .getResultList()
-                .stream()
-                .map(follow -> {
-                    Long toMemberId = follow.getToMemberId();
-                    return this.findOne(toMemberId);
-                })
-                .collect(Collectors.toList());
+                .getResultList();
     }
 
     /**
      * Follow/Unfollow는 빈번하게 일어나므로 Soft Delete를 쓰기보단 Hard Delete를 쓰는 게 나을 것 같아 Hard Delete를 적용.
-     * @param followId
+     * @param
      */
-    public void unfollowByFollowId(Long followId) {
-        Follow followForDelete = em.find(Follow.class, followId);
-        if (followForDelete != null) {
-            em.remove(followForDelete);
-        } else {
-            throw new EntityNotFoundException("Entity with follow id : " + followId + " not found!");
-        }
+    public void unfollowByFollowId(Member fromMember, Member toMember) {
+        Follow result = em.createQuery("select f from Follow f " +
+                        "where f.fromMember = :fromMember and f.toMember = :toMember", Follow.class)
+                .setParameter("fromMember", fromMember)
+                .setParameter("toMember", toMember).getSingleResult();
+        em.remove(result);
     }
+
 
     //soft delete 메소드로 사용하려 하였으나, 영속성 컨텍스트를 통한 엔티티의 deleted 필드값 교체만으로도 동작이 가능해서 현재 잠정 폐기
 /*    @Query("update Member m set m.deleted = true where m.memberId = :id")
