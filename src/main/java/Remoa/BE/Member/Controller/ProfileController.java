@@ -65,8 +65,15 @@ public class ProfileController {
 
                 // 사용자의 입력 정보를 DTO에 담아 서비스로 전달
                 profileService.editProfile(memberId, form);
+                ResUserInfoDto resUserInfoDto = ResUserInfoDto.builder()
+                        .email(myMember.getEmail())
+                        .nickname(myMember.getNickname())
+                        .phoneNumber(myMember.getPhoneNumber())
+                        .university(myMember.getUniversity())
+                        .oneLineIntroduction(myMember.getOneLineIntroduction())
+                        .build();
 
-                return successResponse(CustomMessage.OK, memberService.findOne(memberId));
+                return successResponse(CustomMessage.OK, resUserInfoDto);
             }
 
             return errorResponse(CustomMessage.BAD_DUPLICATE);
