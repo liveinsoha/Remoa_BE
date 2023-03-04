@@ -6,6 +6,8 @@ import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Service.FileService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.Post.form.Request.UploadPostForm;
+import Remoa.BE.exception.CustomBody;
+import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+
+import static Remoa.BE.exception.CustomBody.errorResponse;
+import static Remoa.BE.exception.CustomBody.successResponse;
+import static Remoa.BE.utill.MemberInfo.authorized;
+import static Remoa.BE.utill.MemberInfo.getMemberId;
 
 @Slf4j
 @RestController
@@ -54,13 +61,17 @@ public class PostController {
     }
 
     @PostMapping("/reference")  // 게시물 등록
-    public void share(@RequestPart UploadPostForm uploadPostForm,
+    public ResponseEntity<Object> share(@RequestPart UploadPostForm uploadPostForm,
                       @RequestPart List<MultipartFile> uploadFiles, HttpServletRequest request){
         //TODO postingTime 설정. 로그인 여부 거르는 건 Spring Security 설정으로 가능해서 우선 없어도 괜찮을듯함.
-        HttpSession session = request.getSession();
-        Member loginMember = (Member) session.getAttribute("loginMember");
-        Member member = memberService.findOne(loginMember.getMemberId());
-        postService.registPost(uploadPostForm, uploadFiles, member);
+        if(authorized(request)){
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+            postService.registPost(uploadPostForm,uploadFiles,myMember);
+            return successResponse(CustomMessage.OK,myMember);
+        }
+
+        return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
 }

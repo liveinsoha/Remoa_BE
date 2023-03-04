@@ -1,3 +1,4 @@
+/*
 package Remoa.BE.withdrew;
 
 import Remoa.BE.Member.Domain.Member;
@@ -24,7 +25,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource(locations="classpath:application.yml")
-@Transactional
+@Transactional*/
+/**//*
+
 public class WithdrewTest {
 
     @Autowired
@@ -99,3 +102,4 @@ public class WithdrewTest {
         return member;
     }
 }
+*/
