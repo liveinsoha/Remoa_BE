@@ -31,6 +31,6 @@ public class CustomizedExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Object> responseStatusException(ResponseStatusException ex){
-        return errorResponse(CustomMessage.NO_MEMBER);
+        return errorResponse(CustomMessage.NO_ID);
     }
 }
