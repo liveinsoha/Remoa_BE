@@ -18,6 +18,7 @@ import static Remoa.BE.exception.CustomBody.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class ProfileController {
 
     private final ProfileService profileService;
