@@ -38,13 +38,10 @@ public class MemberService {
         }
     }
 
+
     public Boolean isNicknameDuplicate(String nickname) {
         List<Member> findMembers = memberRepository.findByNickname(nickname);
-        if (findMembers.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(findMembers.size()==0);
     }
 
 
