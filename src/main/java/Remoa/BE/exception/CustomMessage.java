@@ -22,7 +22,7 @@ public enum CustomMessage {
 
     //400 잘못된 요청
     VALIDATED(HttpStatus.BAD_REQUEST,"잘못된 요청","요청한 값이 유효성검사를 통과하지 못했습니다"),
-    NO_MEMBER(HttpStatus.BAD_REQUEST,"잘못된 요청","요청한 memberId가 존재하지 않습니다"),
+    NO_ID(HttpStatus.BAD_REQUEST,"잘못된 요청","요청한 Id가 존재하지 않습니다"),
 
     FOLLOW_ME(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","자신을 팔로우할 수 없습니다"),
 

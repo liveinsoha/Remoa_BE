@@ -22,7 +22,7 @@ import static Remoa.BE.utill.MemberInfo.getMemberId;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*",allowedHeaders = "*")
 public class ProfileController {
 
     private final ProfileService profileService;
