@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class WithdrewController {
 
     private final WithdrewService withdrewService;

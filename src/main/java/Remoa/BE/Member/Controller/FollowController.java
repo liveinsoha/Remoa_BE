@@ -27,7 +27,6 @@ import static Remoa.BE.utill.MemberInfo.getMemberId;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class FollowController {
 
     private final FollowService followService;

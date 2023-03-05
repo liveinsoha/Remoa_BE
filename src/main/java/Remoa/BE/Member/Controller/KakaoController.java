@@ -8,11 +8,15 @@ import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,12 +32,12 @@ import static Remoa.BE.utill.MemberInfo.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // 프론트에서 추가 요청
 public class KakaoController {
+
+
 
     private final KakaoService ks;
     private final MemberService memberService;
-    private final HttpSession httpSession;
 
     /**
      * 카카오 로그인을 통해 code를 query string으로 받아오면, 코드를 통해 토큰, 토큰을 통해 사용자 정보를 얻어와 db에 해당 사용자가 존재하는지 여부를
@@ -136,17 +140,18 @@ public class KakaoController {
      * 로그아웃 기능
      세션무효화, jsession쿠키를 제거,
      */
-    @PostMapping("/user/logout")
-    public ResponseEntity<Object> logout(HttpServletResponse response){
+    @PostMapping ("/user/logout")
+    public ResponseEntity<Object> logout(HttpServletRequest request){
+        if(authorized(request)) {
 
-        SecurityContextHolder.clearContext(); // 현재 SecurityContext를 제거합니다.
-        httpSession.invalidate(); // HttpSession을 무효화합니다.
+            SecurityContextHolder.clearContext();
+            request.getSession().invalidate();
 
-        Cookie myCookie = new Cookie("JSESSIONID", null);
-        myCookie.setMaxAge(0); // 쿠키의 expiration 타임을 0으로 하여 없앤다.
-        myCookie.setPath("/"); // 모든 경로에서 삭제 됬음을 알린다.
-        response.addCookie(myCookie);
-        return successResponse(CustomMessage.OK,myCookie);
+            return successResponse(CustomMessage.OK,"로그아웃 되었습니다");
+
+        }
+
+        return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
 
