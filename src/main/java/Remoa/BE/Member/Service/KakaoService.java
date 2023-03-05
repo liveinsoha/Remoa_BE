@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,7 +122,7 @@ public class KakaoService {
             int responseCode = urlConnection.getResponseCode();
             log.debug("responseCode = {}", responseCode);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
             String line = "";
             String res = "";
             //다양한 형식(한 줄 이상의 JSON 데이터)를 받기 위한 작업
