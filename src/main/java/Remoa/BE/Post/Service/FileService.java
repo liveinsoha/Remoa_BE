@@ -35,33 +35,15 @@ public class FileService {
     private final AmazonS3 amazonS3;
     private final UploadFileRepository uploadFileRepository;
     private final PostRepository postRepository;
-    private final List<UploadFile> uploadFileList;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    /**
-     *
-     * @param post 게시글
-     * @param multipartFile 해당 게시글의 파일 리스트
-     * 파일들을 저장해준다
-     */
-    @Transactional
-    public void saveUploadFiles(Post post,List<MultipartFile> multipartFile){
-
-        multipartFile.forEach(item -> saveUploadFile(post,item));
-
-        post.setUploadFiles(uploadFileList);
-        postRepository.savePost(post);
-
-        uploadFileList.clear();
-    }
 
     /**
      *
      * @param post 게시글
      * @param multipartFile 파일
-     * saveUploadFiles 에서 파일 하나씩 가져와서 s3에 넣는다
      */
     @Transactional
     public void saveUploadFile(Post post, MultipartFile multipartFile){
@@ -82,8 +64,8 @@ public class FileService {
         //파일 이름이 겹치지 않게
         String uuid = UUID.randomUUID().toString();
 
-        //postId 폴더에 따로 넣어서 보관
-        String s3name = uuid+"_"+originalFilename;
+        //post 폴더에 따로 넣어서 보관
+        String s3name = "post/"+uuid+"_"+originalFilename;
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(bucket, s3name, inputStream, objectMetadata)
@@ -97,14 +79,16 @@ public class FileService {
         //파일 보관 url
         String storeFileUrl = amazonS3.getUrl(bucket,s3name).toString().replaceAll("\\+", "+");
         UploadFile uploadFile = new UploadFile();
-        uploadFile.setPost(post);
         uploadFile.setOriginalFileName(originalFilename);
         uploadFile.setSaveFileName(s3name);
         uploadFile.setStoreFileUrl(storeFileUrl);
         uploadFile.setExtension(ext);
-        uploadFileList.add(uploadFile);
-        log.info(storeFileUrl);
+
+        post.setUploadFile(uploadFile);
+
         uploadFileRepository.saveFile(uploadFile);
+
+        log.info(storeFileUrl);
     }
 
     public String getUrl(Long fileId){

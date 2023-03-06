@@ -16,12 +16,8 @@ public class UploadFile {
 
     @Id
     @GeneratedValue
-    @Column(name = "file_id")
     private Long uploadFileId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
 
     /**
      * 업로드된 파일의 원본 이름

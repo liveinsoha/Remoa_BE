@@ -1,4 +1,4 @@
-package Remoa.BE.Post.form.Response;
+package Remoa.BE.Post.Dto.Response;
 
 import lombok.Builder;
 

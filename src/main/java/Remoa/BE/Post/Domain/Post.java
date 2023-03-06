@@ -48,11 +48,6 @@ public class Post {
      */
     private String deadline;
 
-    /**
-     * 참여한 공모전의 수상 내역
-     */
-    @Column(name = "contest_award")
-    private Boolean ContestAward;
 
     /**
      * pm쪽에 문의해야할듯.
@@ -86,8 +81,8 @@ public class Post {
     /**
      * Post에서 쓰인 files
      */
-    @OneToMany(mappedBy = "post")
-    private List<UploadFile> uploadFiles = new ArrayList<>();
+    @OneToOne
+    private UploadFile uploadFile;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostScarp> postScarps = new ArrayList<>();

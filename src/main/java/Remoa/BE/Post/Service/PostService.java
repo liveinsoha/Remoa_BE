@@ -8,11 +8,10 @@ import Remoa.BE.Post.Domain.UploadFile;
 import Remoa.BE.Post.Repository.PostRepository;
 import Remoa.BE.Post.Repository.UploadFileRepository;
 import Remoa.BE.Post.Repository.CategoryRepository;
-import Remoa.BE.Post.form.Request.UploadPostForm;
-import Remoa.BE.Post.form.Response.ResReferenceDto;
-import Remoa.BE.Post.form.Response.ResRegistCommentDto;
+import Remoa.BE.Post.Dto.Request.UploadPostForm;
+import Remoa.BE.Post.Dto.Response.ResReferenceDto;
+import Remoa.BE.Post.Dto.Response.ResRegistCommentDto;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -36,66 +35,33 @@ public class PostService {
 
     private final CategoryRepository categoryRepository;
 
-    private final List<UploadFile> uploadFileList;
-
     private final FileService fileService;
 
-    public Post dtoToEntity(UploadPostForm uploadPostForm, Member member){ // dto를 db에 저장하기 위해 entity로 변환
-
-        // String category를 이용해 Category 엔티티를 찾기
-        Category category = categoryRepository.findByCategoryName(uploadPostForm.getCategory());
-
-        return Post.builder()
-                .title(uploadPostForm.getTitle())
-                .member(member)
-                .contestName(uploadPostForm.getContestName())
-                .category(category)
-                .contestAwareType(uploadPostForm.getContestAward())
-                .build();
-    }
-
-    public Post findOne(Long postId){
+    public Post findOne(Long postId) {
         Optional<Post> post = postRepository.findOne(postId);
         return post.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found"));
     }
 
-    @Transactional
-    public ResReferenceDto registPost(UploadPostForm uploadPostForm, List<MultipartFile> uploadFiles, Member member){
 
-        Post post = dtoToEntity(uploadPostForm, member);
+    @Transactional
+    public Post registerPost(UploadPostForm uploadPostForm, MultipartFile uploadFile, Member member) {
+
+        Category category = categoryRepository.findByCategoryName(uploadPostForm.getCategory());
+
+        Post post = Post.builder()
+                .title(uploadPostForm.getTitle())
+                .member(member)
+                .contestName(uploadPostForm.getContestName())
+                .category(category)
+                .contestAwareType(uploadPostForm.getContestAwardType())
+                .build();
+
+        fileService.saveUploadFile(post, uploadFile);
         postRepository.savePost(post);
 
-        ResReferenceDto resReferenceDto = ResReferenceDto.builder()
-                .postId(post.getPostId())
-                .title(post.getTitle())
-                .contestName(post.getContestName())
-                .deadline(post.getDeadline())
-                .ContestAward(post.getContestAward())
-                .contestAwareType(post.getContestAwareType())
-                .likeCount(post.getLikeCount())
-                .postingTime(post.getPostingTime())
-                .views(post.getViews())
-                .deleted(post.getDeleted())
-                    .build();
-
-        fileService.saveUploadFiles(post, uploadFiles);
-        return resReferenceDto;
+        return post;
     }
 
-    @Transactional
-    public ResRegistCommentDto registComment(Member member, String comment, Long postId){
-        Comment commentObj = new Comment();
-        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        commentObj.setComment(comment);
-        commentObj.setCommentedTime(formatDate);
 
-        ResRegistCommentDto resRegistCommentDto = ResRegistCommentDto.builder()
-                .commentId(commentObj.getCommentId())
-                .comment(commentObj.getComment())
-                .commentedTime(commentObj.getCommentedTime())
-                    .build();
 
-        postRepository.saveComment(commentObj);
-        return resRegistCommentDto;
-    }
 }
