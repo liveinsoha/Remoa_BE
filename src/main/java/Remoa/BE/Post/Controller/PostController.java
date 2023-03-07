@@ -1,12 +1,11 @@
 package Remoa.BE.Post.Controller;
 
-import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Domain.UploadFile;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
-import Remoa.BE.Post.Dto.Response.ResReferenceDto;
+import Remoa.BE.Post.Dto.Response.ResReferenceRegisterDto;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
@@ -44,7 +42,7 @@ public class PostController {
 
             Post post = postService.findOne(savePost.getPostId());
 
-            ResReferenceDto resReferenceDto = ResReferenceDto.builder()
+            ResReferenceRegisterDto resReferenceRegisterDto = ResReferenceRegisterDto.builder()
                     .postId(post.getPostId())
                     .title(post.getTitle())
                     .category(post.getCategory().getName())
@@ -53,7 +51,7 @@ public class PostController {
                     .fileNames(post.getUploadFiles().stream().map(UploadFile::getOriginalFileName).collect(Collectors.toList()))
                     .build();
 
-            return successResponse(CustomMessage.OK,resReferenceDto);
+            return successResponse(CustomMessage.OK, resReferenceRegisterDto);
         }
 
         return errorResponse(CustomMessage.UNAUTHORIZED);

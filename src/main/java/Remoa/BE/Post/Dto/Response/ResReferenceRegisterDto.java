@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-public class ResReferenceDto {
+public class ResReferenceRegisterDto {
 
     private Long postId;
 
