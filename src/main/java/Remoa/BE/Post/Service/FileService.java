@@ -50,9 +50,7 @@ public class FileService {
     @Transactional
     public void saveUploadFiles(Post post, List<MultipartFile> multipartFile){
 
-        for (MultipartFile file : multipartFile) {
-            saveUploadFile(file, post);
-        }
+        multipartFile.forEach(file -> saveUploadFile(file, post));
 
         //새로운 인스턴스 만들어서 set하지 않으면 clear 되면서 null이 계속 저장됨.
         post.setUploadFiles(new ArrayList<>(uploadFileList));
