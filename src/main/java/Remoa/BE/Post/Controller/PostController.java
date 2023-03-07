@@ -44,10 +44,6 @@ public class PostController {
 
             Post post = postService.findOne(savePost.getPostId());
 
-            List<String> collect = post.getUploadFiles().stream().map(UploadFile::getOriginalFileName).collect(Collectors.toList());
-            collect.forEach(s -> log.warn("names = {}", s));
-            log.warn("is post's files null? = {} ", post.getUploadFiles().isEmpty());
-
             ResReferenceDto resReferenceDto = ResReferenceDto.builder()
                     .postId(post.getPostId())
                     .title(post.getTitle())
