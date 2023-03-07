@@ -6,14 +6,12 @@ import Remoa.BE.Member.Dto.Res.ResUserInfoDto;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Member.Service.ProfileService;
 import Remoa.BE.exception.CustomMessage;
-import Remoa.BE.utill.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import static Remoa.BE.exception.CustomBody.*;
 import static Remoa.BE.utill.MemberInfo.authorized;

@@ -3,11 +3,10 @@ package Remoa.BE.Post.Controller;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
-import Remoa.BE.Post.Service.FileService;
+import Remoa.BE.Post.Domain.UploadFile;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
 import Remoa.BE.Post.Dto.Response.ResReferenceDto;
-import Remoa.BE.Post.Dto.Response.ResRegistCommentDto;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
@@ -37,13 +36,17 @@ public class PostController {
 
 
     @PostMapping("/reference")  // 게시물 등록
-    public ResponseEntity<Object> share(@RequestPart("data") UploadPostForm uploadPostForm,
-                      @RequestParam("file") MultipartFile uploadFile, HttpServletRequest request){
-        //TODO postingTime 설정. 로그인 여부 거르는 건 Spring Security 설정으로 가능해서 우선 없어도 괜찮을듯함.
+    public ResponseEntity<Object> share(@RequestPart UploadPostForm uploadPostForm,
+                                        @RequestPart List<MultipartFile> uploadFiles, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();
-            Member myMember = memberService.findOne(memberId);
-            Post post = postService.registerPost(uploadPostForm,uploadFile,myMember);
+            Post savePost = postService.registerPost(uploadPostForm,uploadFiles,memberId);
+
+            Post post = postService.findOne(savePost.getPostId());
+
+            List<String> collect = post.getUploadFiles().stream().map(UploadFile::getOriginalFileName).collect(Collectors.toList());
+            collect.forEach(s -> log.warn("names = {}", s));
+            log.warn("is post's files null? = {} ", post.getUploadFiles().isEmpty());
 
             ResReferenceDto resReferenceDto = ResReferenceDto.builder()
                     .postId(post.getPostId())
@@ -51,9 +54,8 @@ public class PostController {
                     .category(post.getCategory().getName())
                     .contestAwardType(post.getContestAwareType())
                     .contestName(post.getContestName())
-                    .fileName(post.getUploadFile().getOriginalFileName())
+                    .fileNames(post.getUploadFiles().stream().map(UploadFile::getOriginalFileName).collect(Collectors.toList()))
                     .build();
-            myMember.getPosts().add(post);
 
             return successResponse(CustomMessage.OK,resReferenceDto);
         }

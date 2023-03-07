@@ -3,7 +3,6 @@ package Remoa.BE.Member.Domain;
 import Remoa.BE.Post.Domain.Post;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;

@@ -4,7 +4,6 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Dto.Response.ResRegistCommentDto;
 import Remoa.BE.Post.Service.CommentService;
-import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,6 @@
 package Remoa.BE.Member.Service;
 
 import Remoa.BE.Member.Dto.Req.EditProfileForm;
-import Remoa.BE.Member.Repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

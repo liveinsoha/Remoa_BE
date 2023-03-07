@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,18 +36,37 @@ public class FileService {
     private final AmazonS3 amazonS3;
     private final UploadFileRepository uploadFileRepository;
     private final PostRepository postRepository;
+    private final List<UploadFile> uploadFileList;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-
     /**
      *
      * @param post 게시글
+     * @param multipartFile 해당 게시글의 파일 리스트
+     * 파일들을 저장해준다
+     */
+    @Transactional
+    public void saveUploadFiles(Post post, List<MultipartFile> multipartFile){
+
+        for (MultipartFile file : multipartFile) {
+            saveUploadFile(file, post);
+        }
+
+        //새로운 인스턴스 만들어서 set하지 않으면 clear 되면서 null이 계속 저장됨.
+        post.setUploadFiles(new ArrayList<>(uploadFileList));
+        postRepository.savePost(post);
+
+        uploadFileList.clear();
+    }
+
+    /**
+     *
      * @param multipartFile 파일
      */
     @Transactional
-    public void saveUploadFile(Post post, MultipartFile multipartFile){
+    public void saveUploadFile(MultipartFile multipartFile, Post post){
 
         //파일 타입과 사이즈 저장
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -83,8 +103,9 @@ public class FileService {
         uploadFile.setSaveFileName(s3name);
         uploadFile.setStoreFileUrl(storeFileUrl);
         uploadFile.setExtension(ext);
+        uploadFile.setPost(post);
 
-        post.setUploadFile(uploadFile);
+        uploadFileList.add(uploadFile);
 
         uploadFileRepository.saveFile(uploadFile);
 
@@ -116,7 +137,8 @@ public class FileService {
 
             String fileOriginalName = file.get().getOriginalFileName();
             //encode 메서드에 두 번째 파라메터에 StandardCharsets.UTF_8만 쓰면 오류가 나서 뒤에 name을 임사방편으로 붙임. 기능상 문제는 없을듯 함
-            String fileNameFix = URLEncoder.encode(fileOriginalName, StandardCharsets.UTF_8.name()).replaceAll("\\+", "%20");
+            String fileNameFix = URLEncoder.encode(fileOriginalName, StandardCharsets.UTF_8.name())
+                    .replaceAll("\\+", "%20");
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             httpHeaders.setContentLength(bytes.length);

@@ -81,8 +81,8 @@ public class Post {
     /**
      * Post에서 쓰인 files
      */
-    @OneToOne
-    private UploadFile uploadFile;
+    @OneToMany(mappedBy = "post")
+    private List<UploadFile> uploadFiles;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostScarp> postScarps = new ArrayList<>();
