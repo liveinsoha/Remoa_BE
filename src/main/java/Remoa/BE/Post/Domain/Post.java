@@ -72,6 +72,8 @@ public class Post {
      */
     private Integer views = 0;
 
+    private Integer scrapCount = 0;
+
     /**
      * Post에 작성되어진 Comment
      */

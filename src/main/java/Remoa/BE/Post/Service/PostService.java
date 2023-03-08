@@ -17,12 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostService {
 
     private final UploadFileRepository uploadFileRepository;
@@ -48,12 +51,18 @@ public class PostService {
 
         Member member = memberService.findOne(memberId);
 
+        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
         Post post = Post.builder()
                 .title(uploadPostForm.getTitle())
                 .member(member)
                 .contestName(uploadPostForm.getContestName())
                 .category(category)
                 .contestAwareType(uploadPostForm.getContestAwardType())
+                .likeCount(0)
+                .scrapCount(0)
+                .views(0)
+                .postingTime(formatDate)
                 .deleted(false)
                 .build();
 
@@ -61,7 +70,5 @@ public class PostService {
 
         return post;
     }
-
-
 
 }

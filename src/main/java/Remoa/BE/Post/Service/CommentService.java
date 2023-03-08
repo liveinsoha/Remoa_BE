@@ -5,7 +5,7 @@ import Remoa.BE.Member.Domain.CommentBookmark;
 import Remoa.BE.Member.Domain.CommentLike;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Post.Domain.Post;
-import Remoa.BE.Post.Dto.Response.ResRegistCommentDto;
+import Remoa.BE.Post.Dto.Response.ResRegisterCommentDto;
 import Remoa.BE.Post.Repository.CommentRepository;
 import Remoa.BE.Post.Repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,19 +50,19 @@ public class CommentService {
     }
 
     @Transactional
-    public ResRegistCommentDto registComment(Member member, String comment, Long postId){
+    public ResRegisterCommentDto registerComment(Member member, String comment, Long postId){
         Comment commentObj = new Comment();
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         commentObj.setComment(comment);
         commentObj.setCommentedTime(formatDate);
 
-        ResRegistCommentDto resRegistCommentDto = ResRegistCommentDto.builder()
+        ResRegisterCommentDto resRegisterCommentDto = ResRegisterCommentDto.builder()
                 .commentId(commentObj.getCommentId())
                 .comment(commentObj.getComment())
                 .commentedTime(commentObj.getCommentedTime())
                 .build();
 
         postRepository.saveComment(commentObj);
-        return resRegistCommentDto;
+        return resRegisterCommentDto;
     }
 }
