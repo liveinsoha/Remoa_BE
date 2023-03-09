@@ -22,7 +22,6 @@ public class Post {
 
     @Id
     @GeneratedValue
-    @Column(name = "post_id")
     private Long postId;
 
     /**
@@ -36,6 +35,9 @@ public class Post {
      * Post 제목
      */
     private String title;
+
+    @OneToOne
+    private UploadFile thumbnail;
 
     /**
      * 참여 공모전의 이름
@@ -73,6 +75,8 @@ public class Post {
     private Integer views = 0;
 
     private Integer scrapCount = 0;
+
+    private Integer pageCount;
 
     /**
      * Post에 작성되어진 Comment

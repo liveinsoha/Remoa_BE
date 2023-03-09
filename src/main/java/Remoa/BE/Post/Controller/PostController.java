@@ -1,19 +1,21 @@
 package Remoa.BE.Post.Controller;
 
-import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Domain.UploadFile;
-import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
 import Remoa.BE.Post.Dto.Response.ResReferenceRegisterDto;
+import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,15 +32,15 @@ public class PostController {
 
     private final PostService postService;
 
-    private final MemberService memberService;
-
 
     @PostMapping("/reference")  // 게시물 등록
-    public ResponseEntity<Object> share(@RequestPart UploadPostForm uploadPostForm,
-                                        @RequestPart List<MultipartFile> uploadFiles, HttpServletRequest request){
+    public ResponseEntity<Object> share(@RequestPart("data") UploadPostForm uploadPostForm,
+                                        @RequestPart("thumbnail")MultipartFile thumbnail,
+                                        @RequestPart("file") List<MultipartFile> uploadFiles, HttpServletRequest request) throws IOException {
         if(authorized(request)){
             Long memberId = getMemberId();
-            Post savePost = postService.registerPost(uploadPostForm,uploadFiles,memberId);
+
+            Post savePost = postService.registerPost(uploadPostForm,thumbnail,uploadFiles,memberId);
 
             Post post = postService.findOne(savePost.getPostId());
 
@@ -48,10 +50,12 @@ public class PostController {
                     .category(post.getCategory().getName())
                     .contestAwardType(post.getContestAwareType())
                     .contestName(post.getContestName())
+                    .pageCount(post.getPageCount())
                     .fileNames(post.getUploadFiles().stream().map(UploadFile::getOriginalFileName).collect(Collectors.toList()))
                     .build();
-
             return successResponse(CustomMessage.OK, resReferenceRegisterDto);
+
+
         }
 
         return errorResponse(CustomMessage.UNAUTHORIZED);

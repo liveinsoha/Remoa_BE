@@ -48,12 +48,18 @@ public class FileService {
      * 파일들을 저장해준다
      */
     @Transactional
-    public void saveUploadFiles(Post post, List<MultipartFile> multipartFile){
+    public void saveUploadFiles(Post post,MultipartFile thumbnail, List<MultipartFile> multipartFile){
 
-        multipartFile.forEach(file -> saveUploadFile(file, post));
+        //썸네일 파일 저장 추가
+        saveUploadFile(thumbnail,post,"thumbnail");
+        multipartFile.forEach(file -> saveUploadFile(file, post,"post"));
+
 
         //새로운 인스턴스 만들어서 set하지 않으면 clear 되면서 null이 계속 저장됨.
-        post.setUploadFiles(new ArrayList<>(uploadFileList));
+        UploadFile uploadFile = uploadFileList.get(0);
+        post.setThumbnail(uploadFile);
+
+        post.setUploadFiles(new ArrayList<>(uploadFileList.subList(1, uploadFileList.size())));
         postRepository.savePost(post);
 
         uploadFileList.clear();
@@ -64,7 +70,7 @@ public class FileService {
      * @param multipartFile 파일
      */
     @Transactional
-    public void saveUploadFile(MultipartFile multipartFile, Post post){
+    public void saveUploadFile(MultipartFile multipartFile, Post post,String folderName){
 
         //파일 타입과 사이즈 저장
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -83,7 +89,7 @@ public class FileService {
         String uuid = UUID.randomUUID().toString();
 
         //post 폴더에 따로 넣어서 보관
-        String s3name = "post/"+uuid+"_"+originalFilename;
+        String s3name = folderName+"/"+uuid+"_"+originalFilename;
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(bucket, s3name, inputStream, objectMetadata)

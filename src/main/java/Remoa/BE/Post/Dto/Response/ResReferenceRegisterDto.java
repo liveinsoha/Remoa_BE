@@ -21,5 +21,7 @@ public class ResReferenceRegisterDto {
 
     private String contestAwardType;
 
+    private Integer pageCount;
+
     private List<String> fileNames;
 }

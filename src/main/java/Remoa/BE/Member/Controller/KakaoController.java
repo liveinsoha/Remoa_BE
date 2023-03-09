@@ -8,6 +8,7 @@ import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -68,23 +69,6 @@ public class KakaoController {
     }
 
     /**
-     * 카카오 로그인을 우회해 테스트 하기 위한 용도로 추가됨.
-     * @param kakaoId
-     * @return ResponseEntity
-     */
-    @PostMapping("/login/kakao/test")
-    public ResponseEntity<Object> testLogin(@RequestBody Integer kakaoId, HttpServletRequest request) {
-        log.warn("kakaoId = {}", kakaoId);
-        Optional<Member> findMember = memberService.findByKakaoId(Long.valueOf(kakaoId));
-        if (findMember.isPresent()) {
-            Member member = findMember.get();
-            securityLoginWithoutLoginForm(member, request);
-            return successResponse(CustomMessage.OK, member);
-        }
-        return failResponse(CustomMessage.VALIDATED, "User Not Exist");
-    }
-
-    /**
      * front-end에서 회원가입에 필요한 정보를 넘겨주면 KakaoSignupForm으로 받아 회원가입을 진행시켜줌
      */
     @PostMapping("/signup/kakao")
@@ -119,24 +103,6 @@ public class KakaoController {
     }
 
     /**
-     *자동 로그인 추후에
-     */
-/*
-    @GetMapping("/login")
-    public ResponseEntity<Object> autoLogin(){
-       Long kaKaoId = getKaKaoId();
-       Optional<Member> member = memberService.findByKakaoId(kaKaoId);
-       if(member.isPresent()){
-           return successResponse(CustomMessage.OK,member);
-       }
-       else{
-           return errorResponse(CustomMessage.UNAUTHORIZED);
-       }
-
-    }
-*/
-
-    /**
      * 로그아웃 기능
      세션무효화, jsession쿠키를 제거,
      */
@@ -147,7 +113,7 @@ public class KakaoController {
             SecurityContextHolder.clearContext();
             request.getSession().invalidate();
 
-            return successResponse(CustomMessage.OK,"로그아웃 되었습니다");
+            return new ResponseEntity<>(HttpStatus.OK);
 
         }
 

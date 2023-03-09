@@ -4,19 +4,19 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Post.Domain.Post;
-import Remoa.BE.Post.Domain.UploadFile;
-import Remoa.BE.Post.Repository.PostRepository;
-import Remoa.BE.Post.Repository.UploadFileRepository;
-import Remoa.BE.Post.Repository.CategoryRepository;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
+import Remoa.BE.Post.Repository.CategoryRepository;
+import Remoa.BE.Post.Repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -28,7 +28,6 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class PostService {
 
-    private final UploadFileRepository uploadFileRepository;
 
     private final MemberService memberService;
 
@@ -45,7 +44,7 @@ public class PostService {
 
 
     @Transactional
-    public Post registerPost(UploadPostForm uploadPostForm, List<MultipartFile> uploadFiles, Long memberId) {
+    public Post registerPost(UploadPostForm uploadPostForm,MultipartFile thumbnail ,List<MultipartFile> uploadFiles, Long memberId) throws IOException {
 
         Category category = categoryRepository.findByCategoryName(uploadPostForm.getCategory());
 
@@ -53,20 +52,21 @@ public class PostService {
 
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
+        PDDocument document = PDDocument.load(uploadFiles.get(0).getInputStream());
+        Integer pageCount = document.getNumberOfPages();
+
         Post post = Post.builder()
                 .title(uploadPostForm.getTitle())
                 .member(member)
                 .contestName(uploadPostForm.getContestName())
                 .category(category)
                 .contestAwareType(uploadPostForm.getContestAwardType())
-                .likeCount(0)
-                .scrapCount(0)
-                .views(0)
+                .pageCount(pageCount)
                 .postingTime(formatDate)
                 .deleted(false)
                 .build();
 
-        fileService.saveUploadFiles(post, uploadFiles);
+        fileService.saveUploadFiles(post, thumbnail ,uploadFiles);
 
         return post;
     }
