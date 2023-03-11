@@ -1,14 +1,18 @@
 package Remoa.BE.Member.Service;
 
 import Remoa.BE.Member.Dto.Req.EditProfileForm;
-import Remoa.BE.Member.Repository.MemberRepository;
+import com.amazonaws.services.s3.AmazonS3;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import Remoa.BE.Member.Domain.Member;
+
+import java.io.File;
 
 
 @Service
@@ -18,7 +22,6 @@ import Remoa.BE.Member.Domain.Member;
 public class ProfileService {
 
     private final MemberService memberService;
-
 
     @Transactional
     public void editProfile(Long memberId, EditProfileForm profile) {
@@ -34,4 +37,6 @@ public class ProfileService {
         member.setUniversity(profile.getUniversity());
         member.setOneLineIntroduction(profile.getOneLineIntroduction());
     }
+
+
 }
