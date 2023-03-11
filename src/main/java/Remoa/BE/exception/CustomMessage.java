@@ -25,7 +25,9 @@ public enum CustomMessage {
 
     FOLLOW_ME(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","자신을 팔로우할 수 없습니다"),
 
-    BAD_DUPLICATE(HttpStatus.BAD_REQUEST,"올바른 요청","닉네임이 중복되었습니다"),
+    BAD_DUPLICATE(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","닉네임이 중복되었습니다"),
+
+    BAD_PROFILE_IMG(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","해당 멤버의 프로필사진이 존재하지 않습니다"),
 
     //401권한오류
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"권한이 없습니다","인증에 필요한 쿠키 정보가 없습니다");

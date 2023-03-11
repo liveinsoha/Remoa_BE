@@ -5,6 +5,7 @@ import Remoa.BE.Member.Dto.Req.ReqSignupDto;
 import Remoa.BE.Member.Dto.Res.ResSignupDto;
 import Remoa.BE.Member.Service.KakaoService;
 import Remoa.BE.Member.Service.MemberService;
+import Remoa.BE.Member.Service.ProfileService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class KakaoController {
 
     private final KakaoService ks;
     private final MemberService memberService;
+    private final ProfileService profileService;
 
     /**
      * 카카오 로그인을 통해 code를 query string으로 받아오면, 코드를 통해 토큰, 토큰을 통해 사용자 정보를 얻어와 db에 해당 사용자가 존재하는지 여부를
@@ -60,7 +62,7 @@ public class KakaoController {
         if (member.isPresent()) {
             securityLoginWithoutLoginForm(member.get(), request);
             //if문에 걸리지 않았다면 이미 회원가입이 진행돼 db에 kakaoId가 있는 유저이므로 kakaoMember가 존재하므로 LoginController처럼 로그인 처리 하면 됩니다.
-            return successResponse(CustomMessage.OK, userInfo);
+            return successResponse(CustomMessage.OK, member);
 
         } else {
             //kakaoId가 db에 없으므로 kakaoMember가 null이므로 회원가입하지 않은 회원. 따라서 회원가입이 필요하므로 회원가입하는 uri로 redirect 시켜주어야 함.
@@ -72,7 +74,7 @@ public class KakaoController {
      * front-end에서 회원가입에 필요한 정보를 넘겨주면 KakaoSignupForm으로 받아 회원가입을 진행시켜줌
      */
     @PostMapping("/signup/kakao")
-    public ResponseEntity<Object> signupKakaoMember(@RequestBody @Validated ReqSignupDto form, HttpServletRequest request) {
+    public ResponseEntity<Object> signupKakaoMember(@RequestBody @Validated ReqSignupDto form, HttpServletRequest request) throws IOException {
 
         Member member = new Member();
 
@@ -83,6 +85,10 @@ public class KakaoController {
         } else {
             member.setNickname(form.getNickname());
         }
+
+        form.setProfileImage(profileService.editProfileImg(form.getNickname(), form.getProfileImage()));
+
+        //카카오에서 받은 프로필 사진 url 링크를 토대로 s3에 저장
         member.setKakaoId(form.getKakaoId());
         member.setEmail(form.getEmail());
         member.setProfileImage(form.getProfileImage());

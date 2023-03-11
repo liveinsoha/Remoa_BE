@@ -77,6 +77,8 @@ public class FileService {
         objectMetadata.setContentType(multipartFile.getContentType());
         objectMetadata.setContentLength(multipartFile.getSize());
 
+        log.info(multipartFile.getContentType());
+
         //파일 이름
         String originalFilename = multipartFile.getOriginalFilename();
 

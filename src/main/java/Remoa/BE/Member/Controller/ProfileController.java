@@ -11,6 +11,7 @@ import Remoa.BE.Member.Service.ProfileService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 
 import static Remoa.BE.exception.CustomBody.*;
@@ -92,34 +94,50 @@ public class ProfileController {
 
 
     // 프로필 사진 불러오기
-    @GetMapping("/userimg")
+    @GetMapping("/user/img")
     public ResponseEntity<Object> showImage(HttpServletRequest request) {
         if(authorized(request)) {
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
-            log.info(myMember.getNickname());
             return successResponse(CustomMessage.OK, myMember.getProfileImage());
         }
-        return errorResponse(CustomMessage.BAD_DUPLICATE);
+        return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
     // 프로필 사진 업로드
-    @PostMapping("/s3/upload")
-    public AwsS3 upload(@RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) throws IOException {
+    @PutMapping("/user/img")
+    public ResponseEntity<Object> upload(@RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) throws IOException {
 
         if(authorized(request)) {
+
             Long memberId = getMemberId();
-            Member myMember = memberService.findOne(memberId);
-            log.info(myMember.getNickname());
-            myMember.setProfileImage(multipartFile.getOriginalFilename());
+            Member myMember = memberService.findOne(memberId);;
+
+            String editProfileImg = awsS3Service.editProfileImg(myMember.getProfileImage(), multipartFile);
+            myMember.setProfileImage(editProfileImg);
+            memberService.join(myMember);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return awsS3Service.upload(multipartFile,"upload");
+        return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
     // 프로필 사진 삭제
-    @DeleteMapping("/s3/delete")
-    public void remove(AwsS3 awsS3) {
-        awsS3Service.remove(awsS3);
+    @DeleteMapping("/user/img")
+    public ResponseEntity<Object> remove(HttpServletRequest request) throws MalformedURLException {
+        if(authorized(request)) {
+
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+            if(myMember.getProfileImage() == null){
+                return errorResponse(CustomMessage.BAD_PROFILE_IMG);
+            }
+
+            awsS3Service.removeProfileUrl(myMember.getProfileImage());
+            myMember.setProfileImage(null);
+            memberService.join(myMember);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
 

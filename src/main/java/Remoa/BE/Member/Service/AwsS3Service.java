@@ -4,8 +4,10 @@ import Remoa.BE.Member.Domain.AwsS3;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,11 +15,15 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AwsS3Service {
 
     private final AmazonS3 amazonS3;
@@ -25,59 +31,42 @@ public class AwsS3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public AwsS3 upload(MultipartFile multipartFile, String dirName) throws IOException {
-        File file = convertMultipartFileToFile(multipartFile)
-                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File convert fail"));
+    public String editProfileImg(String profileImgUrl,MultipartFile multipartFile) throws IOException {
 
-        return upload(file, dirName);
-    }
+        //기존 프로필 사진 s3에서 삭제
+        removeProfileUrl(profileImgUrl);
 
-    private AwsS3 upload(File file, String dirName) {
-        String key = randomFileName(file, dirName);
-        String path = putS3(file, key);
-        removeFile(file);
+        //파일 타입과 사이즈 저장
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType("image/jpeg");
+        log.info(multipartFile.getContentType());
+        objectMetadata.setContentLength(multipartFile.getSize());
 
-        return AwsS3
-                .builder()
-                .key(key)
-                .path(path)
-                .build();
-    }
+        //파일 이름
+        String originalFilename = multipartFile.getOriginalFilename();
 
-    private String randomFileName(File file, String dirName) {
-        return dirName + "/" + UUID.randomUUID() + file.getName();
-    }
+        //파일 이름이 겹치지 않게
+        String uuid = UUID.randomUUID().toString();
 
-    private String putS3(File uploadFile, String fileName) {
-        amazonS3.putObject(new PutObjectRequest(bucket, fileName, uploadFile)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
-        return getS3(bucket, fileName);
-    }
+        //post 폴더에 따로 넣어서 보관
+        String s3name = "img/"+uuid+"_"+originalFilename;
 
-    private String getS3(String bucket, String fileName) {
-        return amazonS3.getUrl(bucket, fileName).toString();
-    }
-
-    private void removeFile(File file) {
-        file.delete();
-    }
-
-    public Optional<File> convertMultipartFileToFile(MultipartFile multipartFile) throws IOException {
-        File file = new File(System.getProperty("user.dir") + "/" + multipartFile.getOriginalFilename());
-
-        if (file.createNewFile()) {
-            try (FileOutputStream fos = new FileOutputStream(file)){
-                fos.write(multipartFile.getBytes());
-            }
-            return Optional.of(file);
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            amazonS3.putObject(new PutObjectRequest(bucket, s3name, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch (IOException e) {
+            //파일을 제대로 받아오지 못했을때
+            //Todo 예외처리 custom 따로 만들기
+            throw new RuntimeException(e);
         }
-        return Optional.empty();
+
+        return amazonS3.getUrl(bucket,s3name).toString().replaceAll("\\+", "+");
+
     }
 
-    public void remove(AwsS3 awsS3) {
-        if (!amazonS3.doesObjectExist(bucket, awsS3.getKey())) {
-            throw new AmazonS3Exception("Object " +awsS3.getKey()+ " does not exist!");
-        }
-        amazonS3.deleteObject(bucket, awsS3.getKey());
+    public void removeProfileUrl(String profileImgUrl) throws MalformedURLException {
+        URL fileUrl = new URL(profileImgUrl);
+        String objectKey = fileUrl.getPath().replaceAll("^/", "");
+        amazonS3.deleteObject(bucket,objectKey);
     }
 }
