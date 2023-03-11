@@ -2,7 +2,6 @@ package Remoa.BE.Post.Domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -16,12 +15,8 @@ public class UploadFile {
 
     @Id
     @GeneratedValue
-    @Column(name = "file_id")
     private Long uploadFileId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
 
     /**
      * 업로드된 파일의 원본 이름
@@ -47,6 +42,10 @@ public class UploadFile {
     @Lob
     @Column(name = "store_file_url")
     private String storeFileUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     private Boolean deleted = Boolean.FALSE;
 

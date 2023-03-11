@@ -4,18 +4,13 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.FollowService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.exception.CustomMessage;
-import Remoa.BE.exception.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 

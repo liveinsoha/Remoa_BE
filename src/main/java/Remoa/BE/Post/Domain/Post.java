@@ -22,7 +22,6 @@ public class Post {
 
     @Id
     @GeneratedValue
-    @Column(name = "post_id")
     private Long postId;
 
     /**
@@ -37,6 +36,9 @@ public class Post {
      */
     private String title;
 
+    @OneToOne
+    private UploadFile thumbnail;
+
     /**
      * 참여 공모전의 이름
      */
@@ -48,11 +50,6 @@ public class Post {
      */
     private String deadline;
 
-    /**
-     * 참여한 공모전의 수상 내역
-     */
-    @Column(name = "contest_award")
-    private Boolean ContestAward;
 
     /**
      * pm쪽에 문의해야할듯.
@@ -77,6 +74,10 @@ public class Post {
      */
     private Integer views = 0;
 
+    private Integer scrapCount = 0;
+
+    private Integer pageCount;
+
     /**
      * Post에 작성되어진 Comment
      */
@@ -87,7 +88,7 @@ public class Post {
      * Post에서 쓰인 files
      */
     @OneToMany(mappedBy = "post")
-    private List<UploadFile> uploadFiles = new ArrayList<>();
+    private List<UploadFile> uploadFiles;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostScarp> postScarps = new ArrayList<>();

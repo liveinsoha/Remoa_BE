@@ -33,11 +33,10 @@ public class PostRepository {
         return Optional.ofNullable(em.find(Post.class, postId));
     }
 
-    public Optional<Post> findByMemberId(Member member) {
+    public List<Post> findByMember(Member member) {
         return em.createQuery("select p from Post p where p.member = :member", Post.class)
                 .setParameter("member", member)
-                .getResultStream()
-                .findAny();
+                .getResultList();
     }
 
     public void savePostScrap(PostScarp postScarp) {

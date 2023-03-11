@@ -35,8 +35,12 @@ dependencies {
 	// S3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-	// h2 db 추가
-	implementation "com.h2database:h2"
+
+	//ModelMapper 라이브러리 추가
+	implementation 'org.modelmapper:modelmapper:2.4.2'
+
+	//파일 관련
+	implementation 'org.apache.pdfbox:pdfbox:2.0.24'
 }
 
 tasks.named('test') {

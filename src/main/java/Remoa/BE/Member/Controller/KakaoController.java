@@ -8,19 +8,13 @@ import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
@@ -75,32 +69,22 @@ public class KakaoController {
     }
 
     /**
-     * 카카오 로그인을 우회해 테스트 하기 위한 용도로 추가됨.
-     * @param kakaoId
-     * @return ResponseEntity
-     */
-    @PostMapping("/login/kakao/test")
-    public ResponseEntity<Object> testLogin(@RequestBody Integer kakaoId, HttpServletRequest request) {
-        log.warn("kakaoId = {}", kakaoId);
-        Optional<Member> findMember = memberService.findByKakaoId(Long.valueOf(kakaoId));
-        if (findMember.isPresent()) {
-            Member member = findMember.get();
-            securityLoginWithoutLoginForm(member, request);
-            return successResponse(CustomMessage.OK, member);
-        }
-        return failResponse(CustomMessage.VALIDATED, "User Not Exist");
-    }
-
-    /**
      * front-end에서 회원가입에 필요한 정보를 넘겨주면 KakaoSignupForm으로 받아 회원가입을 진행시켜줌
      */
     @PostMapping("/signup/kakao")
     public ResponseEntity<Object> signupKakaoMember(@RequestBody @Validated ReqSignupDto form, HttpServletRequest request) {
 
         Member member = new Member();
+
+        //닉네임 사용 가능하면 그대로 진행, 불가능하면 임의 닉네임 "유저-{kakaoId}로 지정.
+        Boolean nicknameDuplicate = memberService.isNicknameDuplicate(form.getNickname());
+        if (nicknameDuplicate) { //특수문자는 닉네임에 사용할 수 없으나 임의로 지정하는 닉네임에는 사용 가능하게 해서 또 다른 중복 문제 없게끔.
+            member.setNickname("유저-" + form.getKakaoId());
+        } else {
+            member.setNickname(form.getNickname());
+        }
         member.setKakaoId(form.getKakaoId());
         member.setEmail(form.getEmail());
-        member.setNickname(form.getNickname());
         member.setProfileImage(form.getProfileImage());
         member.setTermConsent(form.getTermConsent());
 
@@ -119,24 +103,6 @@ public class KakaoController {
     }
 
     /**
-     *자동 로그인 추후에
-     */
-/*
-    @GetMapping("/login")
-    public ResponseEntity<Object> autoLogin(){
-       Long kaKaoId = getKaKaoId();
-       Optional<Member> member = memberService.findByKakaoId(kaKaoId);
-       if(member.isPresent()){
-           return successResponse(CustomMessage.OK,member);
-       }
-       else{
-           return errorResponse(CustomMessage.UNAUTHORIZED);
-       }
-
-    }
-*/
-
-    /**
      * 로그아웃 기능
      세션무효화, jsession쿠키를 제거,
      */
@@ -147,7 +113,7 @@ public class KakaoController {
             SecurityContextHolder.clearContext();
             request.getSession().invalidate();
 
-            return successResponse(CustomMessage.OK,"로그아웃 되었습니다");
+            return new ResponseEntity<>(HttpStatus.OK);
 
         }
 

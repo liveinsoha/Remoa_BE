@@ -1,9 +1,9 @@
-package Remoa.BE.Post.form.Response;
+package Remoa.BE.Post.Dto.Response;
 
 import lombok.Builder;
 
 @Builder
-public class ResRegistCommentDto {
+public class ResRegisterCommentDto {
     public Long commentId;
     public String comment;
     public String commentedTime;
