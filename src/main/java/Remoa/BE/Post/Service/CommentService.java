@@ -55,6 +55,7 @@ public class CommentService {
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         commentObj.setComment(comment);
         commentObj.setCommentedTime(formatDate);
+        commentRepository.saveComment(commentObj);
 
         ResRegisterCommentDto resRegisterCommentDto = ResRegisterCommentDto.builder()
                 .commentId(commentObj.getCommentId())
@@ -62,7 +63,6 @@ public class CommentService {
                 .commentedTime(commentObj.getCommentedTime())
                 .build();
 
-        postRepository.saveComment(commentObj);
         return resRegisterCommentDto;
     }
 }

@@ -39,17 +39,6 @@ public class MyPostController {
     // Entity <-> DTO 간의 변환을 편리하게 하고자 ModelMapper 사용.(build.gradle에 의존성 주입 완료)
     private final ModelMapper modelMapper = new ModelMapper();
 
-    @PostMapping("/reference/{reference_id}/comment")
-    public ResponseEntity<Object> registComment(@RequestParam Map<String, String> comment, @PathVariable("reference_id") Long postId, HttpServletRequest request) {
-        String myComment = comment.get("comment");
-        if (authorized(request)) {
-            Long memberId = getMemberId();
-            Member myMember = memberService.findOne(memberId);
-            ResRegisterCommentDto resRegisterCommentDto = commentService.registerComment(myMember, myComment, postId);
-            return successResponse(CustomMessage.OK, resRegisterCommentDto);
-        }
-        return errorResponse(CustomMessage.UNAUTHORIZED);
-    }
 
     /**
      * 내 작업물 목록 페이지
