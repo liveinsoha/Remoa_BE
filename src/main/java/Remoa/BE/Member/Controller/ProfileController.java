@@ -1,8 +1,11 @@
 package Remoa.BE.Member.Controller;
 
+import Remoa.BE.Member.Domain.AwsS3;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Req.EditProfileForm;
 import Remoa.BE.Member.Dto.Res.ResUserInfoDto;
+//import Remoa.BE.Member.Service.ImageService;
+import Remoa.BE.Member.Service.AwsS3Service;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Member.Service.ProfileService;
 import Remoa.BE.exception.CustomMessage;
@@ -12,6 +15,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
 
 import static Remoa.BE.exception.CustomBody.*;
 import static Remoa.BE.utill.MemberInfo.authorized;
@@ -23,8 +34,8 @@ import static Remoa.BE.utill.MemberInfo.getMemberId;
 public class ProfileController {
 
     private final ProfileService profileService;
-
     private final MemberService memberService;
+    private final AwsS3Service awsS3Service;
 
     // 프로필 수정 범위 : 닉네임(중복확인), 핸드폰번호, 대학교, 한줄소개
     @GetMapping("/user")
@@ -48,9 +59,6 @@ public class ProfileController {
 
     }
 
-    // RESTful API에서 PUT 매핑은 수정할 리소스를 명확하게 지정해야 하는데 이 경우에는 URL에 리소스 ID를 명시하는 것이 일반적이다.
-    // 그런데 우리는 수정할 사용자의 정보를 모두 입력받아 수정하는 형태이기 때문에
-    // URL에 리소스 ID를 명시할 필요가 없어서 PUT대신 POST 매핑을 사용하였습니다.
     @PutMapping("/user")
     public ResponseEntity<Object> editProfile(@RequestBody EditProfileForm form, HttpServletRequest request) {
 
@@ -81,6 +89,41 @@ public class ProfileController {
         // 수정이 완료되면 프로필 페이지로 이동
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
+
+
+    // 프로필 사진 불러오기
+    @GetMapping("/userimg")
+    public ResponseEntity<Object> showImage(HttpServletRequest request) {
+        if(authorized(request)) {
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+            log.info(myMember.getNickname());
+            return successResponse(CustomMessage.OK, myMember.getProfileImage());
+        }
+        return errorResponse(CustomMessage.BAD_DUPLICATE);
+    }
+
+    // 프로필 사진 업로드
+    @PostMapping("/s3/upload")
+    public AwsS3 upload(@RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) throws IOException {
+
+        if(authorized(request)) {
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+            log.info(myMember.getNickname());
+            myMember.setProfileImage(multipartFile.getOriginalFilename());
+        }
+        return awsS3Service.upload(multipartFile,"upload");
+    }
+
+    // 프로필 사진 삭제
+    @DeleteMapping("/s3/delete")
+    public void remove(AwsS3 awsS3) {
+        awsS3Service.remove(awsS3);
+    }
+
+
+
 
     /**
      * 프론트에서 닉네임 중복 검사를 할 때 사용할 메서드

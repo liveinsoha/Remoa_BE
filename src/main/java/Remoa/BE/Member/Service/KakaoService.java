@@ -2,13 +2,22 @@ package Remoa.BE.Member.Service;
 
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Repository.MemberRepository;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -17,6 +26,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -26,6 +36,9 @@ public class KakaoService {
     //카카오 로그인시 접속해야 할 링크 : https://kauth.kakao.com/oauth/authorize?client_id=139febf9e13da4d124d1c1faafcf3f86&redirect_uri=http://localhost:8080/login/kakao&response_type=code
 
     private final MemberRepository MemberRepository;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+    private final AmazonS3 amazonS3;
 
     /**
      * 카카오 인증 서버에 code를 보내고 token을 발급받는 메서드
@@ -106,6 +119,7 @@ public class KakaoService {
      * @throws IOException
      */
     public Map<String, Object> getUserInfo(String access_token) throws IOException {
+
         //사용자 정보를 받아올 카카오 api 서버. 레모아 서버가 클리아언트로, 카카오 api 서버가 서버로 동작한다고 보면 됩니다.
         String host = "https://kapi.kakao.com/v2/user/me";
         //사용자 정보를 받을 Map 객체 생성
@@ -148,6 +162,28 @@ public class KakaoService {
             result.put("image", profileImage);
             result.put("email", email);
 
+            // 프로필사진을 jpg로 변환하기
+            String imageUrl = profileImage;
+            URL profileURL = new URL(imageUrl);
+            InputStream is = profileURL.openStream();
+
+            // 이미지 파일 생성
+            BufferedImage image = ImageIO.read(is);
+            File outputFile = new File("image.jpg");
+            ImageIO.write(image, "jpg", outputFile);
+
+            // 파일 다운로드
+            byte[] fileContent = FileCopyUtils.copyToByteArray(outputFile);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "image.jpg");
+            headers.setContentLength(fileContent.length);
+            log.info("이미지 파일 생성 완료");
+
+            // 사진으로 바꾼뒤 바로 S3로 업로드하기
+            uploadToS3(outputFile);
+            log.info("S3로 업로드 완료");
+
             br.close();
 
 
@@ -157,6 +193,16 @@ public class KakaoService {
 
         return result;
     }
+
+    // 프로필 사진 초기설정 - S3에 저장하기
+    public String uploadToS3(File file) throws IOException {
+        String s3FileName = UUID.randomUUID() + "-" + file.getName();
+        ObjectMetadata objMeta = new ObjectMetadata();
+        objMeta.setContentLength(file.length());
+        amazonS3.putObject(bucket, s3FileName, file);
+        return amazonS3.getUrl(bucket, s3FileName).toString();
+    }
+
 
     /**
      * 사용자의 카카오 api 동의 내역을 확인하는 메서드.
