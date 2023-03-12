@@ -19,7 +19,9 @@ import java.util.Optional;
 public class CommentRepository {
 
     private final EntityManager em;
-
+    public Optional<Comment> findOne(Long id) {
+        return Optional.ofNullable(em.find(Comment.class, id));
+    }
     public void saveComment(Comment comment) {
         em.persist(comment);
     }
@@ -87,4 +89,12 @@ public class CommentRepository {
                 .getResultList()
                 .size();
     }*/
+
+    public void updateComment(Comment newComment){
+        em.merge(newComment);
+    }
+
+    public void deleteComment(Comment comment){
+        em.remove(comment);
+    }
 }

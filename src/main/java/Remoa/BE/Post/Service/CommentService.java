@@ -46,6 +46,12 @@ public class CommentService {
     }
 
     @Transactional
+    public Comment findOne(Long commentId) {
+        Optional<Comment> comment = commentRepository.findOne(commentId);
+        return comment.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment not found"));
+    }
+
+    @Transactional
     public Long commentBookmarkAction(Comment comment, Member member) {
         CommentBookmark commentBookmark = CommentBookmark.createCommentBookmark(member, comment);
         commentRepository.saveCommentBookmark(commentBookmark);
@@ -66,7 +72,6 @@ public class CommentService {
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Post post = postService.findOne(postId);
 
-
         commentObj.setPost(post);
         commentObj.setMember(member);
         commentObj.setParentComment(parentComment); //대댓글인 경우 원 댓글의 Feedback, 댓글인 경우 null
@@ -76,5 +81,19 @@ public class CommentService {
         commentRepository.saveComment(commentObj);
 
         return post;
+    }
+
+    @Transactional
+    public void modifyComment(String comment, Long commentId){
+        Comment commentObj = findOne(commentId);
+        commentObj.setComment(comment);
+        commentRepository.updateComment(commentObj);
+    }
+
+
+    @Transactional
+    public void deleteComment(Long commentId){
+        Comment commentObj = findOne(commentId);
+        commentRepository.deleteComment(commentObj);
     }
 }
