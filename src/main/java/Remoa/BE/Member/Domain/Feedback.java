@@ -16,7 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Feedback {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feedback_id")
     private Long feedbackId;
 

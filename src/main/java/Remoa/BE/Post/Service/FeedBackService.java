@@ -20,7 +20,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class FeedBackService {
     private final FeedbackRepository feedbackRepository;
-    private  final PostRepository postRepository;
+    private final PostService postService;
 
 
 
@@ -28,17 +28,10 @@ public class FeedBackService {
     public void registFeedback(Member member, String feedback, Long postId, Integer pageNumber){
 
         Feedback feedbackObj = new Feedback();
-        Optional<Post> post = postRepository.findOne(postId);
-        Post myPost; // feedback을 등록할 게시물
-        if(post.isPresent()){
-            myPost = post.get();
-        } else{
-            myPost = post.orElseThrow(() -> new IllegalStateException("값이 없습니다."));
-        }
-
+        Post post = postService.findOne(postId);
 
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        feedbackObj.setPost(myPost);
+        feedbackObj.setPost(post);
         feedbackObj.setMember(member);
         feedbackObj.setPageNumber(pageNumber);
         feedbackObj.setFeedback(feedback);
