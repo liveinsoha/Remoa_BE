@@ -24,8 +24,8 @@ public class FeedbackRepository {
         em.persist(feedback);
     }
 
-    public Feedback findByFeedbackId(Long feedbackId) {
-        return em.find(Feedback.class, feedbackId);
+    public Optional<Feedback> findByFeedbackId(Long feedbackId) {
+        return Optional.ofNullable(em.find(Feedback.class, feedbackId));
     }
 
     /**

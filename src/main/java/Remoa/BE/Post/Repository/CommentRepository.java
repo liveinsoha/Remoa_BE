@@ -25,7 +25,7 @@ public class CommentRepository {
     }
 
     public Optional<Comment> findByCommentId(Long commentId) {
-        return Optional.ofNullable(em.find(Comment.class, commentId)) ;
+        return Optional.ofNullable(em.find(Comment.class, commentId));
     }
 
     /**

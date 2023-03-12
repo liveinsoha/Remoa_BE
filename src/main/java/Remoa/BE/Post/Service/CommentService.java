@@ -53,14 +53,22 @@ public class CommentService {
     }
 
     @Transactional
-    public Post registerComment(Member member, String comment, Long postId){
+    public Post registerComment(Member member, String comment, Long postId, Long commentId){
+
+        Comment parentComment = null;
+
+        if (commentId != null) {
+            parentComment = commentRepository.findByCommentId(commentId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment not found"));
+        }
+
         Comment commentObj = new Comment();
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        //Post post = postRepository.findByPostId(postId); // 댓글을 작성하는 게시글
         Post post = postService.findOne(postId);
 
         commentObj.setPost(post);
         commentObj.setMember(member);
+        commentObj.setParentComment(parentComment); //대댓글인 경우 원 댓글의 Feedback, 댓글인 경우 null
         commentObj.setComment(comment);
         commentObj.setCommentedTime(formatDate);
         commentRepository.saveComment(commentObj);

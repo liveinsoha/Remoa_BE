@@ -37,7 +37,15 @@ public class Comment {
     /**
      * Comment의 내용
      */
+    @Lob
     private String comment;
+
+    /**
+     * 대댓글 기능을 위해 부모 댓글과의 연관관계 세팅. 부모댓글인 경우 null.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_comment_id")
+    private Comment parentComment = null;
 
     /**
      * Comment가 작성된 시간
