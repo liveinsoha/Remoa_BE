@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Deprecated
 public class CommentBookmark {
 
     @Id

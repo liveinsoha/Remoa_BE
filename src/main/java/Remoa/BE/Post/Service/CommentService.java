@@ -71,6 +71,7 @@ public class CommentService {
         commentObj.setMember(member);
         commentObj.setParentComment(parentComment); //대댓글인 경우 원 댓글의 Feedback, 댓글인 경우 null
         commentObj.setComment(comment);
+        commentObj.setCommentLikeCount(0);
         commentObj.setCommentedTime(formatDate);
         commentRepository.saveComment(commentObj);
 

@@ -50,6 +50,7 @@ public class FeedbackService {
         feedbackObj.setParentFeedback(parentFeedback); //대댓글인 경우 원 댓글의 Feedback, 댓글인 경우 null
         feedbackObj.setPageNumber(pageNumber); //대댓글인 경우 null. parentFeedback.getPageNumber()통헤서 값 넣어도 됩니다.
         feedbackObj.setFeedback(feedback);
+        feedbackObj.setFeedbackLikeCount(0);
         feedbackObj.setFeedbackTime(formatDate);
 
         feedbackRepository.saveFeedback(feedbackObj);

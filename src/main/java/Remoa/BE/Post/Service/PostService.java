@@ -74,6 +74,9 @@ public class PostService {
                     .contestAwareType(uploadPostForm.getContestAwardType())
                     .pageCount(pageCount)
                     .postingTime(formatDate)
+                    .likeCount(0)
+                    .views(0)
+                    .scrapCount(0)
                     .deleted(false)
                     .build();
 
