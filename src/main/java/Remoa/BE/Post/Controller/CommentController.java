@@ -38,5 +38,15 @@ public class CommentController {
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
+    @PutMapping("/reference/comment/{comment_id}")
+    public ResponseEntity<Object> modifyComment(@RequestBody Map<String, String> comment, @PathVariable("comment_id") Long commentId, HttpServletRequest request){
+        String myComment = comment.get("comment");
+
+        if(authorized(request)){
+            commentService.modifyComment(myComment, commentId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
 
 }

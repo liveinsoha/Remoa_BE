@@ -87,4 +87,8 @@ public class CommentRepository {
                 .getResultList()
                 .size();
     }*/
+
+    public void updateComment(Comment newComment){
+        em.merge(newComment);
+    }
 }

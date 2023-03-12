@@ -59,7 +59,6 @@ public class CommentService {
         //Post post = postRepository.findByPostId(postId); // 댓글을 작성하는 게시글
         Post post = postService.findOne(postId);
 
-
         commentObj.setPost(post);
         commentObj.setMember(member);
         commentObj.setComment(comment);
@@ -68,4 +67,12 @@ public class CommentService {
 
         return post;
     }
+
+    @Transactional
+    public void modifyComment(String comment, Long commentId){
+        Comment commentObj = commentRepository.findByCommentId(commentId);
+        commentObj.setComment(comment);
+        commentRepository.updateComment(commentObj);
+    }
+
 }
