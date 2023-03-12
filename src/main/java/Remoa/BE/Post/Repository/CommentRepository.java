@@ -24,8 +24,8 @@ public class CommentRepository {
         em.persist(comment);
     }
 
-    public Comment findByCommentId(Long commentId) {
-        return em.find(Comment.class, commentId);
+    public Optional<Comment> findByCommentId(Long commentId) {
+        return Optional.ofNullable(em.find(Comment.class, commentId));
     }
 
     /**

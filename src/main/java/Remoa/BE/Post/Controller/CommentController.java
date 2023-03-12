@@ -28,12 +28,24 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/reference/{reference_id}/comment")
-    public ResponseEntity<Object> registComment(@RequestBody Map<String, String> comment, @PathVariable("reference_id") Long postId, HttpServletRequest request){
+    public ResponseEntity<Object> registerComment(@RequestBody Map<String, String> comment, @PathVariable("reference_id") Long postId, HttpServletRequest request){
         String myComment = comment.get("comment");
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
-            commentService.registerComment(myMember, myComment, postId);
+            commentService.registerComment(myMember, myComment, postId, null);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
+
+    @PostMapping("/reference/{reference_id}/comment/{comment_id}")
+    public ResponseEntity<Object> registerCommentReply(@RequestBody Map<String, String> comment, @PathVariable("reference_id") Long postId, @PathVariable("comment_id") Long commentId, HttpServletRequest request){
+        String myComment = comment.get("comment");
+        if(authorized(request)){
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+            commentService.registerComment(myMember, myComment, postId, commentId);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
