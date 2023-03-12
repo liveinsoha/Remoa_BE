@@ -31,9 +31,9 @@ public enum CustomMessage {
 
     BAD_FILE(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","해당 파일 유형은 지원하지 않습니다"),
 
+    BAD_PAGE_NUM(HttpStatus.BAD_REQUEST, "피드백 등록시 페이지 넘버 오류", "존재하지 않는 페이지에 피드백을 등록하력 합니다"),
     //401권한오류
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"권한이 없습니다","인증에 필요한 쿠키 정보가 없습니다");
-
 
 
     private final HttpStatus httpStatus;
