@@ -2,7 +2,6 @@ package Remoa.BE.Post.Service;
 
 import Remoa.BE.Member.Domain.Feedback;
 import Remoa.BE.Member.Domain.Member;
-import Remoa.BE.Post.Dto.Response.ResFeedbackDto;
 import Remoa.BE.Post.Repository.FeedbackRepository;
 import Remoa.BE.Post.Repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,26 +21,17 @@ public class FeedBackService {
     private  final PostRepository postRepository;
 
     @Transactional
-    public ResFeedbackDto registFeedback(Member member, String feedback, Long postId, Integer pageNumber){
+    public void registFeedback(Member member, String feedback, Long postId, Integer pageNumber){
 
         Feedback feedbackObj = new Feedback();
 
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         feedbackObj.setPost(postRepository.findByPostId(postId));
         feedbackObj.setMember(member);
-        feedbackObj.setFeedback(feedback);
         feedbackObj.setPageNumber(pageNumber);
+        feedbackObj.setFeedback(feedback);
         feedbackObj.setFeedbackTime(formatDate);
 
         feedbackRepository.saveFeedback(feedbackObj);
-        ResFeedbackDto resFeedbackDto = ResFeedbackDto.builder()
-                .feedbackId(feedbackObj.getFeedbackId())
-                .pageNumber(feedbackObj.getPageNumber())
-                .feedback(feedbackObj.getFeedback())
-                .feedbackTime(formatDate)
-                .build();
-
-        System.out.println(feedbackObj.getFeedback());
-        return resFeedbackDto;
     }
 }

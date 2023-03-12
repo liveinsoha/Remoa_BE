@@ -5,10 +5,10 @@ import Remoa.BE.Member.Domain.CommentBookmark;
 import Remoa.BE.Member.Domain.CommentLike;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Post.Domain.Post;
-import Remoa.BE.Post.Dto.Response.ResRegisterCommentDto;
 import Remoa.BE.Post.Repository.CommentRepository;
 import Remoa.BE.Post.Repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,19 +50,15 @@ public class CommentService {
     }
 
     @Transactional
-    public ResRegisterCommentDto registerComment(Member member, String comment, Long postId){
+    public void registerComment(Member member, String comment, Long postId){
         Comment commentObj = new Comment();
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        Post post = postRepository.findByPostId(postId); // 댓글을 작성하는 게시글
+        commentObj.setPost(post);
+        commentObj.setMember(member);
         commentObj.setComment(comment);
         commentObj.setCommentedTime(formatDate);
         commentRepository.saveComment(commentObj);
 
-        ResRegisterCommentDto resRegisterCommentDto = ResRegisterCommentDto.builder()
-                .commentId(commentObj.getCommentId())
-                .comment(commentObj.getComment())
-                .commentedTime(commentObj.getCommentedTime())
-                .build();
-
-        return resRegisterCommentDto;
     }
 }

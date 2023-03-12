@@ -1,25 +1,19 @@
 package Remoa.BE.Post.Controller;
 
-import Remoa.BE.Member.Domain.Feedback;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
-import Remoa.BE.Post.Dto.Response.ResFeedbackDto;
-import Remoa.BE.Post.Repository.FeedbackRepository;
-import Remoa.BE.Post.Repository.PostRepository;
 import Remoa.BE.Post.Service.FeedBackService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
@@ -41,10 +35,9 @@ public class FeedBackController {
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
-            ResFeedbackDto resFeedbackDto = feedbackService.registFeedback(myMember, myFeedback, postId, pageNumber);
-            return successResponse(CustomMessage.OK, resFeedbackDto);
+            feedbackService.registFeedback(myMember, myFeedback, postId, pageNumber);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
-
 }

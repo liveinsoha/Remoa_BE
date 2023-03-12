@@ -2,11 +2,11 @@ package Remoa.BE.Post.Controller;
 
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
-import Remoa.BE.Post.Dto.Response.ResRegisterCommentDto;
 import Remoa.BE.Post.Service.CommentService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,12 +33,10 @@ public class CommentController {
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
-            ResRegisterCommentDto resRegistCommentDto = commentService.registerComment(myMember, myComment, postId);
-            return successResponse(CustomMessage.OK, resRegistCommentDto);
+            commentService.registerComment(myMember, myComment, postId);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
-
-
 
 }

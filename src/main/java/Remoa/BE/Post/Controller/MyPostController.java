@@ -4,7 +4,6 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Domain.UploadFile;
-import Remoa.BE.Post.Dto.Response.ResRegisterCommentDto;
 import Remoa.BE.Post.Dto.Response.ThumbnailReferenceDto;
 import Remoa.BE.Post.Service.CommentService;
 import Remoa.BE.Post.Service.MyPostService;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
