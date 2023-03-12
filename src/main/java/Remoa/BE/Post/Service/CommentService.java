@@ -95,5 +95,4 @@ public class CommentService {
         Comment commentObj = findOne(commentId);
         commentRepository.deleteComment(commentObj);
     }
-
 }
