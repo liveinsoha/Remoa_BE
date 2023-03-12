@@ -62,7 +62,7 @@ public class KakaoController {
         if (member.isPresent()) {
             securityLoginWithoutLoginForm(member.get(), request);
             //if문에 걸리지 않았다면 이미 회원가입이 진행돼 db에 kakaoId가 있는 유저이므로 kakaoMember가 존재하므로 LoginController처럼 로그인 처리 하면 됩니다.
-            return successResponse(CustomMessage.OK, member);
+            return successResponse(CustomMessage.OK, member.get().getNickname());
 
         } else {
             //kakaoId가 db에 없으므로 kakaoMember가 null이므로 회원가입하지 않은 회원. 따라서 회원가입이 필요하므로 회원가입하는 uri로 redirect 시켜주어야 함.
