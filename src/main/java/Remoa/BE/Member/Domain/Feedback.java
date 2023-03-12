@@ -16,7 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Feedback {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feedback_id")
     private Long feedbackId;
 
@@ -47,7 +47,7 @@ public class Feedback {
      * 대댓글 기능을 위해 부모 댓글과의 연관관계 세팅. 부모댓글인 경우 null.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_comment_id")
+    @JoinColumn(name = "parent_feedback_id")
     private Feedback parentFeedback = null;
 
 

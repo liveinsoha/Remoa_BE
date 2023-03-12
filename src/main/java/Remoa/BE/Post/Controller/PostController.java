@@ -42,6 +42,11 @@ public class PostController {
 
             Post savePost = postService.registerPost(uploadPostForm,thumbnail,uploadFiles,memberId);
 
+            //잘못된 파일 유형
+            if(savePost == null){
+                return errorResponse(CustomMessage.BAD_FILE);
+            }
+
             Post post = postService.findOne(savePost.getPostId());
 
             ResReferenceRegisterDto resReferenceRegisterDto = ResReferenceRegisterDto.builder()

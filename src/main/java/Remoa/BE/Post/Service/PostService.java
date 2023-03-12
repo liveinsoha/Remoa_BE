@@ -52,23 +52,39 @@ public class PostService {
 
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        PDDocument document = PDDocument.load(uploadFiles.get(0).getInputStream());
-        Integer pageCount = document.getNumberOfPages();
+        //확장자 확인
+        String fileName = uploadFiles.get(0).getOriginalFilename();
+        assert fileName != null;
+        int lastIndex = fileName.lastIndexOf(".");
+        String extension = fileName.substring(lastIndex + 1);
+        if(extension.equals("pdf") || extension.equals("jpg")){
+            int pageCount;
+            if(extension.equals("pdf")){
+                PDDocument document = PDDocument.load(uploadFiles.get(0).getInputStream());
+                pageCount = document.getNumberOfPages();
+            }
+           else{
+               pageCount = uploadFiles.size();
+            }
+            Post post = Post.builder()
+                    .title(uploadPostForm.getTitle())
+                    .member(member)
+                    .contestName(uploadPostForm.getContestName())
+                    .category(category)
+                    .contestAwareType(uploadPostForm.getContestAwardType())
+                    .pageCount(pageCount)
+                    .postingTime(formatDate)
+                    .deleted(false)
+                    .build();
 
-        Post post = Post.builder()
-                .title(uploadPostForm.getTitle())
-                .member(member)
-                .contestName(uploadPostForm.getContestName())
-                .category(category)
-                .contestAwareType(uploadPostForm.getContestAwardType())
-                .pageCount(pageCount)
-                .postingTime(formatDate)
-                .deleted(false)
-                .build();
+            fileService.saveUploadFiles(post, thumbnail ,uploadFiles);
+            return post;
+        }
+        else{
+            return null;
+        }
 
-        fileService.saveUploadFiles(post, thumbnail ,uploadFiles);
 
-        return post;
     }
 
 }

@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,6 +25,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final PostService postService;
 
     @Transactional
     public Long writeComment(Comment comment) {
@@ -51,24 +53,27 @@ public class CommentService {
     }
 
     @Transactional
-    public void registerComment(Member member, String comment, Long postId, Long commentId){
+    public Post registerComment(Member member, String comment, Long postId, Long commentId){
 
         Comment parentComment = null;
 
         if (commentId != null) {
-            parentComment = (commentRepository.findByCommentId(commentId))
+            parentComment = commentRepository.findByCommentId(commentId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment not found"));
         }
 
         Comment commentObj = new Comment();
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Post post = postRepository.findByPostId(postId); // 댓글을 작성하는 게시글
+        Post post = postService.findOne(postId);
+
+
         commentObj.setPost(post);
         commentObj.setMember(member);
-        commentObj.setParentComment(parentComment);
+        commentObj.setParentComment(parentComment); //대댓글인 경우 원 댓글의 Feedback, 댓글인 경우 null
         commentObj.setComment(comment);
         commentObj.setCommentedTime(formatDate);
         commentRepository.saveComment(commentObj);
 
+        return post;
     }
 }
