@@ -46,6 +46,12 @@ public class CommentService {
     }
 
     @Transactional
+    public Comment findOne(Long commentId) {
+        Optional<Comment> comment = commentRepository.findOne(commentId);
+        return comment.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment not found"));
+    }
+
+    @Transactional
     public Long commentBookmarkAction(Comment comment, Member member) {
         CommentBookmark commentBookmark = CommentBookmark.createCommentBookmark(member, comment);
         commentRepository.saveCommentBookmark(commentBookmark);
@@ -78,22 +84,15 @@ public class CommentService {
 
     @Transactional
     public void modifyComment(String comment, Long commentId){
-        Optional<Comment> commentObj = commentRepository.findByCommentId(commentId);
+        Comment commentObj = findOne(commentId);
         commentObj.setComment(comment);
-
         commentRepository.updateComment(commentObj);
     }
 
-    @Transactional
-    public Comment findOne(Long commentId){
-        if(commentRepository.findByCommentId(commentId)){
-
-        }
-    }
 
     @Transactional
     public void deleteComment(Long commentId){
-        Comment commentObj = commentRepository.findByCommentId(commentId);
+        Comment commentObj = findOne(commentId);
         commentRepository.deleteComment(commentObj);
     }
 
