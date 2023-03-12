@@ -24,8 +24,8 @@ public class CommentRepository {
         em.persist(comment);
     }
 
-    public Comment findByCommentId(Long commentId) {
-        return em.find(Comment.class, commentId);
+    public Optional<Comment> findByCommentId(Long commentId) {
+        return Optional.ofNullable(em.find(Comment.class, commentId)) ;
     }
 
     /**
@@ -90,5 +90,9 @@ public class CommentRepository {
 
     public void updateComment(Comment newComment){
         em.merge(newComment);
+    }
+
+    public void deleteComment(Comment comment){
+        em.remove(comment);
     }
 }

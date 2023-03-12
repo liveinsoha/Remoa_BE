@@ -49,4 +49,13 @@ public class CommentController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
+    @DeleteMapping("/comment/{comment_id}")
+    public ResponseEntity<Object> deleteComment(@PathVariable("comment_id") Long commentId, HttpServletRequest request){
+        if(authorized(request)){
+
+            commentService.deleteComment(commentId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
 }

@@ -70,9 +70,23 @@ public class CommentService {
 
     @Transactional
     public void modifyComment(String comment, Long commentId){
-        Comment commentObj = commentRepository.findByCommentId(commentId);
+        Optional<Comment> commentObj = commentRepository.findByCommentId(commentId);
         commentObj.setComment(comment);
+
         commentRepository.updateComment(commentObj);
+    }
+
+    @Transactional
+    public Comment findOne(Long commentId){
+        if(commentRepository.findByCommentId(commentId)){
+
+        }
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId){
+        Comment commentObj = commentRepository.findByCommentId(commentId);
+        commentRepository.deleteComment(commentObj);
     }
 
 }
