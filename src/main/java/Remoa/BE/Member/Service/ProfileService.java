@@ -62,15 +62,10 @@ public class ProfileService {
         File outputFile = new File(nickname+".jpg");
         ImageIO.write(image, "jpg", outputFile);
 
-        // 파일 다운로드
-        byte[] fileContent = FileCopyUtils.copyToByteArray(outputFile);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", "image.jpg");
-        headers.setContentLength(fileContent.length);
-
         // 사진으로 바꾼뒤 바로 S3로 업로드하기
-        return uploadProfileImg(outputFile);
+        String url = uploadProfileImg(outputFile);
+        outputFile.delete();
+        return url;
     }
 
     // 프로필 사진 초기설정 - S3에 저장하기
@@ -82,6 +77,4 @@ public class ProfileService {
         return amazonS3.getUrl(bucket,"img/"+s3FileName).toString().replaceAll("\\+", "+");
 
     }
-
-
 }
