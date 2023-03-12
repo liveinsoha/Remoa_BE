@@ -65,6 +65,7 @@ public class Member implements UserDetails {
      * 한 줄 소개
      */
     @Column(name = "one_line_introduction")
+    @Lob
     private String oneLineIntroduction;
 
     /**

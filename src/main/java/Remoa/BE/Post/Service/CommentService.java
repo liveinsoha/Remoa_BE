@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -50,12 +51,21 @@ public class CommentService {
     }
 
     @Transactional
-    public void registerComment(Member member, String comment, Long postId){
+    public void registerComment(Member member, String comment, Long postId, Long commentId){
+
+        Comment parentComment = null;
+
+        if (commentId != null) {
+            parentComment = (commentRepository.findByCommentId(commentId))
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment not found"));
+        }
+
         Comment commentObj = new Comment();
         String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Post post = postRepository.findByPostId(postId); // 댓글을 작성하는 게시글
         commentObj.setPost(post);
         commentObj.setMember(member);
+        commentObj.setParentComment(parentComment);
         commentObj.setComment(comment);
         commentObj.setCommentedTime(formatDate);
         commentRepository.saveComment(commentObj);
