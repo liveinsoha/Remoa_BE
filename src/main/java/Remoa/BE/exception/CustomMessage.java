@@ -29,6 +29,8 @@ public enum CustomMessage {
 
     BAD_PROFILE_IMG(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","해당 멤버의 프로필사진이 존재하지 않습니다"),
 
+    BAD_FILE(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","해당 파일 유형은 지원하지 않습니다"),
+
     //401권한오류
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"권한이 없습니다","인증에 필요한 쿠키 정보가 없습니다");
 

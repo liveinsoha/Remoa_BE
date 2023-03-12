@@ -33,8 +33,10 @@ public class AwsS3Service {
 
     public String editProfileImg(String profileImgUrl,MultipartFile multipartFile) throws IOException {
 
-        //기존 프로필 사진 s3에서 삭제
-        removeProfileUrl(profileImgUrl);
+        if(profileImgUrl != null) {
+            //기존 프로필 사진 s3에서 삭제
+            removeProfileUrl(profileImgUrl);
+        }
 
         //파일 타입과 사이즈 저장
         ObjectMetadata objectMetadata = new ObjectMetadata();
