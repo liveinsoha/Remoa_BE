@@ -5,10 +5,9 @@ import Remoa.BE.Post.Dto.Response.ThumbnailReferenceDto;
 import Remoa.BE.Post.Repository.SearchRepository;
 import Remoa.BE.exception.CustomMessage;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,10 @@ import java.util.List;
 
 import static Remoa.BE.exception.CustomBody.successResponse;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SearchService {
 
     @Autowired
@@ -26,45 +28,31 @@ public class SearchService {
 
     // 게시글 검색
     public ResponseEntity<Object> searchPost(String name) {
-        // 검색값이 포함되어 있는 게시글을 가져옴
-        List<ThumbnailReferenceDto> searchPosts = searchRepository.findByTitleContaining(name);
-        List<Post> searchList = new ArrayList<>();
+        List<Post> searchPosts;
 
-        if (searchPosts.isEmpty()) {
-
-            // 검색 결과가 없는 경우 모두 반환
-            List<ThumbnailReferenceDto> allPosts = searchRepository.findAll();
-            for (ThumbnailReferenceDto tr : allPosts) {
-                searchList.add(Post.builder()
-                        .postId(tr.getPostId())
-                        //.nickname(tr.getNickname())
-                        .title(tr.getTitle())
-                        .likeCount(tr.getLikeCount())
-                        .postingTime(tr.getPostingTime())
-                        .views(tr.getViews())
-                        .scrapCount(tr.getScrapCount())
-                        //.storeFileUrls(tr.getStoreFileUrls())
-                        //.categoryName(tr.getCategoryName())
-                        .build()
-                );
-            }
-        } else { // 검색 결과가 있는 경우
-            for (ThumbnailReferenceDto tr : searchPosts) {
-                searchList.add(Post.builder()
-                        .postId(tr.getPostId())
-                        //.nickname(tr.getNickname())
-                        .title(tr.getTitle())
-                        .likeCount(tr.getLikeCount())
-                        .postingTime(tr.getPostingTime())
-                        .views(tr.getViews())
-                        .scrapCount(tr.getScrapCount())
-                        //.storeFileUrls(tr.getStoreFileUrls())
-                        //.categoryName(tr.getCategoryName())
-                        .build()
-                );
-            }
+        if (name == null) {
+            // 검색어가 없는 경우 전체 게시글을 가져옴
+            searchPosts = searchRepository.findAll();
+        } else {
+            // 검색어가 포함되어 있는 게시글을 가져옴
+            searchPosts = searchRepository.findByTitleContaining(name);
         }
 
+        List<Post> searchList = new ArrayList<>();
+        for (Post post : searchPosts) {
+            searchList.add(Post.builder()
+                    .postId(post.getPostId())
+                    //.nickname(post.getNickname())
+                    .title(post.getTitle())
+                    .likeCount(post.getLikeCount())
+                    .postingTime(post.getPostingTime())
+                    .views(post.getViews())
+                    .scrapCount(post.getScrapCount())
+                    //.storeFileUrls(post.getStoreFileUrls())
+                    //.categoryName(post.getCategoryName())
+                    .build()
+            );
+        }
         return successResponse(CustomMessage.OK, searchList);
     }
 }
