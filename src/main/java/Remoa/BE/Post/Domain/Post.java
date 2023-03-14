@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class Post {
      * Post가 작성된 시간
      */
     @Column(name = "posting_time")
-    private String postingTime;
+    private LocalDateTime postingTime;
 
     /**
      * Post의 조회수

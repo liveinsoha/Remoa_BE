@@ -63,7 +63,7 @@ public class CommentService {
         }
 
         Comment commentObj = new Comment();
-        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+//        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Post post = postService.findOne(postId);
 
 
@@ -72,7 +72,7 @@ public class CommentService {
         commentObj.setParentComment(parentComment); //대댓글인 경우 원 댓글의 Feedback, 댓글인 경우 null
         commentObj.setComment(comment);
         commentObj.setCommentLikeCount(0);
-        commentObj.setCommentedTime(formatDate);
+        commentObj.setCommentedTime(LocalDateTime.now());
         commentRepository.saveComment(commentObj);
 
         return post;

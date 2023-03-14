@@ -12,12 +12,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
@@ -42,7 +45,7 @@ public class MyPostController {
      * 내 작업물 목록 페이지
      */
     @GetMapping("/user/reference")
-    public ResponseEntity<Object> myReferences(HttpServletRequest request) {
+    public ResponseEntity<Object> myReference(HttpServletRequest request) {
 
         if (authorized(request)) {
             Long memberId = getMemberId();
@@ -65,10 +68,58 @@ public class MyPostController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
+    @GetMapping("/user/references")
+    public ResponseEntity<Object> myReferencePaging(HttpServletRequest request,
+                                                    @RequestParam int page,
+                                                    @RequestParam String sort) {
+        if (authorized(request)) {
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+
+            Page<Post> posts;
+            if (sort.equals("newest")) {
+                posts = myPostService.getNewestPosts(page, myMember);
+            } else if (sort.equals("oldest")) {
+                posts = myPostService.getOldestPosts(page, myMember);
+            } else if (sort.equals("like")) {
+                posts = myPostService.getMostLikePosts(page, myMember);
+            } else if (sort.equals("scrap")) {
+                posts = myPostService.getMostScrapPosts(page, myMember);
+            } else {
+                //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
+                posts = myPostService.getNewestPosts(page, myMember);
+            }
+
+            if (posts.isEmpty()) {
+                return errorResponse(CustomMessage.PAGE_NUM_OVER);
+            }
+
+            initModelMapper();
+
+            List<ThumbnailReferenceDto> myReferenceList = new ArrayList<>();
+            for (Post post : posts.getContent()) {
+                // ModelMapper 통해 Entity -> DTO 변환
+                ThumbnailReferenceDto postDTO = modelMapper.map(post, ThumbnailReferenceDto.class);
+
+                myReferenceList.add(postDTO);
+            }
+
+            Map<String, Object> referencesAndPageInfo = new HashMap<>();
+            referencesAndPageInfo.put("references", myReferenceList); //조회한 레퍼런스들
+            referencesAndPageInfo.put("totalPages", posts.getTotalPages()); //전체 페이지의 수
+            referencesAndPageInfo.put("totalOfAllReferences", posts.getTotalElements()); //모든 레퍼런스의 수
+            referencesAndPageInfo.put("totalOfPageElements", posts.getNumberOfElements()); //현 페이지의 레퍼런스 수
+
+            return successResponse(CustomMessage.OK, referencesAndPageInfo);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
+
     /**
      * Post Entity -> Thumbnail용 Response DTO를 위한 ModelMapper.
      */
     private void initModelMapper() {
+
         modelMapper.typeMap(Post.class, ThumbnailReferenceDto.class)
                 .addMappings(mapper -> mapper.using(
                                 (Converter<Member, String>) context -> context.getSource().getNickname())
