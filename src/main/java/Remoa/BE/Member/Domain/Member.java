@@ -80,25 +80,25 @@ public class Member implements UserDetails {
     @Column(name = "profile_image")
     private String profileImage;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY)
     private List<Feedback> feedbacks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
     private List<MemberCategory> memberCategories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
     private List<CommentBookmark> commentBookmarks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
     private List<CommentLike> commentLikes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "fromMember", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "fromMember", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
     private List<Follow> follows = new ArrayList<>();
 
     /**

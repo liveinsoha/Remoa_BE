@@ -1,24 +1,23 @@
 package Remoa.BE.Post.Controller;
 
 import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
-import Remoa.BE.Post.Domain.UploadFile;
-import Remoa.BE.Post.Dto.Response.ThumbnailReferenceDto;
+import Remoa.BE.Post.Dto.Response.ResPostDto;
 import Remoa.BE.Post.Service.CommentService;
 import Remoa.BE.Post.Service.MyPostService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
@@ -49,34 +48,25 @@ public class MyPostController {
             Member myMember = memberService.findOne(memberId);
 
             List<Post> allPosts = myPostService.showOnesPosts(myMember);
-            List<ThumbnailReferenceDto> myReferenceList = new ArrayList<>();
-
-            // ModelMapper initialize
-            initModelMapper();
+            List<ResPostDto> result = new ArrayList<>();
 
             for (Post post : allPosts) {
-                // ModelMapper 통해 Entity -> DTO 변환
-                ThumbnailReferenceDto postDTO = modelMapper.map(post, ThumbnailReferenceDto.class);
-
-                myReferenceList.add(postDTO);
+                ResPostDto map = ResPostDto.builder()
+                        .postingTime(post.getPostingTime())
+                        .postMember(new ResMemberInfoDto(post.getMember().getMemberId(), post.getMember().getNickname(), post.getMember().getProfileImage()))
+                        .postId(post.getPostId())
+                        .views(post.getViews())
+                        .categoryName(post.getCategory().getName())
+                        .likeCount(post.getLikeCount())
+                        .thumbnail(post.getThumbnail().getStoreFileUrl())
+                        .scrapCount(post.getScrapCount())
+                        .title(post.getTitle()).build();
+                result.add(map);
             }
-            return successResponse(CustomMessage.OK, myReferenceList);
+            return successResponse(CustomMessage.OK, result);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    /**
-     * Post Entity -> Thumbnail용 Response DTO를 위한 ModelMapper.
-     */
-    private void initModelMapper() {
-        modelMapper.typeMap(Post.class, ThumbnailReferenceDto.class)
-                .addMappings(mapper -> mapper.using(
-                                (Converter<Member, String>) context -> context.getSource().getNickname())
-                        .map(Post::getMember, ThumbnailReferenceDto::setNickname))
-                .addMappings(mapper -> mapper.using(
-                        (Converter<List<UploadFile>, List<String>>) context -> context.getSource().stream()
-                                .map(UploadFile::getStoreFileUrl).collect(Collectors.toList())
-                ).map(Post::getUploadFiles, ThumbnailReferenceDto::setStoreFileUrls));
-    }
 
 }

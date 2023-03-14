@@ -24,7 +24,6 @@ import java.util.Optional;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
     private final PostService postService;
 
     @Transactional
@@ -33,10 +32,7 @@ public class CommentService {
         return comment.getCommentId();
     }
 
-    public List<Comment> loadCommentsByPostId(Long postId) {
-        Post post = postRepository.findByPostId(postId);
-        return commentRepository.findByPost(post);
-    }
+
 
     @Transactional
     public Long commentLikeAction(Comment comment, Member member) {

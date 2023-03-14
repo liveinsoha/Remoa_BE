@@ -7,10 +7,13 @@ import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
 import Remoa.BE.Post.Repository.CategoryRepository;
 import Remoa.BE.Post.Repository.PostRepository;
+import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,8 +22,11 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static Remoa.BE.exception.CustomBody.successResponse;
 
 @Slf4j
 @Service
@@ -42,6 +48,9 @@ public class PostService {
         return post.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found"));
     }
 
+    public List<Post> findAll(){
+        return postRepository.findAll();
+    }
 
     @Transactional
     public Post registerPost(UploadPostForm uploadPostForm,MultipartFile thumbnail ,List<MultipartFile> uploadFiles, Long memberId) throws IOException {
@@ -90,4 +99,7 @@ public class PostService {
 
     }
 
+    public List<Post> searchPost(String name) {
+        return postRepository.findByTitleContaining(name);
+    }
 }

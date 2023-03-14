@@ -11,6 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,9 +29,10 @@ public class PostRepository {
         em.persist(post);
     }
 
-    public Post findByPostId(Long postId){
-        return em.find(Post.class, postId);
+    public List<Post> findAll(){
+        return em.createQuery("SELECT p FROM Post p", Post.class).getResultList();
     }
+
 
     public Optional<Post> findOne(Long postId) { // 위 findByPostId와 거의 같음 반환형을 Optional<Post>로 하기 위함
         return Optional.ofNullable(em.find(Post.class, postId));
@@ -37,6 +42,14 @@ public class PostRepository {
         return em.createQuery("select p from Post p where p.member = :member", Post.class)
                 .setParameter("member", member)
                 .getResultList();
+    }
+
+    public List<Post> findByTitleContaining(String name){
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Post> query = cb.createQuery(Post.class);
+        Root<Post> root = query.from(Post.class);
+        query.select(root).where(cb.like(root.get("title"), "%" + name + "%"));
+        return em.createQuery(query).getResultList();
     }
 
     public void savePostScrap(PostScarp postScarp) {
