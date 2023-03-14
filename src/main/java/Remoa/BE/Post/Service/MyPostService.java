@@ -24,7 +24,7 @@ public class MyPostService {
 
     private final PostRepository postRepository;
     private final PostPagingRepository postPagingRepository;
-    final int pageSize = 3;
+    private static final int pageSize = 5;
 
     /**
      * 특정 member의 post들 전체 조회
@@ -36,8 +36,8 @@ public class MyPostService {
     }
 
     /**
-     * 특정 member의 post들 5개씩 최신순으로 조회
-     * pageSize를 수정해서 한 페이지에 보여질 post의 개수를 정할 수 있음.
+     * paging : 특정 member의 post들 5개씩 조회
+     * sorting : 최신순으로 정렬
      * @param page : 조회하려는 페이지 번호
      * @param member : 조회하려는 작성자
      * @return Page<Post>
@@ -50,6 +50,13 @@ public class MyPostService {
         return postPagingRepository.findAllByMemberOrderByPostingTimeDesc(pageable, member);
     }
 
+    /**
+     * paging : 특정 member의 post들 5개씩 조회
+     * sorting : 과거순으로 정렬
+     * @param page : 조회하려는 페이지 번호
+     * @param member : 조회하려는 작성자
+     * @return Page<Post>
+     */
     public Page<Post> getOldestPosts(int page, Member member) {
 //        PageRequest pageable = PageRequest.of(page, pageSize, Sort.by("postingTime").ascending());
 //        return postPagingRepository.findAllByMember(pageable, member);
@@ -58,11 +65,25 @@ public class MyPostService {
         return postPagingRepository.findAllByMemberOrderByPostingTimeAsc(pageable, member);
     }
 
+    /**
+     * paging : 특정 member의 post들 5개씩 조회
+     * sorting : 좋아요 순으로 정렬
+     * @param page : 조회하려는 페이지 번호
+     * @param member : 조회하려는 작성자
+     * @return Page<Post>
+     */
     public Page<Post> getMostLikePosts(int page, Member member) {
         PageRequest pageable = PageRequest.of(page, pageSize);
         return postPagingRepository.findAllByMemberOrderByLikeCountDesc(pageable, member);
     }
 
+    /**
+     * paging : 특정 member의 post들 5개씩 조회
+     * sorting : 스크랩 순으로 정렬
+     * @param page : 조회하려는 페이지 번호
+     * @param member : 조회하려는 작성자
+     * @return Page<Post>
+     */
     public Page<Post> getMostScrapPosts(int page, Member member) {
         PageRequest pageable = PageRequest.of(page, pageSize);
         return postPagingRepository.findAllByMemberOrderByScrapCountDesc(pageable, member);

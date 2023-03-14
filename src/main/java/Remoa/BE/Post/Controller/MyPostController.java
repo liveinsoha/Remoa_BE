@@ -68,13 +68,25 @@ public class MyPostController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
+    /**
+     * 내가 작성한 레퍼런스를 조건에 맞게 5개씩 보여줍니다.
+     * @param request
+     * @param page :
+     * @param sort
+     * @return
+     */
     @GetMapping("/user/references")
     public ResponseEntity<Object> myReferencePaging(HttpServletRequest request,
-                                                    @RequestParam int page,
-                                                    @RequestParam String sort) {
+                                                    @RequestParam(required = false, defaultValue = "1") int page,
+                                                    @RequestParam(required = false, defaultValue = "newest") String sort) {
         if (authorized(request)) {
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
+            page -= 1;
+
+            if (page <= 0) {
+                return errorResponse(CustomMessage.PAGE_NUM_OVER);
+            }
 
             Page<Post> posts;
             if (sort.equals("newest")) {
@@ -90,7 +102,7 @@ public class MyPostController {
                 posts = myPostService.getNewestPosts(page, myMember);
             }
 
-            if (posts.isEmpty()) {
+            if ((posts.getContent().isEmpty()) && (posts.getTotalElements() != 0)) {
                 return errorResponse(CustomMessage.PAGE_NUM_OVER);
             }
 

@@ -9,15 +9,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 
+/**
+ * JPA Query Creation을 사용해서 post data sorting
+ */
 @Repository
 public interface PostPagingRepository extends PagingAndSortingRepository<Post, Long> {
-    /**
-     * 파라메터로 넘어온 member의 pageable에 명시된 옵션에 따라서
-     *
-     * @param pageable
-     * @param member
-     * @return
-     */
+
     Page<Post> findAllByMemberOrderByPostingTimeDesc(Pageable pageable, Member member);
 
     Page<Post> findAllByMemberOrderByPostingTimeAsc(Pageable pageable, Member member);
