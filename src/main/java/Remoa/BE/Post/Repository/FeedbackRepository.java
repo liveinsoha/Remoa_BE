@@ -93,4 +93,8 @@ public class FeedbackRepository {
                 .getResultList()
                 .size();
     }*/
+
+    public void deleteFeedback(Feedback feedback){
+        em.remove(feedback);
+    }
 }

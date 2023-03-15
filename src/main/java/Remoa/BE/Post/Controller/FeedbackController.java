@@ -65,4 +65,14 @@ public class FeedbackController {
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
+
+    @DeleteMapping("/feedback/{feedback_id}")
+    public ResponseEntity<Object> deleteFeedback(@PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
+        if(authorized(request)){
+
+            feedbackService.deleteFeedback(feedbackId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
 }

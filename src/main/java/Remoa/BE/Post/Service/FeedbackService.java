@@ -65,4 +65,10 @@ public class FeedbackService {
         feedbackRepository.updateFeedback(feedbackObj);
     }
 
+    @Transactional
+    public void deleteFeedback(Long feedbackId){
+        Feedback feedbackObj = findOne(feedbackId);
+        feedbackRepository.deleteFeedback(feedbackObj);
+    }
+
 }
