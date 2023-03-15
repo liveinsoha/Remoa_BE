@@ -54,7 +54,7 @@ public class MyPostController {
             Member myMember = memberService.findOne(memberId);
 
             pageNumber -= 1;
-            if (pageNumber <= 0) {
+            if (pageNumber < 0) {
                 return errorResponse(CustomMessage.PAGE_NUM_OVER);
             }
 
