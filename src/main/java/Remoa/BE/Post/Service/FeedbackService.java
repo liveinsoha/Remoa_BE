@@ -1,9 +1,12 @@
 package Remoa.BE.Post.Service;
 
 import Remoa.BE.Member.Domain.Feedback;
+import Remoa.BE.Member.Domain.FeedbackLike;
 import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Domain.UploadFile;
+import Remoa.BE.Post.Repository.FeedbackLikeRepository;
 import Remoa.BE.Post.Repository.FeedbackRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,11 +30,19 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
+    private final FeedbackLikeRepository feedbackLikeRepository;
     private final PostService postService;
+    private final MemberService memberService;
     @Transactional
     public Feedback findOne(Long feedbackId){
         Optional<Feedback> feedback = feedbackRepository.findOne(feedbackId);
         return feedback.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Feedback not found"));
+    }
+
+    @Transactional
+    public FeedbackLike getFeedbackLikeByMemberIdAndFeedbackId(Long memberId, Long feedbackId) {
+        FeedbackLike feedbackLike = feedbackLikeRepository.findByMemberMemberIdAndFeedbackFeedbackId(memberId, feedbackId);
+        return feedbackLike;
     }
 
     @Transactional
@@ -71,4 +83,21 @@ public class FeedbackService {
         feedbackRepository.deleteFeedback(feedbackObj);
     }
 
+    @Transactional
+    public void likeFeedback(Long memberId, Member myMember, Long feedbackId){
+        Feedback feedbackObj = findOne(feedbackId);
+        Integer feedbackLikeCount = feedbackObj.getFeedbackLikeCount();
+
+        //FeedbackLike를 db에서 조회해보고 조회 결과가 null이면 like+=1, FeedbackLike 엔티티 추가
+        // null이 아니면 like -=1, 조회결과인 해당 FeedbackLike 엔티티 삭제
+        FeedbackLike feedbackLike = getFeedbackLikeByMemberIdAndFeedbackId(memberId, feedbackId);
+        if(feedbackLike == null){
+            feedbackObj.setFeedbackLikeCount(feedbackLikeCount + 1); // 좋아요 수 1 증가
+            FeedbackLike feedbackLikeObj = FeedbackLike.createFeedbackLike(myMember, feedbackObj);
+            feedbackLikeRepository.save(feedbackLikeObj);
+        } else{
+            feedbackObj.setFeedbackLikeCount(feedbackLikeCount - 1); // 좋아요 수 1 차감
+            feedbackLikeRepository.deleteById(feedbackLike.getFeedbackLikeId()); // db에서 삭제
+        }
+    }
 }

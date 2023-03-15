@@ -75,4 +75,16 @@ public class FeedbackController {
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
+
+    @PostMapping("/feedback/like/{feedback_id}") // 피드백 좋아요
+    public ResponseEntity<Object> likeFeedback(@PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
+        if(authorized(request)){
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+            feedbackService.likeFeedback(memberId, myMember, feedbackId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+
+    }
 }
