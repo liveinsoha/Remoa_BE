@@ -7,6 +7,8 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -51,7 +53,7 @@ public class Comment {
      * Comment가 작성된 시간
      */
     @Column(name = "commented_time")
-    private String commentedTime;
+    private LocalDateTime commentedTime;
 
     /**
      * Comment의 좋아요 숫자

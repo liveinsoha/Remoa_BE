@@ -59,7 +59,7 @@ public class PostService {
 
         Member member = memberService.findOne(memberId);
 
-        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+//        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         //확장자 확인
         String fileName = uploadFiles.get(0).getOriginalFilename();
@@ -82,7 +82,7 @@ public class PostService {
                     .category(category)
                     .contestAwareType(uploadPostForm.getContestAwardType())
                     .pageCount(pageCount)
-                    .postingTime(formatDate)
+                    .postingTime(LocalDateTime.now())
                     .likeCount(0)
                     .views(0)
                     .scrapCount(0)
