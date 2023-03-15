@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -53,6 +50,17 @@ public class FeedbackController {
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
             feedbackService.registerFeedback(myMember, myFeedback, postId, null, feedbackId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
+
+    @PutMapping("/reference/feedback/{feedback_id}") // 피드백 수정
+    public ResponseEntity<Object> modifyFeedback(@RequestBody Map<String, String> feedback, @PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
+        String myFeedback = feedback.get("feedback");
+
+        if(authorized(request)){
+            feedbackService.modifyFeedback(myFeedback, feedbackId);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);

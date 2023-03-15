@@ -27,9 +27,11 @@ import java.util.stream.Collectors;
 public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final PostService postService;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;
+    @Transactional
+    public Feedback findOne(Long feedbackId){
+        Optional<Feedback> feedback = feedbackRepository.findOne(feedbackId);
+        return feedback.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Feedback not found"));
+    }
 
     @Transactional
     public void registerFeedback(Member member, String feedback, Long postId, Integer pageNumber, Long feedbackId){
@@ -55,4 +57,12 @@ public class FeedbackService {
 
         feedbackRepository.saveFeedback(feedbackObj);
     }
+
+    @Transactional
+    public void modifyFeedback(String feedback, Long feedbackId){
+        Feedback feedbackObj = findOne(feedbackId);
+        feedbackObj.setFeedback(feedback);
+        feedbackRepository.updateFeedback(feedbackObj);
+    }
+
 }

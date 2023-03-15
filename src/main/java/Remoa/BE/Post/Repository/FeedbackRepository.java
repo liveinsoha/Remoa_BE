@@ -19,7 +19,9 @@ import java.util.Optional;
 public class FeedbackRepository {
 
     private final EntityManager em;
-
+    public Optional<Feedback> findOne(Long id){
+        return Optional.ofNullable(em.find(Feedback.class, id));
+    }
     public void saveFeedback(Feedback feedback) {
         em.persist(feedback);
     }
@@ -78,6 +80,10 @@ public class FeedbackRepository {
                 .setParameter("member", member)
                 .getResultStream()
                 .findAny();
+    }
+
+    public void updateFeedback(Feedback newFeedback){
+        em.merge(newFeedback);
     }
 
     /* //필요없을 거 같아서 주석처리...
