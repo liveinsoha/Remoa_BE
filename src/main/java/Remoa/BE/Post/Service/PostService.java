@@ -6,11 +6,16 @@ import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
 import Remoa.BE.Post.Repository.CategoryRepository;
+import Remoa.BE.Post.Repository.PostPagingRepository;
 import Remoa.BE.Post.Repository.PostRepository;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
@@ -43,13 +48,13 @@ public class PostService {
 
     private final FileService fileService;
 
+    private final PostPagingRepository postPagingRepository;
+
+    private static final int HOME_PAGE_SIZE = 12;
+
     public Post findOne(Long postId) {
         Optional<Post> post = postRepository.findOne(postId);
         return post.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found"));
-    }
-
-    public List<Post> findAll(){
-        return postRepository.findAll();
     }
 
     @Transactional
@@ -101,5 +106,49 @@ public class PostService {
 
     public List<Post> searchPost(String name) {
         return postRepository.findByTitleContaining(name);
+    }
+
+    public List<Post> findAll(){
+        return postRepository.findAll();
+    }
+
+    public Page<Post> findAllPostsWithPaginationForHomepageNewest(int page) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
+        return postPagingRepository.findAll(pageable);
+    }
+
+    public Page<Post> findAllPostsWithPaginationForHomepageMostViewed(int page) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("views").descending());
+        return postPagingRepository.findAll(pageable);
+    }
+
+    public Page<Post> findAllPostsWithPaginationForHomepageMostLiked(int page) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
+        return postPagingRepository.findAll(pageable);
+    }
+
+    public Page<Post> findAllPostsWithPaginationForHomepageMostScraped(int page) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
+        return postPagingRepository.findAll(pageable);
+    }
+
+    public Page<Post> findAllPostsWithPaginationForHomepageSortByCategoryNewest(int page, String category) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
+        return postPagingRepository.findAllByCategory(pageable, categoryRepository.findByCategoryName(category));
+    }
+
+    public Page<Post> findAllPostsWithPaginationForHomepageSortByCategoryMostViewed(int page, String category) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("views").descending());
+        return postPagingRepository.findAllByCategory(pageable, categoryRepository.findByCategoryName(category));
+    }
+
+    public Page<Post> findAllPostsWithPaginationForHomepageSortByCategoryMostLiked(int page, String category) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
+        return postPagingRepository.findAllByCategory(pageable, categoryRepository.findByCategoryName(category));
+    }
+
+    public Page<Post> findAllPostsWithPaginationForHomepageSortByCategoryMostScraped(int page, String category) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
+        return postPagingRepository.findAllByCategory(pageable, categoryRepository.findByCategoryName(category));
     }
 }

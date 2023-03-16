@@ -90,7 +90,9 @@ public class MyPostController {
             for (Post post : posts) {
                 ResPostDto map = ResPostDto.builder()
                         .postingTime(post.getPostingTime().toString())
-                        .postMember(new ResMemberInfoDto(post.getMember().getMemberId(), post.getMember().getNickname(), post.getMember().getProfileImage()))
+                        .postMember(new ResMemberInfoDto(post.getMember().getMemberId(),
+                                post.getMember().getNickname(),
+                                post.getMember().getProfileImage()))
                         .postId(post.getPostId())
                         .views(post.getViews())
                         .categoryName(post.getCategory().getName())
