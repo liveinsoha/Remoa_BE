@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 
 /**
- * JPA Query Creation을 사용해서 post data sorting
+ * JPA Query Creation을 사용해서 post data sorting & slicing
  */
 @Repository
 public interface PostPagingRepository extends PagingAndSortingRepository<Post, Long> {

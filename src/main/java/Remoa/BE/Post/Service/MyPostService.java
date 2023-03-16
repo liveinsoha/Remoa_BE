@@ -21,7 +21,7 @@ public class MyPostService {
 
     private final PostRepository postRepository;
     private final PostPagingRepository postPagingRepository;
-    private static final int pageSize = 5;
+    private static final int PAGE_SIZE = 5;
 
     /**
      * 특정 member의 post들 전체 조회
@@ -43,7 +43,7 @@ public class MyPostService {
 //        PageRequest pageable = PageRequest.of(page, pageSize, Sort.by("postingTime").descending());
 //        return postPagingRepository.findAllByMember(pageable, member);
 
-        PageRequest pageable = PageRequest.of(page, pageSize);
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
         return postPagingRepository.findAllByMemberOrderByPostingTimeDesc(pageable, member);
     }
 
@@ -58,7 +58,7 @@ public class MyPostService {
 //        PageRequest pageable = PageRequest.of(page, pageSize, Sort.by("postingTime").ascending());
 //        return postPagingRepository.findAllByMember(pageable, member);
 
-        PageRequest pageable = PageRequest.of(page, pageSize);
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
         return postPagingRepository.findAllByMemberOrderByPostingTimeAsc(pageable, member);
     }
 
@@ -70,7 +70,7 @@ public class MyPostService {
      * @return Page<Post>
      */
     public Page<Post> getMostLikePosts(int page, Member member) {
-        PageRequest pageable = PageRequest.of(page, pageSize);
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
         return postPagingRepository.findAllByMemberOrderByLikeCountDesc(pageable, member);
     }
 
@@ -82,7 +82,7 @@ public class MyPostService {
      * @return Page<Post>
      */
     public Page<Post> getMostScrapPosts(int page, Member member) {
-        PageRequest pageable = PageRequest.of(page, pageSize);
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
         return postPagingRepository.findAllByMemberOrderByScrapCountDesc(pageable, member);
     }
 
