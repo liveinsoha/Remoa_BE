@@ -24,6 +24,8 @@ public interface PostPagingRepository extends PagingAndSortingRepository<Post, L
 
     Page<Post> findAllByMemberOrderByScrapCountDesc(Pageable pageable, Member member);
 
+    Page<Post> findAllByMemberAndCategory(Pageable pageable, Member member, Category category);
+
     Page<Post> findAllByMember(Pageable pageable, Member member);
 
     Page<Post> findAll(Pageable pageable);

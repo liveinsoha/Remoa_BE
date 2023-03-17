@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
@@ -47,6 +46,7 @@ public class MyPostController {
      */
     @GetMapping("/user/reference")
     public ResponseEntity<Object> myReference(HttpServletRequest request,
+                                              @RequestParam(required = false, defaultValue = "all") String category,
                                               @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber,
                                               @RequestParam(required = false, defaultValue = "newest") String sort) {
         if (authorized(request)) {
@@ -60,24 +60,49 @@ public class MyPostController {
 
             Page<Post> posts;
 
-            //switch문을 통해 각 옵션에 맞게 sorting
-            switch (sort) {
-                case "newest":
-                    posts = myPostService.getNewestPosts(pageNumber, myMember);
-                    break;
-                case "oldest":
-                    posts = myPostService.getOldestPosts(pageNumber, myMember);
-                    break;
-                case "like":
-                    posts = myPostService.getMostLikePosts(pageNumber, myMember);
-                    break;
-                case "scrap":
-                    posts = myPostService.getMostScrapPosts(pageNumber, myMember);
-                    break;
-                default:
-                    //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
-                    posts = myPostService.getNewestPosts(pageNumber, myMember);
-                    break;
+            if (category.equals("idea") ||
+                    category.equals("marketing") ||
+                    category.equals("design") ||
+                    category.equals("video") ||
+                    category.equals("etc")) {
+                switch (sort) {
+                    case "newest":
+                        posts = myPostService.getNewestPostsSortCategory(pageNumber, myMember, category);
+                        break;
+                    case "oldest":
+                        posts = myPostService.getOldestPostsSortCategory(pageNumber, myMember, category);
+                        break;
+                    case "like":
+                        posts = myPostService.getMostLikedPostsSortCategory(pageNumber, myMember, category);
+                        break;
+                    case "scrap":
+                        posts = myPostService.getMostScrapedPostsSortCategory(pageNumber, myMember, category);
+                        break;
+                    default:
+                        //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
+                        posts = myPostService.getNewestPostsSortCategory(pageNumber, myMember, category);
+                        break;
+                }
+            } else {
+                //switch문을 통해 각 옵션에 맞게 sorting
+                switch (sort) {
+                    case "newest":
+                        posts = myPostService.getNewestPosts(pageNumber, myMember);
+                        break;
+                    case "oldest":
+                        posts = myPostService.getOldestPosts(pageNumber, myMember);
+                        break;
+                    case "like":
+                        posts = myPostService.getMostLikedPosts(pageNumber, myMember);
+                        break;
+                    case "scrap":
+                        posts = myPostService.getMostScrapedPosts(pageNumber, myMember);
+                        break;
+                    default:
+                        //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
+                        posts = myPostService.getNewestPosts(pageNumber, myMember);
+                        break;
+                }
             }
 
             //조회할 레퍼런스가 db에 있으나, 현재 페이지에 조회할 데이터가 없는 경우 == 페이지 번호를 잘못 입력
