@@ -44,6 +44,9 @@ public class PostController {
         Map<String, Object> responseData = new HashMap<>();
 
         pageNumber -= 1;
+        if (pageNumber < 0) {
+            return errorResponse(CustomMessage.PAGE_NUM_OVER);
+        }
 
         Page<Post> allPosts;
         if (category.equals("idea") ||
@@ -56,6 +59,10 @@ public class PostController {
         } else {
             //sort -> 최신순 : newest, 좋아요순 : like, 스크랩순 : scrap, 조회순 : view
             allPosts = sortAndPaginatePosts(sort, pageNumber);
+        }
+
+        if ((allPosts.getContent().isEmpty()) && (allPosts.getTotalElements() > 0)) {
+            return errorResponse(CustomMessage.PAGE_NUM_OVER);
         }
 
         List<ResHomeReferenceDto> result = new ArrayList<>();
