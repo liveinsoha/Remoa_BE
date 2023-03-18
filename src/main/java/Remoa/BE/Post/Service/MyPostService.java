@@ -25,7 +25,7 @@ public class MyPostService {
     private final PostRepository postRepository;
     private final PostPagingRepository postPagingRepository;
     private final CategoryRepository categoryRepository;
-    private static final int PAGE_SIZE = 5;
+    private static final int PAGE_SIZE = 12;
 
     /**
      * 특정 member의 post들 전체 조회
@@ -37,7 +37,7 @@ public class MyPostService {
     }
 
     /**
-     * paging : 특정 member의 post들 5개씩 조회
+     * paging : 특정 member의 post들 12개씩 조회
      * sorting : 최신순으로 정렬
      * @param page : 조회하려는 페이지 번호
      * @param member : 조회하려는 작성자
