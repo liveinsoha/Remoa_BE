@@ -1,6 +1,7 @@
 package Remoa.BE.Post.Repository;
 
 import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Post.Domain.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,12 @@ public interface PostPagingRepository extends PagingAndSortingRepository<Post, L
 
     Page<Post> findAllByMemberOrderByScrapCountDesc(Pageable pageable, Member member);
 
+    Page<Post> findAllByMemberAndCategory(Pageable pageable, Member member, Category category);
+
     Page<Post> findAllByMember(Pageable pageable, Member member);
+
+    Page<Post> findAll(Pageable pageable);
+
+    Page<Post> findAllByCategory(Pageable pageable, Category category);
 
 }

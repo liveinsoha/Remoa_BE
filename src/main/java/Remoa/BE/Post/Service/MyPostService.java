@@ -1,13 +1,16 @@
 package Remoa.BE.Post.Service;
 
 import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Post.Domain.Post;
+import Remoa.BE.Post.Repository.CategoryRepository;
 import Remoa.BE.Post.Repository.PostPagingRepository;
 import Remoa.BE.Post.Repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +24,7 @@ public class MyPostService {
 
     private final PostRepository postRepository;
     private final PostPagingRepository postPagingRepository;
+    private final CategoryRepository categoryRepository;
     private static final int PAGE_SIZE = 5;
 
     /**
@@ -69,7 +73,7 @@ public class MyPostService {
      * @param member : 조회하려는 작성자
      * @return Page<Post>
      */
-    public Page<Post> getMostLikePosts(int page, Member member) {
+    public Page<Post> getMostLikedPosts(int page, Member member) {
         PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
         return postPagingRepository.findAllByMemberOrderByLikeCountDesc(pageable, member);
     }
@@ -81,9 +85,29 @@ public class MyPostService {
      * @param member : 조회하려는 작성자
      * @return Page<Post>
      */
-    public Page<Post> getMostScrapPosts(int page, Member member) {
+    public Page<Post> getMostScrapedPosts(int page, Member member) {
         PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
         return postPagingRepository.findAllByMemberOrderByScrapCountDesc(pageable, member);
+    }
+
+    public Page<Post> getNewestPostsSortCategory(int page, Member member, String  category) {
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("postingTime").descending());
+        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
+    }
+
+    public Page<Post> getOldestPostsSortCategory(int page, Member member, String  category) {
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("postingTime").ascending());
+        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
+    }
+
+    public Page<Post> getMostLikedPostsSortCategory(int page, Member member, String  category) {
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("likeCount").descending());
+        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
+    }
+
+    public Page<Post> getMostScrapedPostsSortCategory(int page, Member member, String  category) {
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("scrapCount").descending());
+        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
     }
 
 }

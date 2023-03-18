@@ -11,10 +11,7 @@ import lombok.*;
 @Builder
 public class ResPostDto {
 
-    //TODO 피그마를 통해 분석해보면 썸네일로 쓰일 Member의 profileImage 필요함. 또, 공유횟수도 추가해야하는지 확인 필요
-
     public Long postId;
-
     public ResMemberInfoDto postMember;
     public String thumbnail;
     public String title;
@@ -23,6 +20,5 @@ public class ResPostDto {
     public Integer views;
     public Integer scrapCount;
     public String categoryName;
-
 
 }

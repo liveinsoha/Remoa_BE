@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 import static Remoa.BE.exception.CustomBody.*;
 import static Remoa.BE.utill.MemberInfo.*;
@@ -78,17 +79,23 @@ public class KakaoController {
 
         Member member = new Member();
 
-        //닉네임 사용 가능하면 그대로 진행, 불가능하면 임의 닉네임 "유저-{kakaoId}로 지정.
+        member.setNickname(form.getNickname());
+
+        //닉네임 사용 가능하면 그대로 진행, 불가능하면 임의 닉네임 "유저-{randomInt}로 지정.
         Boolean nicknameDuplicate = memberService.isNicknameDuplicate(form.getNickname());
-        if (nicknameDuplicate) { //특수문자는 닉네임에 사용할 수 없으나 임의로 지정하는 닉네임에는 사용 가능하게 해서 또 다른 중복 문제 없게끔.
-            member.setNickname("유저-" + form.getKakaoId());
-        } else {
-            member.setNickname(form.getNickname());
+        while (nicknameDuplicate) { //특수문자는 닉네임에 사용할 수 없으나 임의로 지정하는 닉네임에는 사용 가능하게 해서 또 다른 중복 문제 없게끔.
+            Random random = new Random();
+            String randomNumber = Integer.toString((random.nextInt(900_000) + 100_000)); // 100_000 ~ 999_999
+            nicknameDuplicate = memberService.isNicknameDuplicate("유저-" + randomNumber);
+            member.setNickname("유저-" + randomNumber);
         }
 
         form.setProfileImage(profileService.editProfileImg(form.getNickname(), form.getProfileImage()));
 
         //카카오에서 받은 프로필 사진 url 링크를 토대로 s3에 저장
+        if (memberService.findByKakaoId(form.getKakaoId()).isPresent()) {
+            return failResponse(CustomMessage.VALIDATED, "kakaoId가 이미 가입되어 있습니다.");
+        }
         member.setKakaoId(form.getKakaoId());
         member.setEmail(form.getEmail());
         member.setProfileImage(form.getProfileImage());
