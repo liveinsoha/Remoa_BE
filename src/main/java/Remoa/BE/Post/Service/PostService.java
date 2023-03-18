@@ -8,6 +8,7 @@ import Remoa.BE.Post.Dto.Request.UploadPostForm;
 import Remoa.BE.Post.Repository.CategoryRepository;
 import Remoa.BE.Post.Repository.PostRepository;
 import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.utill.FileExtension;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static Remoa.BE.exception.CustomBody.successResponse;
+import static Remoa.BE.utill.FileExtension.fileExtension;
 
 @Slf4j
 @Service
@@ -62,11 +64,8 @@ public class PostService {
 //        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         //확장자 확인
-        String fileName = uploadFiles.get(0).getOriginalFilename();
-        assert fileName != null;
-        int lastIndex = fileName.lastIndexOf(".");
-        String extension = fileName.substring(lastIndex + 1);
-        if(extension.equals("pdf") || extension.equals("jpg")){
+        String extension = fileExtension(uploadFiles.get(0));
+        if(extension.equals("pdf") || extension.equals("jpg") || extension.equals("png")){
             int pageCount;
             if(extension.equals("pdf")){
                 PDDocument document = PDDocument.load(uploadFiles.get(0).getInputStream());
@@ -93,7 +92,7 @@ public class PostService {
             return post;
         }
         else{
-            return null;
+            throw new IOException();
         }
 
 

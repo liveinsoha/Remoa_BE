@@ -1,6 +1,7 @@
 package Remoa.BE.Member.Service;
 
 import Remoa.BE.Member.Domain.AwsS3;
+import Remoa.BE.utill.FileExtension;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -20,6 +21,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
+
+import static Remoa.BE.utill.FileExtension.fileExtension;
 
 @Service
 @RequiredArgsConstructor
