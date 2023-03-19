@@ -43,7 +43,7 @@ public class FeedbackController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @PostMapping("/reference/{reference_id}/feedback/{feedback_id}") // 레퍼런스에 피드백 등록
+    @PostMapping("/reference/{reference_id}/feedback/{feedback_id}") // 레퍼런스에 피드백 대댓긓 등록
     public ResponseEntity<Object> registerFeedbackReply(@RequestBody Map<String, String> feedback,
                                                    @PathVariable("reference_id") Long postId,
                                                    @PathVariable("feedback_id") Long feedbackId,

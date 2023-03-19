@@ -5,9 +5,14 @@ import Remoa.BE.Member.Domain.CommentBookmark;
 import Remoa.BE.Member.Domain.CommentLike;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Post.Domain.Post;
+import Remoa.BE.Post.Repository.CommentPagingRepository;
 import Remoa.BE.Post.Repository.CommentRepository;
 import Remoa.BE.Post.Repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.patterns.HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStuffAnywhereVisitor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +30,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostService postService;
+    private final CommentPagingRepository commentPagingRepository;
 
     @Transactional
     public Long writeComment(Comment comment) {
@@ -41,7 +47,6 @@ public class CommentService {
         return commentLike.getCommentLikeId();
     }
 
-    @Transactional
     public Comment findOne(Long commentId) {
         Optional<Comment> comment = commentRepository.findOne(commentId);
         return comment.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment not found"));
@@ -91,5 +96,14 @@ public class CommentService {
     public void deleteComment(Long commentId){
         Comment commentObj = findOne(commentId);
         commentRepository.deleteComment(commentObj);
+    }
+
+    public List<Comment> getRecentThreeCommentsExceptReply(Post post) {
+        PageRequest pageable = PageRequest.of(0, 3, Sort.by("commentedTime").descending());
+        return commentPagingRepository.findByParentCommentIsNullAndPost(pageable, post).getContent();
+    }
+
+    public List<Comment> getParentCommentsReply(Comment parentComment) {
+        return commentRepository.findRepliesOfParentComment(parentComment);
     }
 }

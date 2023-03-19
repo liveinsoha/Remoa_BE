@@ -52,6 +52,17 @@ public class MyPostService {
     }
 
     /**
+     * 받은 피드백 관리에서 쓰이는 최신 3개순 포스트
+     * @param page
+     * @param member
+     * @return member가 작성한 최신 3개의 Post.
+     */
+    public Page<Post> getNewestThreePosts(int page, Member member) {
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE - 2, Sort.by("postingTime").descending());
+        return postPagingRepository.findAllByMember(pageable, member);
+    }
+
+    /**
      * paging : 특정 member의 post들 5개씩 조회
      * sorting : 과거순으로 정렬
      * @param page : 조회하려는 페이지 번호
@@ -92,6 +103,18 @@ public class MyPostService {
 
     public Page<Post> getNewestPostsSortCategory(int page, Member member, String  category) {
         PageRequest pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("postingTime").descending());
+        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
+    }
+
+    /**
+     * 받은 피드백 관리에서 쓰이는 최신 3개순 포스트
+     * @param page
+     * @param member
+     * @param category
+     * @return member가 작성한 최신 3개의 Post.
+     */
+    public Page<Post> getNewestThreePostsSortCategory(int page, Member member, String category) {
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE - 2, Sort.by("postingTime").descending());
         return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
     }
 
