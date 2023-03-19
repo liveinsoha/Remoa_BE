@@ -4,10 +4,12 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Post.Domain.Post;
+import Remoa.BE.Post.Domain.PostScarp;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
 import Remoa.BE.Post.Repository.CategoryRepository;
 import Remoa.BE.Post.Repository.PostPagingRepository;
 import Remoa.BE.Post.Repository.PostRepository;
+import Remoa.BE.Post.Repository.PostScrapRepository;
 import Remoa.BE.exception.CustomMessage;
 import Remoa.BE.utill.FileExtension;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +53,8 @@ public class PostService {
     private final FileService fileService;
 
     private final PostPagingRepository postPagingRepository;
+
+    private final PostScrapRepository postScrapRepository;
 
     private static final int HOME_PAGE_SIZE = 12;
 
@@ -193,5 +197,28 @@ public class PostService {
     public Page<Post> findAllPostsWithPaginationForHomepageSortByCategoryMostScraped(int page, String category) {
         Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
         return postPagingRepository.findAllByCategory(pageable, categoryRepository.findByCategoryName(category));
+    }
+
+    @Transactional
+    public PostScarp getPostScrapByMemberIdAndPostId(Long memberId, Long postId){
+        return postScrapRepository.findByMemberMemberIdAndPostPostId(memberId, postId);
+    }
+
+    @Transactional
+    public void scrapPost(Long memberId, Member myMember, Long referenceId){
+        Post post = findOne(referenceId);
+        Integer postScrapCount = post.getScrapCount(); // 이 게시물을 스크랩한 수
+
+        // scrapPost를 db에서 조회해보고 조회 결과가 null이면 scrapCount += 1, PostScrap 생성
+        // null이 아니면 scrapCount -= 1, 조회결과인 해당 PostScrap 삭제
+        PostScarp postScarp = getPostScrapByMemberIdAndPostId(memberId, referenceId);
+        if(postScarp == null){
+            post.setScrapCount(postScrapCount + 1); // 스크랩 수 1 증가
+            PostScarp postScrapObj = PostScarp.createPostScrap(myMember, post);
+            postScrapRepository.save(postScrapObj);
+        } else{
+            post.setScrapCount(post.getScrapCount() - 1); // 스크랩 수 1 차감
+            postScrapRepository.deleteById(postScarp.getPostScrapId()); // db에서 삭제
+        }
     }
 }

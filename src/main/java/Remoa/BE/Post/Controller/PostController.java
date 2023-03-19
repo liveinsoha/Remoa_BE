@@ -1,6 +1,8 @@
 package Remoa.BE.Post.Controller;
 
+import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
+import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Domain.UploadFile;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
@@ -11,6 +13,7 @@ import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +37,7 @@ import static Remoa.BE.utill.MemberInfo.getMemberId;
 public class PostController {
 
     private final PostService postService;
+    private final MemberService memberService;
 //    private final ModelMapper modelMapper;
 
     @GetMapping("/reference")
@@ -125,5 +129,16 @@ public class PostController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
+    @PostMapping("/reference/scrap/{reference_id}")
+    public ResponseEntity<Object> scrapReference(@PathVariable("reference_id") Long referenceId, HttpServletRequest request){
+        if(authorized(request)){
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+            postService.scrapPost(memberId, myMember, referenceId);
 
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
 }
