@@ -2,15 +2,19 @@ package Remoa.BE.Post.Service;
 
 import Remoa.BE.Member.Domain.*;
 import Remoa.BE.Post.Domain.Post;
+import Remoa.BE.Post.Repository.CommentPagingRepository;
 import Remoa.BE.Post.Repository.CommentLikeRepository;
 import Remoa.BE.Post.Repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +26,7 @@ public class CommentService {
 
     private final CommentLikeRepository commentLikeRepository;
     private final PostService postService;
+    private final CommentPagingRepository commentPagingRepository;
 
     @Transactional
     public Long writeComment(Comment comment) {
@@ -38,7 +43,6 @@ public class CommentService {
         return commentLike.getCommentLikeId();
     }
 
-    @Transactional
     public Comment findOne(Long commentId) {
         Optional<Comment> comment = commentRepository.findOne(commentId);
         return comment.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment not found"));
@@ -89,6 +93,14 @@ public class CommentService {
         commentRepository.deleteComment(commentObj);
     }
 
+    public List<Comment> getRecentThreeCommentsExceptReply(Post post) {
+        PageRequest pageable = PageRequest.of(0, 3, Sort.by("commentedTime").descending());
+        return commentPagingRepository.findByParentCommentIsNullAndPost(pageable, post).getContent();
+    }
+
+    public List<Comment> getParentCommentsReply(Comment parentComment) {
+        return commentRepository.findRepliesOfParentComment(parentComment);
+    }
     @Transactional
     public CommentLike getCommentLikeByMemberIdAndCommentId(Long memberId, Long commentId) {
         return commentLikeRepository.findByMemberMemberIdAndCommentCommentId(memberId, commentId);

@@ -90,6 +90,13 @@ public class CommentRepository {
                 .size();
     }*/
 
+    public List<Comment> findRepliesOfParentComment(Comment parentComment) {
+        return em.createQuery("select c from Comment c " +
+                        "where c.parentComment = :comment order by c.commentedTime desc", Comment.class)
+                .setParameter("comment", parentComment)
+                .getResultList();
+    }
+
     public void updateComment(Comment newComment){
         em.merge(newComment);
     }
