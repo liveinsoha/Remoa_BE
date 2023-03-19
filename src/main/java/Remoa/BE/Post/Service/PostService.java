@@ -80,8 +80,8 @@ public class PostService {
                 PDDocument document = PDDocument.load(uploadFiles.get(0).getInputStream());
                 pageCount = document.getNumberOfPages();
             }
-           else{
-               pageCount = uploadFiles.size();
+            else{
+                pageCount = uploadFiles.size();
             }
             Post post = Post.builder()
                     .title(uploadPostForm.getTitle())
