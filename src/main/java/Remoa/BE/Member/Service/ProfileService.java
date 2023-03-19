@@ -41,10 +41,6 @@ public class ProfileService {
     public void editProfile(Long memberId, EditProfileForm profile) {
         Member member = memberService.findOne(memberId);
 
-        if (member == null) {
-            throw new IllegalArgumentException("Invalid member id");
-        }
-
         // 사용자의 프로필 정보 수정
         member.setNickname(profile.getNickname());
         member.setPhoneNumber(profile.getPhoneNumber());

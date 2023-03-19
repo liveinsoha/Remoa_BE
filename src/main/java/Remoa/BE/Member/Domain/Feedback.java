@@ -63,7 +63,7 @@ public class Feedback {
      * Feedback의 좋아요 숫자
      */
     @Column(name = "feedback_like_count")
-    private Integer feedbackLikeCount;
+    private Integer feedbackLikeCount = 0;
 
     private Boolean deleted = Boolean.FALSE;
 }

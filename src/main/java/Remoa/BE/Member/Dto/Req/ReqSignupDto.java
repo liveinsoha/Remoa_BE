@@ -16,10 +16,6 @@ public class ReqSignupDto {
     @NotNull(message = "카카오에서 발급받은 id값이 누락되었습니다.")
     private Long kakaoId;
 
-    @NotBlank(message = "이름은 필수값입니다.")
-    private String nickname;
-
-    private String profileImage;
 
     @NotNull(message = "선택 동의사항 값은 필수입니다.")
     private Boolean termConsent;

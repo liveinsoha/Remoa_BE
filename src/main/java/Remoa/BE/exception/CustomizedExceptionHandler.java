@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,5 +32,11 @@ public class CustomizedExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<Object> responseStatusException(ResponseStatusException ex){
         return errorResponse(CustomMessage.NO_ID);
+    }
+
+    //파일 유형 에러
+    @ExceptionHandler
+    public ResponseEntity<Object> ioException(IOException ex){
+        return errorResponse(CustomMessage.BAD_FILE);
     }
 }

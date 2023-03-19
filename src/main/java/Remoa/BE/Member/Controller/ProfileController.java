@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 
 
 import static Remoa.BE.exception.CustomBody.*;
+import static Remoa.BE.utill.FileExtension.fileExtension;
 import static Remoa.BE.utill.MemberInfo.authorized;
 import static Remoa.BE.utill.MemberInfo.getMemberId;
 
@@ -110,13 +111,22 @@ public class ProfileController {
 
         if(authorized(request)) {
 
-            Long memberId = getMemberId();
-            Member myMember = memberService.findOne(memberId);;
+            //jpg랑 png만 가능합니다
+            String extension = fileExtension(multipartFile);
+            if(extension.equals("png") ||extension.equals("jpg")) {
 
-            String editProfileImg = awsS3Service.editProfileImg(myMember.getProfileImage(), multipartFile);
-            myMember.setProfileImage(editProfileImg);
-            memberService.join(myMember);
-            return new ResponseEntity<>(HttpStatus.OK);
+                Long memberId = getMemberId();
+                Member myMember = memberService.findOne(memberId);
+
+
+                String editProfileImg = awsS3Service.editProfileImg(myMember.getProfileImage(), multipartFile);
+                myMember.setProfileImage(editProfileImg);
+                memberService.join(myMember);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            else{
+                throw new IOException();
+            }
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
@@ -128,12 +138,9 @@ public class ProfileController {
 
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
-            if(myMember.getProfileImage() == null){
-                return errorResponse(CustomMessage.BAD_PROFILE_IMG);
-            }
 
             awsS3Service.removeProfileUrl(myMember.getProfileImage());
-            myMember.setProfileImage(null);
+            myMember.setProfileImage("https://remoa.s3.ap-northeast-2.amazonaws.com/img/profile_img.png");
             memberService.join(myMember);
             return new ResponseEntity<>(HttpStatus.OK);
         }
