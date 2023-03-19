@@ -40,12 +40,12 @@ public class FeedbackController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @PostMapping("/reference/{reference_id}/feedback/{feedback_id}") // 레퍼런스에 피드백 등록
+    @PostMapping("/reference/{reference_id}/feedback/{feedback_id}") // 레퍼런스 피드백 대댓글
     public ResponseEntity<Object> registerFeedbackReply(@RequestBody Map<String, String> feedback,
                                                    @PathVariable("reference_id") Long postId,
                                                    @PathVariable("feedback_id") Long feedbackId,
                                                    HttpServletRequest request){
-        String myFeedback = feedback.get("feedback");
+        String myFeedback = feedback.get("feedback")
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
@@ -66,7 +66,7 @@ public class FeedbackController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @DeleteMapping("/feedback/{feedback_id}")
+    @DeleteMapping("/reference/feedback/{feedback_id}")
     public ResponseEntity<Object> deleteFeedback(@PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
         if(authorized(request)){
 
@@ -76,7 +76,7 @@ public class FeedbackController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @PostMapping("/feedback/like/{feedback_id}") // 피드백 좋아요
+    @PostMapping("/reference/feedback/{feedback_id}/like") // 피드백 좋아요
     public ResponseEntity<Object> likeFeedback(@PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();
