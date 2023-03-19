@@ -138,12 +138,9 @@ public class ProfileController {
 
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
-            if(myMember.getProfileImage() == null){
-                return errorResponse(CustomMessage.BAD_PROFILE_IMG);
-            }
 
             awsS3Service.removeProfileUrl(myMember.getProfileImage());
-            myMember.setProfileImage(null);
+            myMember.setProfileImage("https://remoa.s3.ap-northeast-2.amazonaws.com/img/profile_img.png");
             memberService.join(myMember);
             return new ResponseEntity<>(HttpStatus.OK);
         }
