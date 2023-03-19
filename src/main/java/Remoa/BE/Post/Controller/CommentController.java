@@ -1,5 +1,6 @@
 package Remoa.BE.Post.Controller;
 
+import Remoa.BE.Member.Domain.Comment;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Service.CommentService;
@@ -66,6 +67,17 @@ public class CommentController {
         if(authorized(request)){
 
             commentService.deleteComment(commentId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
+
+    @PostMapping("/comment/like/{comment_id}") // 댓글 좋아요
+    public ResponseEntity<Object> likeComment(@PathVariable("comment_id") Long commentId, HttpServletRequest request){
+        if(authorized(request)){
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+            commentService.likeComment(memberId, myMember, commentId);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);

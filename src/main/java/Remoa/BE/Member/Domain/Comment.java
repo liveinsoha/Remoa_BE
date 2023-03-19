@@ -59,7 +59,7 @@ public class Comment {
      * Comment의 좋아요 숫자
      */
     @Column(name = "comment_like_count")
-    private Integer commentLikeCount;
+    private Integer commentLikeCount = 0;
 
     private Boolean deleted = Boolean.FALSE;
 }

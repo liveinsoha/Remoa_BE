@@ -45,7 +45,7 @@ public class FeedbackController {
                                                    @PathVariable("reference_id") Long postId,
                                                    @PathVariable("feedback_id") Long feedbackId,
                                                    HttpServletRequest request){
-        String myFeedback = feedback.get("feedback")
+        String myFeedback = feedback.get("feedback");
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);

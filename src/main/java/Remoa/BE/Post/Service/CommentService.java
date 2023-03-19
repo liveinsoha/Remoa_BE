@@ -1,10 +1,8 @@
 package Remoa.BE.Post.Service;
 
-import Remoa.BE.Member.Domain.Comment;
-import Remoa.BE.Member.Domain.CommentBookmark;
-import Remoa.BE.Member.Domain.CommentLike;
-import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Member.Domain.*;
 import Remoa.BE.Post.Domain.Post;
+import Remoa.BE.Post.Repository.CommentLikeRepository;
 import Remoa.BE.Post.Repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +19,8 @@ import java.util.Optional;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+
+    private final CommentLikeRepository commentLikeRepository;
     private final PostService postService;
 
     @Transactional
@@ -87,5 +87,28 @@ public class CommentService {
     public void deleteComment(Long commentId){
         Comment commentObj = findOne(commentId);
         commentRepository.deleteComment(commentObj);
+    }
+
+    @Transactional
+    public CommentLike getCommentLikeByMemberIdAndCommentId(Long memberId, Long commentId) {
+        return commentLikeRepository.findByMemberMemberIdAndCommentCommentId(memberId, commentId);
+    }
+
+    @Transactional
+    public void likeComment(Long memberId, Member myMember, Long commentId){
+        Comment commentObj = findOne(commentId);
+        Integer commentLikeCount = commentObj.getCommentLikeCount();
+
+        // CommentLike를 db에서 조회해보고 조회 결과가 null이면 like+=1, CommentLike 엔티티 생성
+        // null이 아니면 like -= 1, 조회결과인 해당 CommentLike 엔티티 삭제
+        CommentLike commentLike = getCommentLikeByMemberIdAndCommentId(memberId, commentId);
+        if(commentLike == null){
+            commentObj.setCommentLikeCount(commentLikeCount + 1); // 좋아요 수 1 증가
+            CommentLike commentLikeObj = CommentLike.createCommentLike(myMember, commentObj);
+            commentLikeRepository.save(commentLikeObj);
+        }else{
+            commentObj.setCommentLikeCount(commentLikeCount - 1); // 좋아요 수 1 차감
+            commentLikeRepository.deleteById(commentLike.getCommentLikeId()); // db에서 삭제
+        }
     }
 }
