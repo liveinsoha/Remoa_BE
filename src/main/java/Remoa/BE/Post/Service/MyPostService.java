@@ -66,6 +66,53 @@ public class MyPostService {
         return postPagingRepository.findAllByMemberOrderByPostingTimeAsc(pageable, member);
     }
 
+    public Page<Post> sortAndPaginatePostsByMember(int pageNumber, String sort, Member myMember) {
+        Page<Post> posts;
+        //switch문을 통해 각 옵션에 맞게 sorting
+        switch (sort) {
+            case "newest":
+                posts = getNewestPosts(pageNumber, myMember);
+                break;
+            case "oldest":
+                posts = getOldestPosts(pageNumber, myMember);
+                break;
+            case "like":
+                posts = getMostLikedPosts(pageNumber, myMember);
+                break;
+            case "scrap":
+                posts = getMostScrapedPosts(pageNumber, myMember);
+                break;
+            default:
+                //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
+                posts = getNewestPosts(pageNumber, myMember);
+                break;
+        }
+        return posts;
+    }
+
+    public Page<Post> sortAndPaginatePostsByCategoryAndMember(String category, int pageNumber, String sort, Member myMember) {
+        Page<Post> posts;
+        switch (sort) {
+            case "newest":
+                posts = getNewestPostsSortCategory(pageNumber, myMember, category);
+                break;
+            case "oldest":
+                posts = getOldestPostsSortCategory(pageNumber, myMember, category);
+                break;
+            case "like":
+                posts = getMostLikedPostsSortCategory(pageNumber, myMember, category);
+                break;
+            case "scrap":
+                posts = getMostScrapedPostsSortCategory(pageNumber, myMember, category);
+                break;
+            default:
+                //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
+                posts = getNewestPostsSortCategory(pageNumber, myMember, category);
+                break;
+        }
+        return posts;
+    }
+
     /**
      * paging : 특정 member의 post들 5개씩 조회
      * sorting : 좋아요 순으로 정렬

@@ -6,7 +6,6 @@ import Remoa.BE.Member.Domain.CommentLike;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Repository.CommentRepository;
-import Remoa.BE.Post.Repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -55,7 +52,7 @@ public class CommentService {
     }
 
     @Transactional
-    public Post registerComment(Member member, String comment, Long postId, Long commentId){
+    public void registerComment(Member member, String comment, Long postId, Long commentId){
 
         Comment parentComment = null;
 
@@ -76,7 +73,6 @@ public class CommentService {
         commentObj.setCommentedTime(LocalDateTime.now());
         commentRepository.saveComment(commentObj);
 
-        return post;
     }
 
     @Transactional

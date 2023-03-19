@@ -103,6 +103,50 @@ public class PostService {
 
     }
 
+    public Page<Post> sortAndPaginatePosts(String sort, int pageNumber) {
+        Page<Post> allPosts;
+        switch (sort) {
+            case "newest":
+                allPosts = findAllPostsWithPaginationForHomepageNewest(pageNumber);
+                break;
+            case "like":
+                allPosts = findAllPostsWithPaginationForHomepageMostLiked(pageNumber);
+                break;
+            case "scrap":
+                allPosts = findAllPostsWithPaginationForHomepageMostScraped(pageNumber);
+                break;
+            case "view":
+                allPosts = findAllPostsWithPaginationForHomepageMostViewed(pageNumber);
+            default:
+                //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
+                allPosts = findAllPostsWithPaginationForHomepageNewest(pageNumber);
+                break;
+        }
+        return allPosts;
+    }
+
+    public Page<Post> sortAndPaginatePostsByCategory(String category, String sort, int pageNumber) {
+        Page<Post> allPosts;
+        switch (sort) {
+            case "newest":
+                allPosts = findAllPostsWithPaginationForHomepageSortByCategoryNewest(pageNumber, category);
+                break;
+            case "like":
+                allPosts = findAllPostsWithPaginationForHomepageSortByCategoryMostLiked(pageNumber, category);
+                break;
+            case "scrap":
+                allPosts = findAllPostsWithPaginationForHomepageSortByCategoryMostScraped(pageNumber, category);
+                break;
+            case "view":
+                allPosts = findAllPostsWithPaginationForHomepageSortByCategoryMostViewed(pageNumber, category);
+            default:
+                //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
+                allPosts = findAllPostsWithPaginationForHomepageSortByCategoryNewest(pageNumber, category);
+                break;
+        }
+        return allPosts;
+    }
+
     public List<Post> searchPost(String name) {
         return postRepository.findByTitleContaining(name);
     }
