@@ -47,6 +47,11 @@ public class Post {
     private String contestName;
 
     /**
+     * 유튜브 링크
+     */
+    private String youtubeLink;
+
+    /**
      * 참여한 공모전의 마감 기한
      */
     private String deadline;
