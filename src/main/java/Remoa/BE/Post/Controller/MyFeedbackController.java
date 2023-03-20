@@ -68,7 +68,11 @@ public class MyFeedbackController {
                 posts = myPostService.getNewestThreePosts(pageNumber, myMember);
             }
 
-            Map<String, ResReceivedCommentDto> result = new HashMap<>();
+            if ((posts.getContent().isEmpty()) && (posts.getTotalElements() > 0)) {
+                return errorResponse(CustomMessage.PAGE_NUM_OVER);
+            }
+
+            Map<String, Object> result = new HashMap<>();
 
             int postNumber = 1;
             for (Post post : posts) { //조회한 post
@@ -83,7 +87,6 @@ public class MyFeedbackController {
 
 
                     List<ResReplyDto> replies = new ArrayList<>();
-                    int replyNum = 1;
                     for (Comment reply : parentCommentsReply) {
                         log.warn("reply = {}", reply.getComment());
 
@@ -94,7 +97,6 @@ public class MyFeedbackController {
                                 reply.getMember().getProfileImage(),
                                 reply.getComment(),
                                 reply.getCommentLikeCount()));
-                        replyNum++;
                     }
 
                     commentInfo.put("comment_" + commentNumber, new ResCommentDto(
@@ -112,9 +114,6 @@ public class MyFeedbackController {
                 ResReceivedCommentDto map = ResReceivedCommentDto.builder()
                         .title(post.getTitle())
                         .postId(post.getPostId())
-                        .postMember(new ResMemberInfoDto(post.getMember().getMemberId(),
-                                post.getMember().getNickname(),
-                                post.getMember().getProfileImage()))
                         .commentInfo(commentInfo)
                         .build();
 
@@ -122,6 +121,9 @@ public class MyFeedbackController {
 
                 postNumber++;
             }
+            result.put("totalPages", posts.getTotalPages()); //전체 페이지의 수
+            result.put("totalOfAllComments", posts.getTotalElements()); //모든 코멘트의 수
+            result.put("totalOfPageElements", posts.getNumberOfElements()); //현 페이지 피드백의 수
 
             return successResponse(CustomMessage.OK, result);
 

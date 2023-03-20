@@ -72,7 +72,7 @@ public class CommentController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @PostMapping("/comment/like/{comment_id}") // 댓글 좋아요
+    @PostMapping("/comment/{comment_id}/like") // 댓글 좋아요
     public ResponseEntity<Object> likeComment(@PathVariable("comment_id") Long commentId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();
