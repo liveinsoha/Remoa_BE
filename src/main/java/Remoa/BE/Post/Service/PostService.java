@@ -80,6 +80,7 @@ public class PostService {
                     .member(member)
                     .contestName(uploadPostForm.getContestName())
                     .category(category)
+                    .youtubeLink(uploadPostForm.getYoutubeLink())
                     .contestAwareType(uploadPostForm.getContestAwardType())
                     .pageCount(pageCount)
                     .postingTime(LocalDateTime.now())
