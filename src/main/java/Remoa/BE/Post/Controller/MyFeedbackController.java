@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
@@ -91,8 +90,8 @@ public class MyFeedbackController {
                         log.warn("reply = {}", reply.getComment());
 
                         replies.add(new ResReplyDto(
-                                reply.getMember().getMemberId(),
                                 reply.getCommentId(),
+                                reply.getMember().getMemberId(),
                                 reply.getMember().getNickname(),
                                 reply.getMember().getProfileImage(),
                                 reply.getComment(),
@@ -100,8 +99,8 @@ public class MyFeedbackController {
                     }
 
                     commentInfo.put("comment_" + commentNumber, new ResCommentDto(
-                            parentComment.getMember().getMemberId(),
                             parentComment.getCommentId(),
+                            parentComment.getMember().getMemberId(),
                             parentComment.getMember().getNickname(),
                             parentComment.getMember().getProfileImage(),
                             parentComment.getComment(),

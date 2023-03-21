@@ -81,7 +81,7 @@ public class PostService {
                     .contestName(uploadPostForm.getContestName())
                     .category(category)
                     .youtubeLink(uploadPostForm.getYoutubeLink())
-                    .contestAwareType(uploadPostForm.getContestAwardType())
+                    .contestAwardType(uploadPostForm.getContestAwardType())
                     .pageCount(pageCount)
                     .postingTime(LocalDateTime.now())
                     .likeCount(0)

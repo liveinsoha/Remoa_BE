@@ -61,7 +61,7 @@ public class Post {
      * pm쪽에 문의해야할듯.
      */
     @Column(name = "contest_aware_type")
-    private String contestAwareType;
+    private String contestAwardType;
 
     /**
      * Post에 대한 좋아요 수

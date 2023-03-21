@@ -21,6 +21,8 @@ public class ResReferenceRegisterDto {
 
     private String contestAwardType;
 
+    private String youtubeLink;
+
     private Integer pageCount;
 
     private List<String> fileNames;

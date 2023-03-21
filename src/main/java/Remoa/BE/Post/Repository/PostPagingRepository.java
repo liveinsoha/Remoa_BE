@@ -18,7 +18,7 @@ public interface PostPagingRepository extends PagingAndSortingRepository<Post, L
 
     Page<Post> findByMemberOrderByPostingTimeDesc(Pageable pageable, Member member);
 
-    Page<Post> findByMemberOrderByPostingTimeAsc(Pageable pageable, Member member);
+    Page<Post> findByMemberOrderByViewsDesc(Pageable pageable, Member member);
 
     Page<Post> findByMemberOrderByLikeCountDesc(Pageable pageable, Member member);
 

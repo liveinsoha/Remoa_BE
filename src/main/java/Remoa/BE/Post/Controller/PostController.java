@@ -117,8 +117,9 @@ public class PostController {
                     .postId(post.getPostId())
                     .title(post.getTitle())
                     .category(post.getCategory().getName())
-                    .contestAwardType(post.getContestAwareType())
+                    .contestAwardType(post.getContestAwardType())
                     .contestName(post.getContestName())
+                    .youtubeLink(post.getYoutubeLink())
                     .pageCount(post.getPageCount())
                     .fileNames(post.getUploadFiles().stream().map(UploadFile::getOriginalFileName).collect(Collectors.toList()))
                     .build();

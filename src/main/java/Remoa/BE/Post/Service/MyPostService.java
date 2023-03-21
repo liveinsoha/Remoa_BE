@@ -21,26 +21,15 @@ public class MyPostService {
     private final PostPagingRepository postPagingRepository;
     private final CategoryRepository categoryRepository;
     private static final int PAGE_SIZE = 12;
-
-
-    /**
-     * 받은 피드백 관리에서 쓰이는 최신 3개순 포스트
-     * @param page
-     * @param member
-     * @return member가 작성한 최신 3개의 Post.
-     */
-    public Page<Post> getNewestThreePosts(int page, Member member) {
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE - 2, Sort.by("postingTime").descending());
-        return postPagingRepository.findByMember(pageable, member);
-    }
+    private static final int RECEIVED_COMMENT_PAGE_SIZE = 3;
 
     public Page<Post> sortAndPaginatePostsByMember(int pageNumber, String sort, Member myMember,String title) {
         Page<Post> posts;
         PageRequest pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         //switch문을 통해 각 옵션에 맞게 sorting
         switch (sort) {
-            case "oldest":
-                posts = postPagingRepository.findByMemberOrderByPostingTimeAsc(pageable, myMember);
+            case "view":
+                posts = postPagingRepository.findByMemberOrderByViewsDesc(pageable, myMember);
                 break;
             case "like":
                 posts =  postPagingRepository.findByMemberOrderByLikeCountDesc(pageable, myMember);;
@@ -60,22 +49,21 @@ public class MyPostService {
         Page<Post> posts;
         PageRequest pageable;
         switch (sort) {
-            case "oldest":
-                pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("postingTime").ascending());
-
+            case "view":
+                pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("views").descending());
                 break;
             case "like":
-               pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("likeCount").descending());
+                pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("likeCount").descending());
                 break;
             case "scrap":
                 pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("scrapCount").descending());
                 break;
             default:
                 //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
-                pageable = PageRequest.of(pageNumber, 3, Sort.by("postingTime").descending());
+                pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("postingTime").descending());
                 break;
         }
-        posts=  postPagingRepository.findByMemberAndCategoryAndTitleContaining(pageable, myMember, categoryRepository.findByCategoryName(category),title);
+        posts =  postPagingRepository.findByMemberAndCategoryAndTitleContaining(pageable, myMember, categoryRepository.findByCategoryName(category),title);
         return posts;
     }
 
@@ -87,10 +75,19 @@ public class MyPostService {
      * @return member가 작성한 최신 3개의 Post.
      */
     public Page<Post> getNewestThreePostsSortCategory(int page, Member member, String category) {
-        PageRequest pageable = PageRequest.of(page, 3, Sort.by("postingTime").descending());
+        PageRequest pageable = PageRequest.of(page, RECEIVED_COMMENT_PAGE_SIZE, Sort.by("postingTime").descending());
         return postPagingRepository.findByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
     }
 
-
+    /**
+     * 받은 피드백 관리에서 쓰이는 최신 3개순 포스트
+     * @param page
+     * @param member
+     * @return member가 작성한 최신 3개의 Post.
+     */
+    public Page<Post> getNewestThreePosts(int page, Member member) {
+        PageRequest pageable = PageRequest.of(page, RECEIVED_COMMENT_PAGE_SIZE, Sort.by("postingTime").descending());
+        return postPagingRepository.findByMember(pageable, member);
+    }
 
 }

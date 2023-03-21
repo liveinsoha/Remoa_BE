@@ -56,7 +56,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void registerComment(Member member, String comment, Long postId, Long commentId){
+    public Comment registerComment(Member member, String comment, Long postId, Long commentId){
 
         Comment parentComment = null;
 
@@ -76,6 +76,8 @@ public class CommentService {
         commentObj.setCommentLikeCount(0);
         commentObj.setCommentedTime(LocalDateTime.now());
         commentRepository.saveComment(commentObj);
+
+        return commentObj;
 
     }
 
