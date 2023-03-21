@@ -25,7 +25,8 @@ public class MyPostService {
     private final PostRepository postRepository;
     private final PostPagingRepository postPagingRepository;
     private final CategoryRepository categoryRepository;
-    private static final int PAGE_SIZE = 12;
+    private static final int MY_POST_PAGE_SIZE = 12;
+    private static final int RECEIVED_FEEDBACK_PAGE_SIZE = 3;
 
     /**
      * 특정 member의 post들 전체 조회
@@ -47,19 +48,8 @@ public class MyPostService {
 //        PageRequest pageable = PageRequest.of(page, pageSize, Sort.by("postingTime").descending());
 //        return postPagingRepository.findAllByMember(pageable, member);
 
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
+        PageRequest pageable = PageRequest.of(page, MY_POST_PAGE_SIZE);
         return postPagingRepository.findAllByMemberOrderByPostingTimeDesc(pageable, member);
-    }
-
-    /**
-     * 받은 피드백 관리에서 쓰이는 최신 3개순 포스트
-     * @param page
-     * @param member
-     * @return member가 작성한 최신 3개의 Post.
-     */
-    public Page<Post> getNewestThreePosts(int page, Member member) {
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE - 2, Sort.by("postingTime").descending());
-        return postPagingRepository.findAllByMember(pageable, member);
     }
 
     /**
@@ -69,12 +59,12 @@ public class MyPostService {
      * @param member : 조회하려는 작성자
      * @return Page<Post>
      */
-    public Page<Post> getOldestPosts(int page, Member member) {
+    public Page<Post> getMostViewedPosts(int page, Member member) {
 //        PageRequest pageable = PageRequest.of(page, pageSize, Sort.by("postingTime").ascending());
 //        return postPagingRepository.findAllByMember(pageable, member);
 
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
-        return postPagingRepository.findAllByMemberOrderByPostingTimeAsc(pageable, member);
+        PageRequest pageable = PageRequest.of(page, MY_POST_PAGE_SIZE);
+        return postPagingRepository.findAllByMemberOrderByViewsDesc(pageable, member);
     }
 
     public Page<Post> sortAndPaginatePostsByMember(int pageNumber, String sort, Member myMember) {
@@ -84,8 +74,8 @@ public class MyPostService {
             case "newest":
                 posts = getNewestPosts(pageNumber, myMember);
                 break;
-            case "oldest":
-                posts = getOldestPosts(pageNumber, myMember);
+            case "view":
+                posts = getMostViewedPosts(pageNumber, myMember);
                 break;
             case "like":
                 posts = getMostLikedPosts(pageNumber, myMember);
@@ -107,8 +97,8 @@ public class MyPostService {
             case "newest":
                 posts = getNewestPostsSortCategory(pageNumber, myMember, category);
                 break;
-            case "oldest":
-                posts = getOldestPostsSortCategory(pageNumber, myMember, category);
+            case "view":
+                posts = getMostViewedPostsSortCategory(pageNumber, myMember, category);
                 break;
             case "like":
                 posts = getMostLikedPostsSortCategory(pageNumber, myMember, category);
@@ -132,7 +122,7 @@ public class MyPostService {
      * @return Page<Post>
      */
     public Page<Post> getMostLikedPosts(int page, Member member) {
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
+        PageRequest pageable = PageRequest.of(page, MY_POST_PAGE_SIZE);
         return postPagingRepository.findAllByMemberOrderByLikeCountDesc(pageable, member);
     }
 
@@ -144,12 +134,27 @@ public class MyPostService {
      * @return Page<Post>
      */
     public Page<Post> getMostScrapedPosts(int page, Member member) {
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
+        PageRequest pageable = PageRequest.of(page, MY_POST_PAGE_SIZE);
         return postPagingRepository.findAllByMemberOrderByScrapCountDesc(pageable, member);
     }
 
     public Page<Post> getNewestPostsSortCategory(int page, Member member, String  category) {
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("postingTime").descending());
+        PageRequest pageable = PageRequest.of(page, MY_POST_PAGE_SIZE, Sort.by("postingTime").descending());
+        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
+    }
+
+    public Page<Post> getMostViewedPostsSortCategory(int page, Member member, String  category) {
+        PageRequest pageable = PageRequest.of(page, MY_POST_PAGE_SIZE, Sort.by("views").ascending());
+        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
+    }
+
+    public Page<Post> getMostLikedPostsSortCategory(int page, Member member, String  category) {
+        PageRequest pageable = PageRequest.of(page, MY_POST_PAGE_SIZE, Sort.by("likeCount").descending());
+        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
+    }
+
+    public Page<Post> getMostScrapedPostsSortCategory(int page, Member member, String  category) {
+        PageRequest pageable = PageRequest.of(page, MY_POST_PAGE_SIZE, Sort.by("scrapCount").descending());
         return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
     }
 
@@ -161,23 +166,19 @@ public class MyPostService {
      * @return member가 작성한 최신 3개의 Post.
      */
     public Page<Post> getNewestThreePostsSortCategory(int page, Member member, String category) {
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE - 2, Sort.by("postingTime").descending());
+        PageRequest pageable = PageRequest.of(page, RECEIVED_FEEDBACK_PAGE_SIZE, Sort.by("postingTime").descending());
         return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
     }
 
-    public Page<Post> getOldestPostsSortCategory(int page, Member member, String  category) {
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("postingTime").ascending());
-        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
-    }
-
-    public Page<Post> getMostLikedPostsSortCategory(int page, Member member, String  category) {
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("likeCount").descending());
-        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
-    }
-
-    public Page<Post> getMostScrapedPostsSortCategory(int page, Member member, String  category) {
-        PageRequest pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("scrapCount").descending());
-        return postPagingRepository.findAllByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
+    /**
+     * 받은 피드백 관리에서 쓰이는 최신 3개순 포스트
+     * @param page
+     * @param member
+     * @return member가 작성한 최신 3개의 Post.
+     */
+    public Page<Post> getNewestThreePosts(int page, Member member) {
+        PageRequest pageable = PageRequest.of(page, RECEIVED_FEEDBACK_PAGE_SIZE - 2, Sort.by("postingTime").descending());
+        return postPagingRepository.findAllByMember(pageable, member);
     }
 
 }
