@@ -28,7 +28,7 @@ public class MyFollowingController {
 
     private final MyFollowingService myFollowingService;
 
-    @GetMapping("/mypage/following")
+    @GetMapping("/mypage/following") // 마이페이지 팔로잉 관리화면
     public ResponseEntity<Object> mypageFollowing(HttpServletRequest request){
         if(authorized(request)){
             Long myMemberId = getMemberId();
@@ -40,15 +40,16 @@ public class MyFollowingController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-//    @GetMapping("/mypage/follower")
-//    public ResponseEntity<Object> mypageFollower(HttpServletRequest request){
-//        if(authorized(request)){
-//            Long myMemberId = getMemberId();
-//            Member member = memberService.findOne(myMemberId);
-//            ResMypageFollowing resMypageFollowing = myFollowingService.mypageFollower(member);
-//
-//            return successResponse(CustomMessage.OK, resMypageFollowing);
-//        }
-//        return errorResponse(CustomMessage.UNAUTHORIZED);
-//    }
+    @GetMapping("/mypage/follower") // 마이페이지 팔로워 관리화면
+    public ResponseEntity<Object> mypageFollower(HttpServletRequest request){
+        if(authorized(request)){
+            Long myMemberId = getMemberId();
+            Member member = memberService.findOne(myMemberId);
+            ResMypageFollowing resMypageFollower = myFollowingService.mypageFollower(member);
+
+            return successResponse(CustomMessage.OK, resMypageFollower);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
+
 }
