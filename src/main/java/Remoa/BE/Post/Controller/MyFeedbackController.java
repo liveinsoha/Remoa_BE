@@ -87,7 +87,6 @@ public class MyFeedbackController {
 
                     List<ResReplyDto> replies = new ArrayList<>();
                     for (Comment reply : parentCommentsReply) {
-                        log.warn("reply = {}", reply.getComment());
 
                         replies.add(new ResReplyDto(
                                 reply.getCommentId(),

@@ -76,7 +76,7 @@ public class MyPostService {
      */
     public Page<Post> getNewestThreePostsSortCategory(int page, Member member, String category) {
         PageRequest pageable = PageRequest.of(page, RECEIVED_COMMENT_PAGE_SIZE, Sort.by("postingTime").descending());
-        return postPagingRepository.findByMemberAndCategory(pageable, member, categoryRepository.findByCategoryName(category));
+        return postPagingRepository.findByMemberAndCategoryAndCommentsIsNotEmpty(pageable, member, categoryRepository.findByCategoryName(category));
     }
 
     /**
@@ -87,7 +87,7 @@ public class MyPostService {
      */
     public Page<Post> getNewestThreePosts(int page, Member member) {
         PageRequest pageable = PageRequest.of(page, RECEIVED_COMMENT_PAGE_SIZE, Sort.by("postingTime").descending());
-        return postPagingRepository.findByMember(pageable, member);
+        return postPagingRepository.findByMemberAndCommentsIsNotEmpty(pageable, member);
     }
 
 }
