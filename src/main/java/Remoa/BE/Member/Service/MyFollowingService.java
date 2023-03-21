@@ -32,7 +32,7 @@ public class MyFollowingService {
         for(int i=0; i<memberList.size(); i++){
             ResMypageList resMypageList = ResMypageList.builder()
                     .profileImage(memberList.get(i).getProfileImage())
-                    .userName(memberList.get(i).getName())
+                    .userName(memberList.get(i).getNickname())
                     .followingNum(memberList.size())
                     .followerNum(memberRepository.loadFollowers(memberList.get(i)).size())
                     .build();
