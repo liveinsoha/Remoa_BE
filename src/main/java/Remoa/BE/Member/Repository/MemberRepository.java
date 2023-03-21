@@ -96,6 +96,18 @@ public class MemberRepository {
     }
 
     /**
+     * 팔로워 Member 객체 리스트 반환
+     * @param member
+     * @return List<Member>
+     */
+    public List<Member> loadFollowers(Member member){
+        return em.createQuery("select f.fromMember from Follow f " +
+                "where f.toMember = :member", Member.class)
+                .setParameter("member", member)
+                .getResultList();
+    }
+
+    /**
      * 멤버가 팔로우하는 모든멤버의 아이디를 불러와줌
      * @param member
      * @return
