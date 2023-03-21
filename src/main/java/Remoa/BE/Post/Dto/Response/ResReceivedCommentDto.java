@@ -12,7 +12,6 @@ import java.util.Map;
 public class ResReceivedCommentDto {
 
     private Long postId;
-    private ResMemberInfoDto postMember;
     private Map<String, ResCommentDto> commentInfo;
     private String title;
 

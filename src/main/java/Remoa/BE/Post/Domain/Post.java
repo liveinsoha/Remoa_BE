@@ -47,6 +47,11 @@ public class Post {
     private String contestName;
 
     /**
+     * 유튜브 링크
+     */
+    private String youtubeLink;
+
+    /**
      * 참여한 공모전의 마감 기한
      */
     private String deadline;
@@ -56,7 +61,7 @@ public class Post {
      * pm쪽에 문의해야할듯.
      */
     @Column(name = "contest_aware_type")
-    private String contestAwareType;
+    private String contestAwardType;
 
     /**
      * Post에 대한 좋아요 수

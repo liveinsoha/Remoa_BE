@@ -10,8 +10,6 @@ import Remoa.BE.Post.Repository.CategoryRepository;
 import Remoa.BE.Post.Repository.PostPagingRepository;
 import Remoa.BE.Post.Repository.PostRepository;
 import Remoa.BE.Post.Repository.PostScrapRepository;
-import Remoa.BE.exception.CustomMessage;
-import Remoa.BE.utill.FileExtension;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -20,8 +18,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,12 +25,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static Remoa.BE.exception.CustomBody.successResponse;
 import static Remoa.BE.utill.FileExtension.fileExtension;
 
 @Slf4j
@@ -70,7 +63,6 @@ public class PostService {
 
         Member member = memberService.findOne(memberId);
 
-//        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         //확장자 확인
         String extension = fileExtension(uploadFiles.get(0));
@@ -88,7 +80,8 @@ public class PostService {
                     .member(member)
                     .contestName(uploadPostForm.getContestName())
                     .category(category)
-                    .contestAwareType(uploadPostForm.getContestAwardType())
+                    .youtubeLink(uploadPostForm.getYoutubeLink())
+                    .contestAwardType(uploadPostForm.getContestAwardType())
                     .pageCount(pageCount)
                     .postingTime(LocalDateTime.now())
                     .likeCount(0)
@@ -107,97 +100,53 @@ public class PostService {
 
     }
 
-    public Page<Post> sortAndPaginatePosts(String sort, int pageNumber) {
-        Page<Post> allPosts;
+    public Page<Post> sortAndPaginatePosts(String sort, int pageNumber,String title) {
+        Page<Post> Posts;
+        Pageable pageable;
         switch (sort) {
-            case "newest":
-                allPosts = findAllPostsWithPaginationForHomepageNewest(pageNumber);
-                break;
             case "like":
-                allPosts = findAllPostsWithPaginationForHomepageMostLiked(pageNumber);
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
+                Posts = postPagingRepository.findByTitleContaining(pageable,title);
                 break;
             case "scrap":
-                allPosts = findAllPostsWithPaginationForHomepageMostScraped(pageNumber);
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
+                Posts = postPagingRepository.findByTitleContaining(pageable,title);
                 break;
             case "view":
-                allPosts = findAllPostsWithPaginationForHomepageMostViewed(pageNumber);
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("views").descending());
+                Posts = postPagingRepository.findByTitleContaining(pageable,title);
+                break;
             default:
                 //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
-                allPosts = findAllPostsWithPaginationForHomepageNewest(pageNumber);
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
+                Posts = postPagingRepository.findByTitleContaining(pageable,title);
                 break;
         }
-        return allPosts;
+        return Posts;
     }
 
-    public Page<Post> sortAndPaginatePostsByCategory(String category, String sort, int pageNumber) {
-        Page<Post> allPosts;
+    public Page<Post> sortAndPaginatePostsByCategory(String category, String sort, int pageNumber,String title) {
+        Page<Post> Posts;
+        Pageable pageable;
         switch (sort) {
-            case "newest":
-                allPosts = findAllPostsWithPaginationForHomepageSortByCategoryNewest(pageNumber, category);
-                break;
             case "like":
-                allPosts = findAllPostsWithPaginationForHomepageSortByCategoryMostLiked(pageNumber, category);
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
                 break;
             case "scrap":
-                allPosts = findAllPostsWithPaginationForHomepageSortByCategoryMostScraped(pageNumber, category);
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
                 break;
             case "view":
-                allPosts = findAllPostsWithPaginationForHomepageSortByCategoryMostViewed(pageNumber, category);
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("views").descending());
+                break;
             default:
                 //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
-                allPosts = findAllPostsWithPaginationForHomepageSortByCategoryNewest(pageNumber, category);
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
                 break;
         }
-        return allPosts;
+        Posts = postPagingRepository.findByCategoryAndTitleContaining(pageable, categoryRepository.findByCategoryName(category),title);
+        return Posts;
     }
 
-    public List<Post> searchPost(String name) {
-        return postRepository.findByTitleContaining(name);
-    }
-
-    public List<Post> findAll(){
-        return postRepository.findAll();
-    }
-
-    public Page<Post> findAllPostsWithPaginationForHomepageNewest(int page) {
-        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
-        return postPagingRepository.findAll(pageable);
-    }
-
-    public Page<Post> findAllPostsWithPaginationForHomepageMostViewed(int page) {
-        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("views").descending());
-        return postPagingRepository.findAll(pageable);
-    }
-
-    public Page<Post> findAllPostsWithPaginationForHomepageMostLiked(int page) {
-        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
-        return postPagingRepository.findAll(pageable);
-    }
-
-    public Page<Post> findAllPostsWithPaginationForHomepageMostScraped(int page) {
-        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
-        return postPagingRepository.findAll(pageable);
-    }
-
-    public Page<Post> findAllPostsWithPaginationForHomepageSortByCategoryNewest(int page, String category) {
-        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
-        return postPagingRepository.findAllByCategory(pageable, categoryRepository.findByCategoryName(category));
-    }
-
-    public Page<Post> findAllPostsWithPaginationForHomepageSortByCategoryMostViewed(int page, String category) {
-        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("views").descending());
-        return postPagingRepository.findAllByCategory(pageable, categoryRepository.findByCategoryName(category));
-    }
-
-    public Page<Post> findAllPostsWithPaginationForHomepageSortByCategoryMostLiked(int page, String category) {
-        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
-        return postPagingRepository.findAllByCategory(pageable, categoryRepository.findByCategoryName(category));
-    }
-
-    public Page<Post> findAllPostsWithPaginationForHomepageSortByCategoryMostScraped(int page, String category) {
-        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
-        return postPagingRepository.findAllByCategory(pageable, categoryRepository.findByCategoryName(category));
-    }
 
     @Transactional
     public PostScarp getPostScrapByMemberIdAndPostId(Long memberId, Long postId){

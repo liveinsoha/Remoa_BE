@@ -17,4 +17,5 @@ public class UploadPostForm {
 
     private String category; // Category name
 
+    private String youtubeLink; // 유튜브 링크
 }

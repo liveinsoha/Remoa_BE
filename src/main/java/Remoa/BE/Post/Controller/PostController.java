@@ -43,7 +43,8 @@ public class PostController {
     @GetMapping("/reference")
     public ResponseEntity<Object> searchPost(@RequestParam(required = false, defaultValue = "all") String category,
                                              @RequestParam(required = false, defaultValue = "newest") String sort,
-                                             @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber) {
+                                             @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber,
+                                             @RequestParam(required = false, defaultValue = "") String title) {
 
         Map<String, Object> responseData = new HashMap<>();
 
@@ -59,10 +60,10 @@ public class PostController {
                 category.equals("video") ||
                 category.equals("etc")) {
             //sort -> 최신순 : newest, 좋아요순 : like, 스크랩순 : scrap, 조회순 : view
-            allPosts = postService.sortAndPaginatePostsByCategory(category, sort, pageNumber);
+            allPosts = postService.sortAndPaginatePostsByCategory(category, sort, pageNumber,title);
         } else {
             //sort -> 최신순 : newest, 좋아요순 : like, 스크랩순 : scrap, 조회순 : view
-            allPosts = postService.sortAndPaginatePosts(sort, pageNumber);
+            allPosts = postService.sortAndPaginatePosts(sort, pageNumber,title);
         }
 
         if ((allPosts.getContent().isEmpty()) && (allPosts.getTotalElements() > 0)) {
@@ -116,8 +117,9 @@ public class PostController {
                     .postId(post.getPostId())
                     .title(post.getTitle())
                     .category(post.getCategory().getName())
-                    .contestAwardType(post.getContestAwareType())
+                    .contestAwardType(post.getContestAwardType())
                     .contestName(post.getContestName())
+                    .youtubeLink(post.getYoutubeLink())
                     .pageCount(post.getPageCount())
                     .fileNames(post.getUploadFiles().stream().map(UploadFile::getOriginalFileName).collect(Collectors.toList()))
                     .build();

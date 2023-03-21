@@ -47,7 +47,8 @@ public class MyPostController {
     public ResponseEntity<Object> myReference(HttpServletRequest request,
                                               @RequestParam(required = false, defaultValue = "all") String category,
                                               @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber,
-                                              @RequestParam(required = false, defaultValue = "newest") String sort) {
+                                              @RequestParam(required = false, defaultValue = "newest") String sort,
+                                              @RequestParam(required = false, defaultValue = "") String title) {
         if (authorized(request)) {
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
@@ -64,9 +65,9 @@ public class MyPostController {
                     category.equals("design") ||
                     category.equals("video") ||
                     category.equals("etc")) {
-                posts = myPostService.sortAndPaginatePostsByCategoryAndMember(category, pageNumber, sort, myMember);
+                posts = myPostService.sortAndPaginatePostsByCategoryAndMember(category, pageNumber, sort, myMember,title);
             } else {
-                posts = myPostService.sortAndPaginatePostsByMember(pageNumber, sort, myMember);
+                posts = myPostService.sortAndPaginatePostsByMember(pageNumber, sort, myMember,title);
             }
 
             //조회할 레퍼런스가 db에 있으나, 현재 페이지에 조회할 데이터가 없는 경우 == 페이지 번호를 잘못 입력
