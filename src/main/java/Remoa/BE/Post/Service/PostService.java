@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static Remoa.BE.utill.FileExtension.fileExtension;
 
@@ -57,7 +58,7 @@ public class PostService {
     }
 
     @Transactional
-    public Post registerPost(UploadPostForm uploadPostForm,MultipartFile thumbnail ,List<MultipartFile> uploadFiles, Long memberId) throws IOException {
+    public Post registerPost(UploadPostForm uploadPostForm, MultipartFile thumbnail, List<MultipartFile> uploadFiles, Long memberId) throws IOException {
 
         Category category = categoryRepository.findByCategoryName(uploadPostForm.getCategory());
 
@@ -66,13 +67,12 @@ public class PostService {
 
         //확장자 확인
         String extension = fileExtension(uploadFiles.get(0));
-        if(extension.equals("pdf") || extension.equals("jpg") || extension.equals("png")){
+        if (extension.equals("pdf") || extension.equals("jpg") || extension.equals("png")) {
             int pageCount;
-            if(extension.equals("pdf")){
+            if (extension.equals("pdf")) {
                 PDDocument document = PDDocument.load(uploadFiles.get(0).getInputStream());
                 pageCount = document.getNumberOfPages();
-            }
-            else{
+            } else {
                 pageCount = uploadFiles.size();
             }
             Post post = Post.builder()
@@ -90,42 +90,41 @@ public class PostService {
                     .deleted(false)
                     .build();
 
-            fileService.saveUploadFiles(post, thumbnail ,uploadFiles);
+            fileService.saveUploadFiles(post, thumbnail, uploadFiles);
             return post;
-        }
-        else{
+        } else {
             throw new IOException();
         }
 
 
     }
 
-    public Page<Post> sortAndPaginatePosts(String sort, int pageNumber,String title) {
+    public Page<Post> sortAndPaginatePosts(String sort, int pageNumber, String title) {
         Page<Post> Posts;
         Pageable pageable;
         switch (sort) {
             case "like":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
-                Posts = postPagingRepository.findByTitleContaining(pageable,title);
+                Posts = postPagingRepository.findByTitleContaining(pageable, title);
                 break;
             case "scrap":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
-                Posts = postPagingRepository.findByTitleContaining(pageable,title);
+                Posts = postPagingRepository.findByTitleContaining(pageable, title);
                 break;
             case "view":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("views").descending());
-                Posts = postPagingRepository.findByTitleContaining(pageable,title);
+                Posts = postPagingRepository.findByTitleContaining(pageable, title);
                 break;
             default:
                 //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
-                Posts = postPagingRepository.findByTitleContaining(pageable,title);
+                Posts = postPagingRepository.findByTitleContaining(pageable, title);
                 break;
         }
         return Posts;
     }
 
-    public Page<Post> sortAndPaginatePostsByCategory(String category, String sort, int pageNumber,String title) {
+    public Page<Post> sortAndPaginatePostsByCategory(String category, String sort, int pageNumber, String title) {
         Page<Post> Posts;
         Pageable pageable;
         switch (sort) {
@@ -143,31 +142,34 @@ public class PostService {
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
                 break;
         }
-        Posts = postPagingRepository.findByCategoryAndTitleContaining(pageable, categoryRepository.findByCategoryName(category),title);
+        Posts = postPagingRepository.findByCategoryAndTitleContaining(pageable, categoryRepository.findByCategoryName(category), title);
         return Posts;
     }
 
-
-    @Transactional
-    public PostScarp getPostScrapByMemberIdAndPostId(Long memberId, Long postId){
+    public PostScarp getPostScrapByMemberIdAndPostId(Long memberId, Long postId) {
         return postScrapRepository.findByMemberMemberIdAndPostPostId(memberId, postId);
     }
 
     @Transactional
-    public void scrapPost(Long memberId, Member myMember, Long referenceId){
+    public void scrapPost(Long memberId, Member myMember, Long referenceId) {
         Post post = findOne(referenceId);
         Integer postScrapCount = post.getScrapCount(); // 이 게시물을 스크랩한 수
 
         // scrapPost를 db에서 조회해보고 조회 결과가 null이면 scrapCount += 1, PostScrap 생성
         // null이 아니면 scrapCount -= 1, 조회결과인 해당 PostScrap 삭제
         PostScarp postScarp = getPostScrapByMemberIdAndPostId(memberId, referenceId);
-        if(postScarp == null){
+        if (postScarp == null) {
             post.setScrapCount(postScrapCount + 1); // 스크랩 수 1 증가
             PostScarp postScrapObj = PostScarp.createPostScrap(myMember, post);
             postScrapRepository.save(postScrapObj);
-        } else{
+        } else {
             post.setScrapCount(post.getScrapCount() - 1); // 스크랩 수 1 차감
             postScrapRepository.deleteById(postScarp.getPostScrapId()); // db에서 삭제
         }
+    }
+
+    public Page<PostScarp> findScrapedPost(int size, Member member) {
+        Pageable pageable = PageRequest.of(0, size);
+        return postScrapRepository.findByMemberOrderByScrapTimeDesc(pageable, member);
     }
 }

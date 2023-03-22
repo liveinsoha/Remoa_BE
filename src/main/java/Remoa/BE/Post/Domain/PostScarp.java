@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -29,11 +30,15 @@ public class PostScarp {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Column(name = "scrap_time")
+    private LocalDateTime scrapTime;
+
     private Boolean deleted = Boolean.FALSE;
 
     public static PostScarp createPostScrap(Member member, Post post) {
         PostScarp postScrap = new PostScarp();
         postScrap.setPost(post);
+        postScrap.setScrapTime(LocalDateTime.now());
         postScrap.setMember(member);
 
         return postScrap;

@@ -61,5 +61,8 @@ public class Comment {
     @Column(name = "comment_like_count")
     private Integer commentLikeCount = 0;
 
+    @OneToOne
+    private CommentFeedback commentFeedback;
+
     private Boolean deleted = Boolean.FALSE;
 }

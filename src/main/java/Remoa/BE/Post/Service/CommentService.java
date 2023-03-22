@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static Remoa.BE.Member.Domain.ContentType.COMMENT;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
     private final PostService postService;
     private final CommentPagingRepository commentPagingRepository;
+    private final CommentFeedbackService commentFeedbackService;
 
     @Transactional
     public Long writeComment(Comment comment) {
@@ -68,14 +71,19 @@ public class CommentService {
         Comment commentObj = new Comment();
 //        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Post post = postService.findOne(postId);
+        LocalDateTime time = LocalDateTime.now();
 
         commentObj.setPost(post);
         commentObj.setMember(member);
         commentObj.setParentComment(parentComment); //대댓글인 경우 원 댓글의 Feedback, 댓글인 경우 null
         commentObj.setComment(comment);
         commentObj.setCommentLikeCount(0);
-        commentObj.setCommentedTime(LocalDateTime.now());
+        commentObj.setCommentedTime(time);
         commentRepository.saveComment(commentObj);
+
+        if (parentComment == null) {
+            commentFeedbackService.saveCommentFeedback(commentObj, null, COMMENT, member, post, time);
+        }
 
         return commentObj;
 

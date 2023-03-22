@@ -1,8 +1,6 @@
 package Remoa.BE.Post.Service;
 
-import Remoa.BE.Member.Domain.Feedback;
-import Remoa.BE.Member.Domain.FeedbackLike;
-import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Member.Domain.*;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Domain.UploadFile;
@@ -24,6 +22,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static Remoa.BE.Member.Domain.ContentType.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,8 @@ public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final FeedbackLikeRepository feedbackLikeRepository;
     private final PostService postService;
-    private final MemberService memberService;
+    private final CommentFeedbackService commentFeedbackService;
+
     @Transactional
     public Feedback findOne(Long feedbackId){
         Optional<Feedback> feedback = feedbackRepository.findOne(feedbackId);
@@ -58,16 +59,21 @@ public class FeedbackService {
         Feedback feedbackObj = new Feedback();
         Post post = postService.findOne(postId);
 
-//        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime time = LocalDateTime.now();
+
         feedbackObj.setPost(post);
         feedbackObj.setMember(member);
         feedbackObj.setParentFeedback(parentFeedback); //대댓글인 경우 원 댓글의 Feedback, 댓글인 경우 null
         feedbackObj.setPageNumber(pageNumber); //대댓글인 경우 null. parentFeedback.getPageNumber()통헤서 값 넣어도 됩니다.
         feedbackObj.setFeedback(feedback);
         feedbackObj.setFeedbackLikeCount(0);
-        feedbackObj.setFeedbackTime(LocalDateTime.now());
-
+        feedbackObj.setFeedbackTime(time);
         feedbackRepository.saveFeedback(feedbackObj);
+
+        if (parentFeedback == null) {
+            commentFeedbackService.saveCommentFeedback(null, feedbackObj, FEEDBACK, member, post, time);
+        }
+
     }
 
     @Transactional

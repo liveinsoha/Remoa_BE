@@ -90,4 +90,15 @@ public class MyPostService {
         return postPagingRepository.findByMemberAndCommentsIsNotEmpty(pageable, member);
     }
 
+    /**
+     * 내 활동 관리에 쓰이는 코멘트 및 피드백을 단 작업물
+     * @param size
+     * @param member
+     * @return Post
+     */
+    public Page<Post> getCommentedPost(int size, Member member) {
+        PageRequest pageable = PageRequest.of(0, size, Sort.by("postingTime").descending());
+        return postPagingRepository.findByMemberAndCommentsIsNotEmpty(pageable, member);
+    }
+
 }
