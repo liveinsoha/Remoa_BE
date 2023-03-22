@@ -101,6 +101,9 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "fromMember", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
     private List<Follow> follows = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    private List<CommentFeedback> commentFeedbacks = new ArrayList<>();
+
     /**
      * ADMIN과 일반 USER를 구분하기 위해 존재. Spring Security 이용하기 위함
      */

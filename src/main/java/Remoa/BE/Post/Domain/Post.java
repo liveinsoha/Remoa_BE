@@ -1,6 +1,8 @@
 package Remoa.BE.Post.Domain;
 
 import Remoa.BE.Member.Domain.Comment;
+import Remoa.BE.Member.Domain.CommentFeedback;
+import Remoa.BE.Member.Domain.Feedback;
 import Remoa.BE.Member.Domain.Member;
 import lombok.*;
 import org.hibernate.annotations.Where;
@@ -89,6 +91,12 @@ public class Post {
      */
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<Feedback> feedbacks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<CommentFeedback> commentFeedbacks = new ArrayList<>();
 
     /**
      * Post에서 쓰인 files
