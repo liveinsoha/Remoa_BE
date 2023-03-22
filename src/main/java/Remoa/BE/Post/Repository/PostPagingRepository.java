@@ -16,13 +16,13 @@ import java.time.LocalDateTime;
 @Repository
 public interface PostPagingRepository extends PagingAndSortingRepository<Post, Long> {
 
-    Page<Post> findByMemberOrderByPostingTimeDesc(Pageable pageable, Member member);
+    Page<Post> findByMemberAndTitleContainingOrderByPostingTimeDesc(Pageable pageable, Member member,String title);
 
-    Page<Post> findByMemberOrderByViewsDesc(Pageable pageable, Member member);
+    Page<Post> findByMemberAndTitleContainingOrderByViewsDesc(Pageable pageable, Member member,String title);
 
-    Page<Post> findByMemberOrderByLikeCountDesc(Pageable pageable, Member member);
+    Page<Post> findByMemberAndTitleContainingOrderByLikeCountDesc(Pageable pageable, Member member,String title);
 
-    Page<Post> findByMemberOrderByScrapCountDesc(Pageable pageable, Member member);
+    Page<Post> findByMemberAndTitleContainingOrderByScrapCountDesc(Pageable pageable, Member member,String title);
 
     Page<Post> findByMemberAndCategoryAndTitleContaining(Pageable pageable, Member member, Category category,String title);
 

@@ -29,17 +29,17 @@ public class MyPostService {
         //switch문을 통해 각 옵션에 맞게 sorting
         switch (sort) {
             case "view":
-                posts = postPagingRepository.findByMemberOrderByViewsDesc(pageable, myMember);
+                posts = postPagingRepository.findByMemberAndTitleContainingOrderByViewsDesc(pageable, myMember,title);
                 break;
             case "like":
-                posts =  postPagingRepository.findByMemberOrderByLikeCountDesc(pageable, myMember);;
+                posts =  postPagingRepository.findByMemberAndTitleContainingOrderByLikeCountDesc(pageable, myMember,title);
                 break;
             case "scrap":
-                posts = postPagingRepository.findByMemberOrderByScrapCountDesc(pageable, myMember);
+                posts = postPagingRepository.findByMemberAndTitleContainingOrderByScrapCountDesc(pageable, myMember,title);
                 break;
             default:
                 //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
-                posts = postPagingRepository.findByMemberOrderByPostingTimeDesc(pageable, myMember);
+                posts = postPagingRepository.findByMemberAndTitleContainingOrderByPostingTimeDesc(pageable, myMember,title);
                 break;
         }
         return posts;
