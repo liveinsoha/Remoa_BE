@@ -17,6 +17,7 @@ public class ViewerService {
 
     private final PostRepository postRepository;
 
+    @Transactional
     public Post getPost(Long postId) {
         // 게시물 정보 검색
         Post post = postRepository.findOne(postId)
@@ -24,19 +25,18 @@ public class ViewerService {
 
         // 조회수 업데이트
         post.setViews(post.getViews() + 1);
-        postRepository.savePost(post);
 
         return post;
     }
 
+    @Transactional
     public void updateScrapCount(Long postId) {
         // 게시물 정보 검색
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid postId: " + postId));
 
         // 스크랩수 업데이트
-        int scrapCount = (int)post.getPostScarps().stream().count();
+        int scrapCount = post.getPostScarps().size();
         post.setScrapCount(scrapCount);
-        postRepository.savePost(post);
     }
 }
