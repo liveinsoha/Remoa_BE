@@ -24,20 +24,27 @@ public class MyFollowingService {
         List<Member> memberList;
 
         if(isFollowing == 1) { // 마이페이지 팔로잉 관리 화면
-            memberList = memberRepository.loadFollows(member);
+            memberList = memberRepository.loadFollows(member); // member가 팔로우하는 유저 확인
         } else{ // 마이페이지 팔로워 관리 화면
             memberList = memberRepository.loadFollowers(member);
         }
 
         for(int i=0; i<memberList.size(); i++){
+            Member followMember = memberList.get(i);
+            // followMember가 팔로잉하는 유저 구하기
+            List<Member> followingMemberFollowing = memberRepository.loadFollows(followMember);
+            // followMember를 팔로우하는 유저 구하기(팔로워)
+            List<Member> followingMemberFollower = memberRepository.loadFollowers(followMember);
+
             ResMypageList resMypageList = ResMypageList.builder()
-                    .profileImage(memberList.get(i).getProfileImage())
-                    .userName(memberList.get(i).getNickname())
-                    .followingNum(memberList.size())
-                    .followerNum(memberRepository.loadFollowers(memberList.get(i)).size())
+                    .profileImage(followMember.getProfileImage())
+                    .userName(followMember.getNickname())
+                    .followingNum(followingMemberFollowing.size())
+                    .followerNum(followingMemberFollower.size())
                     .build();
             resMypageLists.add(resMypageList);
         }
+
         return resMypageLists;
     }
 

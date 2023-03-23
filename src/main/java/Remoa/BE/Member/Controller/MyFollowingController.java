@@ -28,7 +28,7 @@ public class MyFollowingController {
 
     private final MyFollowingService myFollowingService;
 
-    @GetMapping("/mypage/following") // 마이페이지 팔로잉 관리화면
+    @GetMapping("/following") // 마이페이지 팔로잉 관리화면
     public ResponseEntity<Object> mypageFollowing(HttpServletRequest request){
         if(authorized(request)){
             Long myMemberId = getMemberId();
@@ -40,7 +40,7 @@ public class MyFollowingController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @GetMapping("/mypage/follower") // 마이페이지 팔로워 관리화면
+    @GetMapping("/follower") // 마이페이지 팔로워 관리화면
     public ResponseEntity<Object> mypageFollower(HttpServletRequest request){
         if(authorized(request)){
             Long myMemberId = getMemberId();
