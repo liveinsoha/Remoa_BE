@@ -90,20 +90,22 @@ public class MyFeedbackController {
 
                         replies.add(new ResReplyDto(
                                 reply.getCommentId(),
-                                reply.getMember().getMemberId(),
-                                reply.getMember().getNickname(),
-                                reply.getMember().getProfileImage(),
+                                new ResMemberInfoDto(reply.getMember().getMemberId(),
+                                        reply.getMember().getNickname(),
+                                        reply.getMember().getProfileImage()),
                                 reply.getComment(),
-                                reply.getCommentLikeCount()));
+                                reply.getCommentLikeCount(),
+                                reply.getCommentedTime()));
                     }
 
                     commentInfo.put("comment_" + commentNumber, new ResCommentDto(
                             parentComment.getCommentId(),
-                            parentComment.getMember().getMemberId(),
-                            parentComment.getMember().getNickname(),
-                            parentComment.getMember().getProfileImage(),
+                            new ResMemberInfoDto(parentComment.getMember().getMemberId(),
+                                    parentComment.getMember().getNickname(),
+                                    parentComment.getMember().getProfileImage()),
                             parentComment.getComment(),
                             parentComment.getCommentLikeCount(),
+                            parentComment.getCommentedTime(),
                             replies));
 
                     commentNumber++;
