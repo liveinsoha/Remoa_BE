@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -22,13 +24,14 @@ public class NoticeService {
         Notice notice = new Notice();
         notice.setTitle(reqNoticeDto.getTitle());
         notice.setContent(reqNoticeDto.getContent());
+        notice.setPostingTime(LocalDateTime.now());
 
         noticeRepository.save(notice);
     }
 
     public Page<Notice> getNotice(int pageNumber){
         int NOTICE_NUMBER = 5;
-        Pageable pageable = PageRequest.of(pageNumber-1, NOTICE_NUMBER);
+        Pageable pageable = PageRequest.of(pageNumber, NOTICE_NUMBER);
         return noticeRepository.findAll(pageable);
     }
 }

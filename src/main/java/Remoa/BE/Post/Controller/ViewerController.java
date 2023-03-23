@@ -24,8 +24,7 @@ public class ViewerController {
     private final ViewerService viewerService;
 
     @GetMapping("reference/{reference_id}")
-    public ResponseEntity<Object> referenceViewer(HttpServletRequest request,
-                                                  @PathVariable("reference_id") Long referenceId) {
+    public ResponseEntity<Object> referenceViewer(@PathVariable("reference_id") Long referenceId) {
 
         Post post = viewerService.getPost(referenceId);
 
@@ -42,6 +41,7 @@ public class ViewerController {
                 .scrapCount(post.getScrapCount())
                 .title(post.getTitle())
                 .build();
+
 
         return successResponse(CustomMessage.OK, result);
     }

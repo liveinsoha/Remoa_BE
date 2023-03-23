@@ -9,10 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +27,7 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @PostMapping("/notice")
-    public ResponseEntity<Object> postNotice(ReqNoticeDto reqNoticeDto){
+    public ResponseEntity<Object> postNotice(@Validated @RequestBody ReqNoticeDto reqNoticeDto){
         noticeService.registerNotice(reqNoticeDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -47,13 +45,13 @@ public class NoticeController {
         }
         Map<String, Object> responseData = new HashMap<>();
 
-        List<Object> result = new ArrayList<>();
+        List<ResNoticeDto> result = new ArrayList<>();
 
         for(Notice notice:notices) {
             ResNoticeDto resNoticeDto = ResNoticeDto.builder()
                     .noticeId(notice.getNoticeId())
                     .title(notice.getTitle())
-                    .postingTime(notice.getPostingTime())
+                    .postingTime(notice.getPostingTime().toLocalDate())
                     .view(10)
                     .build();
             result.add(resNoticeDto);

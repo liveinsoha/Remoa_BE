@@ -15,13 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ViewerService {
 
-    private final PostRepository postRepository;
+    private final PostService postService;
 
     @Transactional
     public Post getPost(Long postId) {
         // 게시물 정보 검색
-        Post post = postRepository.findOne(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid postId: " + postId));
+        Post post = postService.findOne(postId);
 
         // 조회수 업데이트
         post.setViews(post.getViews() + 1);
@@ -32,8 +31,7 @@ public class ViewerService {
     @Transactional
     public void updateScrapCount(Long postId) {
         // 게시물 정보 검색
-        Post post = postRepository.findOne(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid postId: " + postId));
+        Post post = postService.findOne(postId);
 
         // 스크랩수 업데이트
         int scrapCount = post.getPostScarps().size();

@@ -11,10 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +28,7 @@ public class InquiryController {
     private final InquiryService inquiryService;
 
     @PostMapping("/inquiry")
-    public ResponseEntity<Object> postInquiry(@Validated ReqNoticeDto reqNoticeDto){
+    public ResponseEntity<Object> postInquiry(@Validated @RequestBody ReqNoticeDto reqNoticeDto){
         inquiryService.registerInquiry(reqNoticeDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -56,7 +53,7 @@ public class InquiryController {
             ResNoticeDto resNoticeDto = ResNoticeDto.builder()
                     .noticeId(inquiry.getInquiryId())
                     .title(inquiry.getTitle())
-                    .postingTime(inquiry.getPostingTime())
+                    .postingTime(inquiry.getPostingTime().toLocalDate())
                     .view(10)
                     .build();
             result.add(resNoticeDto);
