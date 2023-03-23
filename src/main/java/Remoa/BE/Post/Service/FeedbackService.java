@@ -40,6 +40,14 @@ public class FeedbackService {
         return feedback.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Feedback not found"));
     }
 
+    public List<Feedback> findAllFeedbacksOfPost(Post post) {
+        return feedbackRepository.findByPost(post);
+    }
+
+    public List<Feedback> getParentFeedbacksReply(Feedback parentFeedback) {
+        return feedbackRepository.findRepliesOfParentFeedback(parentFeedback);
+    }
+
     @Transactional
     public FeedbackLike getFeedbackLikeByMemberIdAndFeedbackId(Long memberId, Long feedbackId) {
         FeedbackLike feedbackLike = feedbackLikeRepository.findByMemberMemberIdAndFeedbackFeedbackId(memberId, feedbackId);

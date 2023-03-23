@@ -1,9 +1,6 @@
 package Remoa.BE.Post.Repository;
 
-import Remoa.BE.Member.Domain.Feedback;
-import Remoa.BE.Member.Domain.FeedbackBookmark;
-import Remoa.BE.Member.Domain.FeedbackLike;
-import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Member.Domain.*;
 import Remoa.BE.Post.Domain.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +33,16 @@ public class FeedbackRepository {
      * @return List<Feedback>
      */
     public List<Feedback> findByPost(Post post) {
-        return em.createQuery("select c from Feedback c where c.post = :post", Feedback.class)
+        return em.createQuery("select f from Feedback f where f.post = :post order by f.feedbackTime desc",
+                        Feedback.class)
                 .setParameter("post", post)
+                .getResultList();
+    }
+
+    public List<Feedback> findRepliesOfParentFeedback(Feedback parentFeedback) {
+        return em.createQuery("select f from Feedback f " +
+                        "where f.parentFeedback = :feedback order by f.feedbackTime desc", Feedback.class)
+                .setParameter("feedback", parentFeedback)
                 .getResultList();
     }
 

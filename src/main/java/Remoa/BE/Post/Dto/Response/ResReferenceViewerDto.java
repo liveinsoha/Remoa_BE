@@ -10,7 +10,6 @@ import java.util.List;
 @Builder
 public class ResReferenceViewerDto {
 
-    // 임시
     public Long postId;
     public ResMemberInfoDto postMember;
     public String thumbnail;
@@ -24,5 +23,7 @@ public class ResReferenceViewerDto {
     public Integer views;
     private Integer pageCount;
     private List<String> fileNames;
+    private List<ResCommentDto> comments;
+    private List<ResFeedbackDto> feedbacks;
 
 }

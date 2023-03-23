@@ -10,16 +10,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResCommentDto {
-
-    private Long commentId;
+@Builder
+public class ResFeedbackDto {
+    private Long feedbackId;
     private ResMemberInfoDto member;
-    private String comment;
+    private String feedback;
+    private Integer page;
     private Integer likeCount;
-    private LocalDateTime commentedTime;
+    private LocalDateTime feedbackTime;
     private List<ResReplyDto> replies;
-
 }
