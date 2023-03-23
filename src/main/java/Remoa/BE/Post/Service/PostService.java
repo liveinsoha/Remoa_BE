@@ -58,6 +58,13 @@ public class PostService {
     }
 
     @Transactional
+    public Post findOneViewPlus(Long postId) {
+        Optional<Post> findPost = postRepository.findOne(postId);
+        findPost.ifPresent(post -> post.setViews(post.getViews() + 1));
+        return findPost.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found"));
+    }
+
+    @Transactional
     public Post registerPost(UploadPostForm uploadPostForm, MultipartFile thumbnail, List<MultipartFile> uploadFiles, Long memberId) throws IOException {
 
         Category category = categoryRepository.findByCategoryName(uploadPostForm.getCategory());

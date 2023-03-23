@@ -5,6 +5,7 @@ import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Repository.CommentPagingRepository;
 import Remoa.BE.Post.Repository.CommentLikeRepository;
 import Remoa.BE.Post.Repository.CommentRepository;
+import Remoa.BE.Post.Repository.FeedbackRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -37,7 +38,9 @@ public class CommentService {
         return comment.getCommentId();
     }
 
-
+    public List<Comment> findAllCommentsOfPost(Post post) {
+        return commentRepository.findByPost(post);
+    }
 
     @Transactional
     public Long commentLikeAction(Comment comment, Member member) {
