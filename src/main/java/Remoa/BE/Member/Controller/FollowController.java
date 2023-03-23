@@ -6,6 +6,7 @@ import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,29 +38,27 @@ public class FollowController {
     @PostMapping("/follow/{member_id}")
     public ResponseEntity<Object> follow(@PathVariable("member_id") Long memberId, HttpServletRequest request) {
 
-        if(authorized(request)){
+        if (authorized(request)) {
             //나 자신을 팔로우 하는 경우
             Long myMemberId = getMemberId();
-            if(Objects.equals(memberId, myMemberId)){
+            if (Objects.equals(memberId, myMemberId)) {
 
                 return errorResponse(CustomMessage.FOLLOW_ME);
-            }
-            else{
+            } else {
                 Member member = memberService.findOne(myMemberId);
                 boolean check = followService.followFunction(memberId, member);
                 //팔로우
-                if(check){
-                    return successResponse(CustomMessage.OK_FOLLOW,followService.showFollowId(member));
+                if (check) {
+                    return new ResponseEntity<>(HttpStatus.CREATED);
                 }
                 //언팔로우
-                else{
-                    return successResponse(CustomMessage.OK_UNFOLLOW,followService.showFollowId(member));
+                else {
+                    return new ResponseEntity<>(HttpStatus.OK);
+
                 }
 
             }
-
         }
-
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
