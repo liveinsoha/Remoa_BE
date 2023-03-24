@@ -131,22 +131,6 @@ public class ProfileController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    // 프로필 사진 삭제
-    @DeleteMapping("/user/img")
-    public ResponseEntity<Object> remove(HttpServletRequest request) throws MalformedURLException {
-        if(authorized(request)) {
-
-            Long memberId = getMemberId();
-            Member myMember = memberService.findOne(memberId);
-
-            awsS3Service.removeProfileUrl(myMember.getProfileImage());
-            myMember.setProfileImage("https://remoa.s3.ap-northeast-2.amazonaws.com/img/profile_img.png");
-            memberService.join(myMember);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return errorResponse(CustomMessage.UNAUTHORIZED);
-    }
-
 
 
 

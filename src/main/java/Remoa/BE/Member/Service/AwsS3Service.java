@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ public class AwsS3Service {
 
     public String editProfileImg(String profileImgUrl,MultipartFile multipartFile) throws IOException {
 
-        if(profileImgUrl != null) {
+        if(!Objects.equals(profileImgUrl, "https://remoa.s3.ap-northeast-2.amazonaws.com/img/profile_img.png")) {
             //기존 프로필 사진 s3에서 삭제
             removeProfileUrl(profileImgUrl);
         }
