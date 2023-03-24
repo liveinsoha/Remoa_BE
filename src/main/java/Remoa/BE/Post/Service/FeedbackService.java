@@ -6,6 +6,7 @@ import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Domain.UploadFile;
 import Remoa.BE.Post.Repository.FeedbackLikeRepository;
 import Remoa.BE.Post.Repository.FeedbackRepository;
+import Remoa.BE.Post.Repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

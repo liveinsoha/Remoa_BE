@@ -2,7 +2,9 @@ package Remoa.BE.Post.Controller;
 
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
+import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Service.FeedbackService;
+import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,7 @@ public class FeedbackController {
 
     private final FeedbackService feedbackService;
     private final MemberService memberService;
+    private final PostService postService;
 
     @PostMapping("/reference/{reference_id}/{page_number}") // 레퍼런스에 피드백 등록
     public ResponseEntity<Object> registerFeedback(@RequestBody Map<String, String> feedback,
@@ -34,6 +37,12 @@ public class FeedbackController {
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
+            Post post = postService.findOne(postId);
+            // 피드백을 등록하려는 게시물의 페이지 수가 없을 경우 예외 처리
+            if(post.getPageCount() < pageNumber || pageNumber < 1){
+                return errorResponse(CustomMessage.BAD_PAGE_NUM);
+            }
+
             feedbackService.registerFeedback(myMember, myFeedback, postId, pageNumber, null);
             return new ResponseEntity<>(HttpStatus.OK);
         }

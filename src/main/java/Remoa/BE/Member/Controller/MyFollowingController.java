@@ -2,6 +2,7 @@ package Remoa.BE.Member.Controller;
 
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMypageFollowing;
+import Remoa.BE.Member.Dto.Res.ResMypageList;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Member.Service.MyFollowingService;
 import Remoa.BE.exception.CustomMessage;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
