@@ -158,9 +158,9 @@ public class ProfileController {
     @GetMapping("/nickname")
     public ResponseEntity<Object> checkNicknameDuplicate(@RequestParam String nickname) {
         if (memberService.isNicknameDuplicate(nickname)) {
-            return successResponse(CustomMessage.OK, nickname + "은(는) 이미 사용중인 닉네임입니다.");
+            return successResponse(CustomMessage.OK, false);
         } else {
-            return successResponse(CustomMessage.OK, nickname + "은(는) 사용 가능한 닉네임입니다.");
+            return successResponse(CustomMessage.OK, true);
         }
     }
 }
