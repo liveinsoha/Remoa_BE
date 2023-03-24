@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Objects;
 
 
 import static Remoa.BE.exception.CustomBody.*;
@@ -127,6 +128,25 @@ public class ProfileController {
             else{
                 throw new IOException();
             }
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
+
+    @DeleteMapping("/user/img")
+    public ResponseEntity<Object> remove(HttpServletRequest request) throws MalformedURLException {
+        if(authorized(request)) {
+
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+
+            //유저가 기본프로필이 아니라면
+            if(!Objects.equals(myMember.getProfileImage(), "https://remoa.s3.ap-northeast-2.amazonaws.com/img/profile_img.png")) {
+                awsS3Service.removeProfileUrl(myMember.getProfileImage());
+                myMember.setProfileImage("https://remoa.s3.ap-northeast-2.amazonaws.com/img/profile_img.png");
+                memberService.join(myMember);
+            }
+
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
