@@ -6,7 +6,9 @@ import Remoa.BE.Post.Service.PostService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface PostScrapRepository extends JpaRepository<PostScarp, Long> {
     PostScarp findByMemberMemberIdAndPostPostId(Long memberId, Long postId);
 

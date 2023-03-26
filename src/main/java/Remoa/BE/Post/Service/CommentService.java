@@ -54,6 +54,11 @@ public class CommentService {
         return comment.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment not found"));
     }
 
+    public int commentLikeCount(Long commentId){
+        Comment comment = findOne(commentId);
+        return comment.getCommentLikeCount();
+    }
+
     @Transactional
     public Long commentBookmarkAction(Comment comment, Member member) {
         CommentBookmark commentBookmark = CommentBookmark.createCommentBookmark(member, comment);

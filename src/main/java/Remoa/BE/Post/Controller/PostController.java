@@ -20,10 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
@@ -131,15 +128,28 @@ public class PostController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @PostMapping("/reference/scrap/{reference_id}")
+    @PostMapping("/reference/{reference_id}/like")
+    public ResponseEntity<Object> likeReference(@PathVariable("reference_id") Long referenceId, HttpServletRequest request) {
+        if (authorized(request)) {
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+            postService.likePost(memberId, myMember, referenceId);
+            int count = postService.findLikeCount(referenceId);
+            Map<String, Integer> map = Collections.singletonMap("likeCount", count);
+            return successResponse(CustomMessage.OK,map);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
+
+    @PostMapping("/reference/{reference_id}/scrap")
     public ResponseEntity<Object> scrapReference(@PathVariable("reference_id") Long referenceId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
             postService.scrapPost(memberId, myMember, referenceId);
-
-
-            return new ResponseEntity<>(HttpStatus.OK);
+            int count = postService.findScrapCount(referenceId);
+            Map<String, Integer> map = Collections.singletonMap("scrapCount", count);
+            return successResponse(CustomMessage.OK,map);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
@@ -148,7 +158,6 @@ public class PostController {
     public ResponseEntity<Object> deleteReference(@PathVariable("reference_id") Long postId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();
-            Member postMember; // Post 엔티티에 등록된 Member
             Member myMember = memberService.findOne(memberId);
 
             // 현재 로그인한 사용자가 올린 게시글이 맞는지 확인/예외처리

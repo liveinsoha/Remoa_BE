@@ -4,12 +4,10 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Post.Domain.Post;
+import Remoa.BE.Post.Domain.PostLike;
 import Remoa.BE.Post.Domain.PostScarp;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
-import Remoa.BE.Post.Repository.CategoryRepository;
-import Remoa.BE.Post.Repository.PostPagingRepository;
-import Remoa.BE.Post.Repository.PostRepository;
-import Remoa.BE.Post.Repository.PostScrapRepository;
+import Remoa.BE.Post.Repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -49,6 +47,7 @@ public class PostService {
     private final PostPagingRepository postPagingRepository;
 
     private final PostScrapRepository postScrapRepository;
+    private final PostLikeRepository postLikeRepository;
 
     private static final int HOME_PAGE_SIZE = 12;
 
@@ -62,6 +61,32 @@ public class PostService {
         Optional<Post> findPost = postRepository.findOne(postId);
         findPost.ifPresent(post -> post.setViews(post.getViews() + 1));
         return findPost.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found"));
+    }
+
+    public int findScrapCount(Long postId){
+        Post findPost = findOne(postId);
+        return findPost.getPostScarps().size();
+    }
+
+    public int findLikeCount(Long postId){
+        Post findPost = findOne(postId);
+        return findPost.getPostLikes().size();
+    }
+
+    @Transactional
+    public void likePost(Long memberId, Member myMember, Long referenceId) {
+        Post post = findOne(referenceId);
+        Integer postLikeCount = post.getLikeCount(); // 이 게시물을 좋아요한 수
+
+        PostLike postLike = postLikeRepository.findByMemberMemberIdAndPostPostId(memberId, referenceId);
+        if (postLike == null) {
+            post.setLikeCount(postLikeCount + 1); // 좋아요 + 1
+            PostLike postLikeObj = PostLike.createPostLike(myMember, post);
+            postLikeRepository.save(postLikeObj);
+        } else {
+            post.setLikeCount(post.getLikeCount() - 1); // 좋아요 + 1
+            postLikeRepository.deleteById(postLike.getPostLikeId());
+        }
     }
 
     @Transactional
@@ -175,9 +200,13 @@ public class PostService {
         }
     }
 
-    public Page<PostScarp> findScrapedPost(int size, Member member) {
-        Pageable pageable = PageRequest.of(0, size);
+    public Page<PostScarp> findScrapedPost(int page, Member member) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE);
         return postScrapRepository.findByMemberOrderByScrapTimeDesc(pageable, member);
+    }
+
+    public List<Post> findRecentTwelveScrapedPost(Member member) {
+        return postPagingRepository.findByMemberRecentTwelve(member);
     }
 
     public boolean checkMemberPost(Member myMember, Long postId){

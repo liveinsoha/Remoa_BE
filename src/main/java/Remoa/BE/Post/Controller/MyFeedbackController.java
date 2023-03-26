@@ -54,26 +54,15 @@ public class MyFeedbackController {
                 return errorResponse(CustomMessage.PAGE_NUM_OVER);
             }
 
-            Page<Post> posts;
-            if (category.equals("idea") ||
-                    category.equals("marketing") ||
-                    category.equals("design") ||
-                    category.equals("video") ||
-                    category.equals("etc")) {
-
-                posts = myPostService.getNewestThreePostsSortCategory(pageNumber, myMember, category);
-
-            } else {
-                posts = myPostService.getNewestThreePosts(pageNumber, myMember);
-            }
+            Page<Post> posts = myPostService.getNewestThreePosts(pageNumber, myMember);
 
             if ((posts.getContent().isEmpty()) && (posts.getTotalElements() > 0)) {
                 return errorResponse(CustomMessage.PAGE_NUM_OVER);
             }
 
             Map<String, Object> result = new HashMap<>();
+            List<Object> res = new ArrayList<>();
 
-            int postNumber = 1;
             for (Post post : posts) { //조회한 post
                 Map<String, ResCommentDto> commentInfo = new HashMap<>();
 
@@ -113,14 +102,15 @@ public class MyFeedbackController {
 
                 ResReceivedCommentDto map = ResReceivedCommentDto.builder()
                         .title(post.getTitle())
+                        .thumbnail(post.getThumbnail().getStoreFileUrl())
                         .postId(post.getPostId())
                         .commentInfo(commentInfo)
                         .build();
 
-                result.put("post_" + postNumber, map);
+                res.add(map);
 
-                postNumber++;
             }
+            result.put("post",res);
             result.put("totalPages", posts.getTotalPages()); //전체 페이지의 수
             result.put("totalOfAllComments", posts.getTotalElements()); //모든 코멘트의 수
             result.put("totalOfPageElements", posts.getNumberOfElements()); //현 페이지 피드백의 수

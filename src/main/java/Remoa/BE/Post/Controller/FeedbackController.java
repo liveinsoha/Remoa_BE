@@ -13,9 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Map;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
+import static Remoa.BE.exception.CustomBody.successResponse;
 import static Remoa.BE.utill.MemberInfo.authorized;
 import static Remoa.BE.utill.MemberInfo.getMemberId;
 
@@ -91,7 +93,9 @@ public class FeedbackController {
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
             feedbackService.likeFeedback(memberId, myMember, feedbackId);
-            return new ResponseEntity<>(HttpStatus.OK);
+            int count = feedbackService.feedbackLikeCount(feedbackId);
+            Map<String, Integer> map = Collections.singletonMap("LikeCount", count);
+            return successResponse(CustomMessage.OK,map);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
 
