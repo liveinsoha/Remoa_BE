@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommentFeedbackService {
-
+    private static final int HOME_PAGE_SIZE = 12;
     private final CommentFeedbackRepository commentFeedbackRepository;
 
     @Transactional
@@ -34,8 +34,8 @@ public class CommentFeedbackService {
         return commentFeedbackRepository.save(commentFeedback);
     }
 
-    public Page<CommentFeedback> findNewestCommentOrFeedback(Member member, int size) {
-        Pageable pageable = PageRequest.of(0, size);
+    public Page<CommentFeedback> findNewestCommentOrFeedback(int page, Member member) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE);
         return commentFeedbackRepository.findByMemberOrderByTimeDesc(pageable, member);
     }
 

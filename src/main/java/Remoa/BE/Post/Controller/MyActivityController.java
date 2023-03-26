@@ -62,7 +62,7 @@ public class MyActivityController {
 
             Map<String, Object> result = new HashMap<>();
 
-            Page<CommentFeedback> commentOrFeedback = commentFeedbackService.findNewestCommentOrFeedback(myMember, commentSize);
+            Page<CommentFeedback> commentOrFeedback = commentFeedbackService.findNewestCommentOrFeedback(commentSize, myMember);
 
             /**
              * 조회한 가장 최근에 작성한 댓글들을 dto로 mapping
@@ -165,4 +165,50 @@ public class MyActivityController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
+    @GetMapping("/user/comment")
+    public ResponseEntity<Object> myComment(HttpServletRequest request,
+                                            @RequestParam(name = "page", defaultValue = "1", required = false) int pageNum){
+        if (authorized(request)) {
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+
+            Map<String, Object> result = new HashMap<>();
+
+            Page<CommentFeedback> commentOrFeedback = commentFeedbackService.findNewestCommentOrFeedback(pageNum, myMember);
+
+            /**
+             * 조회한 가장 최근에 작성한 댓글들을 dto로 mapping
+             */
+            List<ResCommentFeedbackDto> contents = commentOrFeedback.stream().map(commentFeedback -> {
+                ResCommentFeedbackDto map = null;
+                if (commentFeedback.getType().equals(FEEDBACK)) {
+                    map = ResCommentFeedbackDto.builder()
+                            .title(commentFeedback.getPost().getTitle())
+                            .postId(commentFeedback.getPost().getPostId())
+                            .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
+                            .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
+                                    commentFeedback.getMember().getNickname(),
+                                    commentFeedback.getMember().getProfileImage()))
+                            .content(commentFeedback.getFeedback().getFeedback())
+                            .likeCount(commentFeedback.getFeedback().getFeedbackLikeCount()).build();
+                } else if (commentFeedback.getType().equals(COMMENT)) {
+                    map = ResCommentFeedbackDto.builder()
+                            .title(commentFeedback.getPost().getTitle())
+                            .postId(commentFeedback.getPost().getPostId())
+                            .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
+                            .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
+                                    commentFeedback.getMember().getNickname(),
+                                    commentFeedback.getMember().getProfileImage()))
+                            .content(commentFeedback.getComment().getComment())
+                            .likeCount(commentFeedback.getComment().getCommentLikeCount()).build();
+                }
+                return map;
+            }).collect(Collectors.toList());
+
+            result.put("contents", contents);
+
+            return successResponse(CustomMessage.OK, result);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
 }
