@@ -41,6 +41,11 @@ public class FeedbackService {
         return feedback.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Feedback not found"));
     }
 
+    public int feedbackLikeCount(Long feedbackId){
+        Feedback feedback = findOne(feedbackId);
+        return feedback.getFeedbackLikeCount();
+    }
+
     public List<Feedback> findAllFeedbacksOfPost(Post post) {
         return feedbackRepository.findByPost(post);
     }

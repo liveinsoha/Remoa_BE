@@ -64,6 +64,11 @@ public class PostService {
         return findPost.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found"));
     }
 
+    public int findScrapCount(Long postId){
+        Post findPost = findOne(postId);
+        return findPost.getPostScarps().size();
+    }
+
     @Transactional
     public Post registerPost(UploadPostForm uploadPostForm, MultipartFile thumbnail, List<MultipartFile> uploadFiles, Long memberId) throws IOException {
 

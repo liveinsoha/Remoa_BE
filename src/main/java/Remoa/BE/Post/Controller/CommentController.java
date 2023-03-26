@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Map;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
@@ -78,7 +79,9 @@ public class CommentController {
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
             commentService.likeComment(memberId, myMember, commentId);
-            return new ResponseEntity<>(HttpStatus.OK);
+            int count = commentService.commentLikeCount(commentId);
+            Map<String, Integer> map = Collections.singletonMap("LikeCount", count);
+            return successResponse(CustomMessage.OK,map);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
