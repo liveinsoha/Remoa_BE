@@ -72,8 +72,8 @@ public class MyFeedbackController {
             }
 
             Map<String, Object> result = new HashMap<>();
+            List<Object> res = new ArrayList<>();
 
-            int postNumber = 1;
             for (Post post : posts) { //조회한 post
                 Map<String, ResCommentDto> commentInfo = new HashMap<>();
 
@@ -117,10 +117,10 @@ public class MyFeedbackController {
                         .commentInfo(commentInfo)
                         .build();
 
-                result.put("post_" + postNumber, map);
+                res.add(map);
 
-                postNumber++;
             }
+            result.put("post",res);
             result.put("totalPages", posts.getTotalPages()); //전체 페이지의 수
             result.put("totalOfAllComments", posts.getTotalElements()); //모든 코멘트의 수
             result.put("totalOfPageElements", posts.getNumberOfElements()); //현 페이지 피드백의 수
