@@ -12,6 +12,7 @@ import java.util.Map;
 public class ResReceivedCommentDto {
 
     private Long postId;
+    private String thumbnail;
     private Map<String, ResCommentDto> commentInfo;
     private String title;
 

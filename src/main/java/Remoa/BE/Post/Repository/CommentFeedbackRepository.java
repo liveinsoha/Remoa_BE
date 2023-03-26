@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommentFeedbackRepository extends JpaRepository<CommentFeedback, Long> {
+public interface CommentFeedbackRepository extends JpaRepository<CommentFeedback, Long>, CommentFeedbackCustomRepository {
 
     Page<CommentFeedback> findByMemberOrderByTimeDesc(Pageable pageable, Member member);
 

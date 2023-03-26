@@ -54,18 +54,7 @@ public class MyFeedbackController {
                 return errorResponse(CustomMessage.PAGE_NUM_OVER);
             }
 
-            Page<Post> posts;
-            if (category.equals("idea") ||
-                    category.equals("marketing") ||
-                    category.equals("design") ||
-                    category.equals("video") ||
-                    category.equals("etc")) {
-
-                posts = myPostService.getNewestThreePostsSortCategory(pageNumber, myMember, category);
-
-            } else {
-                posts = myPostService.getNewestThreePosts(pageNumber, myMember);
-            }
+            Page<Post> posts = myPostService.getNewestThreePosts(pageNumber, myMember);
 
             if ((posts.getContent().isEmpty()) && (posts.getTotalElements() > 0)) {
                 return errorResponse(CustomMessage.PAGE_NUM_OVER);
@@ -113,6 +102,7 @@ public class MyFeedbackController {
 
                 ResReceivedCommentDto map = ResReceivedCommentDto.builder()
                         .title(post.getTitle())
+                        .thumbnail(post.getThumbnail().getStoreFileUrl())
                         .postId(post.getPostId())
                         .commentInfo(commentInfo)
                         .build();
