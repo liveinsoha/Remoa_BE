@@ -195,8 +195,8 @@ public class PostService {
         }
     }
 
-    public Page<PostScarp> findScrapedPost(int size, Member member) {
-        Pageable pageable = PageRequest.of(0, size);
+    public Page<PostScarp> findScrapedPost(int page, Member member) {
+        Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE);
         return postScrapRepository.findByMemberOrderByScrapTimeDesc(pageable, member);
     }
 
