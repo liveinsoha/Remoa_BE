@@ -125,4 +125,44 @@ public class MyActivityController {
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
+
+    @GetMapping("/user/scrap") // 내가 스크랩한 게시글 확인
+    public ResponseEntity<Object> myScrap(HttpServletRequest request,
+                                          @RequestParam(name = "page", defaultValue = "1", required = false) int pageNum){
+
+        if (authorized(request)) {
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+
+            Map<String, Object> result = new HashMap<>();
+
+            /**
+             * 조회한 최근에 스크랩한 12개의 post들을 dto로 mapping.
+             */
+            List<ResPostDto> posts = postService.findScrapedPost(pageNum, myMember)
+                    .stream()
+                    .map(PostScarp::getPost)
+                    .collect(Collectors.toList())
+                    .stream()
+                    .map(post -> ResPostDto.builder()
+                            .postId(post.getPostId())
+                            .postMember(new ResMemberInfoDto(post.getMember().getMemberId(),
+                                    post.getMember().getNickname(),
+                                    post.getMember().getProfileImage()))
+                            .thumbnail(post.getThumbnail().getStoreFileUrl())
+                            .title(post.getTitle())
+                            .likeCount(post.getLikeCount())
+                            .postingTime(post.getPostingTime().toString())
+                            .views(post.getViews())
+                            .scrapCount(post.getScrapCount())
+                            .categoryName(post.getCategory().getName()).build())
+                    .collect(Collectors.toList());
+
+            result.put("posts", posts);
+
+            return successResponse(CustomMessage.OK, result);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
+
 }
