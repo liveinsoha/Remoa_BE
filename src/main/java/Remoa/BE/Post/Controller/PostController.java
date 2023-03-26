@@ -128,19 +128,20 @@ public class PostController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @PostMapping("/reference/like/{reference_id}")
+    @PostMapping("/reference/{reference_id}/like")
     public ResponseEntity<Object> likeReference(@PathVariable("reference_id") Long referenceId, HttpServletRequest request) {
         if (authorized(request)) {
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
             postService.likePost(memberId, myMember, referenceId);
-
-            return new ResponseEntity<>(HttpStatus.OK);
+            int count = postService.findLikeCount(referenceId);
+            Map<String, Integer> map = Collections.singletonMap("likeCount", count);
+            return successResponse(CustomMessage.OK,map);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @PostMapping("/reference/scrap/{reference_id}")
+    @PostMapping("/reference/{reference_id}/scrap")
     public ResponseEntity<Object> scrapReference(@PathVariable("reference_id") Long referenceId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();

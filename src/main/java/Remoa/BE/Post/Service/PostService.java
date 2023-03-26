@@ -68,6 +68,11 @@ public class PostService {
         return findPost.getPostScarps().size();
     }
 
+    public int findLikeCount(Long postId){
+        Post findPost = findOne(postId);
+        return findPost.getPostLikes().size();
+    }
+
     @Transactional
     public void likePost(Long memberId, Member myMember, Long referenceId) {
         Post post = findOne(referenceId);
