@@ -179,4 +179,17 @@ public class PostService {
         Pageable pageable = PageRequest.of(0, size);
         return postScrapRepository.findByMemberOrderByScrapTimeDesc(pageable, member);
     }
+
+    public boolean checkMemberPost(Member myMember, Long postId){
+        // postId를 이용해 Post 엔티티에 등록된 Member를 불러오고 이 Member가 컨트롤러에서 불러온 Member와 맞는지 확인하고 true/false 반환
+        Post post = findOne(postId);
+        Member member = post.getMember();
+        return myMember == member;
+    }
+
+
+    @Transactional
+    public void deleteReference(Long postId){
+        postRepository.deletePost(postId);
+    }
 }

@@ -143,4 +143,21 @@ public class PostController {
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
+
+    @DeleteMapping("/user/reference/{reference_id}")
+    public ResponseEntity<Object> deleteReference(@PathVariable("reference_id") Long postId, HttpServletRequest request){
+        if(authorized(request)){
+            Long memberId = getMemberId();
+            Member postMember; // Post 엔티티에 등록된 Member
+            Member myMember = memberService.findOne(memberId);
+
+            // 현재 로그인한 사용자가 올린 게시글이 맞는지 확인/예외처리
+            if(postService.checkMemberPost(myMember, postId)){
+                postService.deleteReference(postId);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }
+        return errorResponse(CustomMessage.CAN_NOT_ACCESS);
+    }
+
 }

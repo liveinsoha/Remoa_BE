@@ -89,19 +89,19 @@ public class Post {
     /**
      * Post에 작성되어진 Comment
      */
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Feedback> feedbacks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<CommentFeedback> commentFeedbacks = new ArrayList<>();
 
     /**
      * Post에서 쓰인 files
      */
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<UploadFile> uploadFiles;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)

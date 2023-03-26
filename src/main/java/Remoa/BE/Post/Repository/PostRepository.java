@@ -84,4 +84,8 @@ public class PostRepository {
         em.persist(comment);
     }
 
+    public void deletePost(Long postId){
+        Post post = em.find(Post.class, postId);
+        em.remove(post);
+    }
 }
