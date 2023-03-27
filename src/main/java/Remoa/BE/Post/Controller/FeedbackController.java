@@ -1,8 +1,12 @@
 package Remoa.BE.Post.Controller;
 
+import Remoa.BE.Member.Domain.Feedback;
 import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
+import Remoa.BE.Post.Dto.Response.ResFeedbackDto;
+import Remoa.BE.Post.Dto.Response.ResReplyDto;
 import Remoa.BE.Post.Service.FeedbackService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
@@ -14,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
@@ -31,11 +37,11 @@ public class FeedbackController {
     private final PostService postService;
 
     @PostMapping("/reference/{reference_id}/{page_number}") // 레퍼런스에 피드백 등록
-    public ResponseEntity<Object> registerFeedback(@RequestBody Map<String, String> feedback,
+    public ResponseEntity<Object> registerFeedback(@RequestBody Map<String, String> req,
                                                    @PathVariable("reference_id") Long postId,
                                                    @PathVariable("page_number") Integer pageNumber,
                                                    HttpServletRequest request){
-        String myFeedback = feedback.get("feedback");
+        String myFeedback = req.get("feedback");
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
@@ -46,33 +52,105 @@ public class FeedbackController {
             }
 
             feedbackService.registerFeedback(myMember, myFeedback, postId, pageNumber, null);
-            return new ResponseEntity<>(HttpStatus.OK);
+            List<ResFeedbackDto> feedbacks = feedbackService.findAllFeedbacksOfPost(post).stream()
+                    .filter(feedback -> feedback.getParentFeedback() == null)
+                    .map(feedback -> ResFeedbackDto.builder()
+                            .feedbackId(feedback.getFeedbackId())
+                            .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
+                                    feedback.getMember().getNickname(),
+                                    feedback.getMember().getProfileImage()))
+                            .feedback(feedback.getFeedback())
+                            .page(feedback.getPageNumber())
+                            .likeCount(feedback.getFeedbackLikeCount())
+                            .feedbackTime(feedback.getFeedbackTime())
+                            //아래부터 대댓글 feedback 조회 및 dto 매핑
+                            .replies(feedbackService.getParentFeedbacksReply(feedback).stream()
+                                    .map(reply -> ResReplyDto.builder()
+                                            .replyId(reply.getFeedbackId())
+                                            .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
+                                                    reply.getMember().getNickname(),
+                                                    reply.getMember().getProfileImage()))
+                                            .content(reply.getFeedback())
+                                            .likeCount(reply.getFeedbackLikeCount())
+                                            .repliedTime(reply.getFeedbackTime())
+                                            .build()).collect(Collectors.toList()))
+                            .build()).toList();
+            return successResponse(CustomMessage.OK,feedbacks);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
     @PostMapping("/reference/{reference_id}/feedback/{feedback_id}") // 레퍼런스에 피드백 대댓글 등록
-    public ResponseEntity<Object> registerFeedbackReply(@RequestBody Map<String, String> feedback,
+    public ResponseEntity<Object> registerFeedbackReply(@RequestBody Map<String, String> req,
                                                    @PathVariable("reference_id") Long postId,
                                                    @PathVariable("feedback_id") Long feedbackId,
                                                    HttpServletRequest request){
-        String myFeedback = feedback.get("feedback");
+        String myFeedback = req.get("feedback");
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
+            Post post = postService.findOne(postId);
             feedbackService.registerFeedback(myMember, myFeedback, postId, null, feedbackId);
-            return new ResponseEntity<>(HttpStatus.OK);
+
+            List<ResFeedbackDto> feedbacks = feedbackService.findAllFeedbacksOfPost(post).stream()
+                    .filter(feedback -> feedback.getParentFeedback() == null)
+                    .map(feedback -> ResFeedbackDto.builder()
+                            .feedbackId(feedback.getFeedbackId())
+                            .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
+                                    feedback.getMember().getNickname(),
+                                    feedback.getMember().getProfileImage()))
+                            .feedback(feedback.getFeedback())
+                            .page(feedback.getPageNumber())
+                            .likeCount(feedback.getFeedbackLikeCount())
+                            .feedbackTime(feedback.getFeedbackTime())
+                            //아래부터 대댓글 feedback 조회 및 dto 매핑
+                            .replies(feedbackService.getParentFeedbacksReply(feedback).stream()
+                                    .map(reply -> ResReplyDto.builder()
+                                            .replyId(reply.getFeedbackId())
+                                            .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
+                                                    reply.getMember().getNickname(),
+                                                    reply.getMember().getProfileImage()))
+                                            .content(reply.getFeedback())
+                                            .likeCount(reply.getFeedbackLikeCount())
+                                            .repliedTime(reply.getFeedbackTime())
+                                            .build()).collect(Collectors.toList()))
+                            .build()).toList();
+            return successResponse(CustomMessage.OK,feedbacks);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
     @PutMapping("/reference/feedback/{feedback_id}") // 피드백 수정
-    public ResponseEntity<Object> modifyFeedback(@RequestBody Map<String, String> feedback, @PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
-        String myFeedback = feedback.get("feedback");
+    public ResponseEntity<Object> modifyFeedback(@RequestBody Map<String, String> req, @PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
+        String myFeedback = req.get("feedback");
 
         if(authorized(request)){
             feedbackService.modifyFeedback(myFeedback, feedbackId);
-            return new ResponseEntity<>(HttpStatus.OK);
+            Feedback f = feedbackService.findOne(feedbackId);
+            List<ResFeedbackDto> feedbacks = feedbackService.findAllFeedbacksOfPost(f.getPost()).stream()
+                    .filter(feedback -> feedback.getParentFeedback() == null)
+                    .map(feedback -> ResFeedbackDto.builder()
+                            .feedbackId(feedback.getFeedbackId())
+                            .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
+                                    feedback.getMember().getNickname(),
+                                    feedback.getMember().getProfileImage()))
+                            .feedback(feedback.getFeedback())
+                            .page(feedback.getPageNumber())
+                            .likeCount(feedback.getFeedbackLikeCount())
+                            .feedbackTime(feedback.getFeedbackTime())
+                            //아래부터 대댓글 feedback 조회 및 dto 매핑
+                            .replies(feedbackService.getParentFeedbacksReply(feedback).stream()
+                                    .map(reply -> ResReplyDto.builder()
+                                            .replyId(reply.getFeedbackId())
+                                            .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
+                                                    reply.getMember().getNickname(),
+                                                    reply.getMember().getProfileImage()))
+                                            .content(reply.getFeedback())
+                                            .likeCount(reply.getFeedbackLikeCount())
+                                            .repliedTime(reply.getFeedbackTime())
+                                            .build()).collect(Collectors.toList()))
+                            .build()).toList();
+            return successResponse(CustomMessage.OK,feedbacks);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
@@ -80,9 +158,33 @@ public class FeedbackController {
     @DeleteMapping("/reference/feedback/{feedback_id}")
     public ResponseEntity<Object> deleteFeedback(@PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
         if(authorized(request)){
-
             feedbackService.deleteFeedback(feedbackId);
-            return new ResponseEntity<>(HttpStatus.OK);
+
+            Feedback f = feedbackService.findOne(feedbackId);
+            List<ResFeedbackDto> feedbacks = feedbackService.findAllFeedbacksOfPost(f.getPost()).stream()
+                    .filter(feedback -> feedback.getParentFeedback() == null)
+                    .map(feedback -> ResFeedbackDto.builder()
+                            .feedbackId(feedback.getFeedbackId())
+                            .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
+                                    feedback.getMember().getNickname(),
+                                    feedback.getMember().getProfileImage()))
+                            .feedback(feedback.getFeedback())
+                            .page(feedback.getPageNumber())
+                            .likeCount(feedback.getFeedbackLikeCount())
+                            .feedbackTime(feedback.getFeedbackTime())
+                            //아래부터 대댓글 feedback 조회 및 dto 매핑
+                            .replies(feedbackService.getParentFeedbacksReply(feedback).stream()
+                                    .map(reply -> ResReplyDto.builder()
+                                            .replyId(reply.getFeedbackId())
+                                            .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
+                                                    reply.getMember().getNickname(),
+                                                    reply.getMember().getProfileImage()))
+                                            .content(reply.getFeedback())
+                                            .likeCount(reply.getFeedbackLikeCount())
+                                            .repliedTime(reply.getFeedbackTime())
+                                            .build()).collect(Collectors.toList()))
+                            .build()).toList();
+            return successResponse(CustomMessage.OK,feedbacks);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
