@@ -97,7 +97,7 @@ public class PostController {
     @PostMapping("/reference")  // 게시물 등록
     public ResponseEntity<Object> share(@RequestPart("data") UploadPostForm uploadPostForm,
                                         @RequestPart("thumbnail")MultipartFile thumbnail,
-                                        @RequestPart("file") List<MultipartFile> uploadFiles, HttpServletRequest request) throws IOException {
+                                        @RequestPart(value = "file", required = false) List<MultipartFile> uploadFiles, HttpServletRequest request) throws IOException {
         if(authorized(request)){
             Long memberId = getMemberId();
 
