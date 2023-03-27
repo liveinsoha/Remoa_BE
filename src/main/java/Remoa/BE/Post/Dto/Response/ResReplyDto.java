@@ -19,5 +19,6 @@ public class ResReplyDto {
     private ResMemberInfoDto member;
     private String content;
     private Integer likeCount;
+    private Boolean isLiked;
     private LocalDateTime repliedTime;
 }

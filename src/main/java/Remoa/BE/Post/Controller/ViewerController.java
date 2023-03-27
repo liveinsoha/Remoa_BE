@@ -1,6 +1,8 @@
 package Remoa.BE.Post.Controller;
 
+import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
+import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Domain.UploadFile;
 import Remoa.BE.Post.Dto.Response.ResCommentDto;
@@ -18,10 +20,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static Remoa.BE.exception.CustomBody.successResponse;
+import static Remoa.BE.utill.MemberInfo.authorized;
+import static Remoa.BE.utill.MemberInfo.getMemberId;
 
 @Slf4j
 @RestController
@@ -31,10 +36,19 @@ public class ViewerController {
     private final CommentService commentService;
     private final PostService postService;
     private final FeedbackService feedbackService;
+    private final MemberService memberService;
 
     @GetMapping("reference/{reference_id}")
-    public ResponseEntity<Object> referenceViewer(@PathVariable("reference_id") Long referenceId) {
+    public ResponseEntity<Object> referenceViewer(HttpServletRequest request,
+                                                  @PathVariable("reference_id") Long referenceId) {
 
+        Long myMemberId = null;
+        Member myMember = null;
+        if (authorized(request)) {
+            myMemberId = getMemberId();
+            myMember = memberService.findOne(myMemberId);
+        }
+        final Long finalMyMemberId = myMemberId;
 
         // query parameter로 넘어온 id값의 post 조회
         Post post = postService.findOneViewPlus(referenceId);
@@ -44,6 +58,7 @@ public class ViewerController {
                 .filter(comment -> comment.getParentComment() == null)
                 .map(comment -> ResCommentDto.builder()
                         .commentId(comment.getCommentId())
+                        .isLiked(finalMyMemberId == null ? null : commentService.findCommentLike(finalMyMemberId, comment.getCommentId()).isPresent())
                         .member(new ResMemberInfoDto(comment.getMember().getMemberId(),
                                 comment.getMember().getNickname(),
                                 comment.getMember().getProfileImage()))
@@ -59,6 +74,7 @@ public class ViewerController {
                                                 reply.getMember().getProfileImage()))
                                         .content(reply.getComment())
                                         .likeCount(reply.getCommentLikeCount())
+                                        .isLiked(finalMyMemberId == null ? null : commentService.findCommentLike(finalMyMemberId, reply.getCommentId()).isPresent())
                                         .repliedTime(reply.getCommentedTime())
                                         .build()).collect(Collectors.toList()))
                         .build()).collect(Collectors.toList());
@@ -68,6 +84,7 @@ public class ViewerController {
                 .filter(feedback -> feedback.getParentFeedback() == null)
                 .map(feedback -> ResFeedbackDto.builder()
                         .feedbackId(feedback.getFeedbackId())
+                        .isLiked(finalMyMemberId == null ? null : feedbackService.findFeedbackLike(finalMyMemberId, feedback.getFeedbackId()).isPresent())
                         .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
                                 feedback.getMember().getNickname(),
                                 feedback.getMember().getProfileImage()))
@@ -84,6 +101,7 @@ public class ViewerController {
                                                 reply.getMember().getProfileImage()))
                                         .content(reply.getFeedback())
                                         .likeCount(reply.getFeedbackLikeCount())
+                                        .isLiked(finalMyMemberId == null ? null : feedbackService.findFeedbackLike(finalMyMemberId, reply.getFeedbackId()).isPresent())
                                         .repliedTime(reply.getFeedbackTime())
                                         .build()).collect(Collectors.toList()))
                         .build()).collect(Collectors.toList());
@@ -100,7 +118,9 @@ public class ViewerController {
                 .category(post.getCategory().getName())
                 .title(post.getTitle())
                 .likeCount(post.getLikeCount())
+                .isLiked(finalMyMemberId == null ? null : postService.isThisPostLiked(myMember))
                 .scrapCount(post.getScrapCount())
+                .isScraped(finalMyMemberId == null ? null : postService.isThisPostScraped(myMember))
                 .postingTime(post.getPostingTime().toString())
                 .views(post.getViews())
                 .pageCount(post.getPageCount())
@@ -108,7 +128,6 @@ public class ViewerController {
                 .comments(comments)
                 .feedbacks(feedbacks)
                 .build();
-
 
         return successResponse(CustomMessage.OK, result);
     }

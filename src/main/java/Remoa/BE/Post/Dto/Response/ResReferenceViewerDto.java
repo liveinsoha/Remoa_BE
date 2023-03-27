@@ -18,7 +18,9 @@ public class ResReferenceViewerDto {
     private String category;
     public String title;
     public Integer likeCount;
+    public Boolean isLiked;
     public Integer scrapCount;
+    public Boolean isScraped;
     public String postingTime;
     public Integer views;
     private Integer pageCount;

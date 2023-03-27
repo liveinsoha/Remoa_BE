@@ -19,6 +19,7 @@ public class ResFeedbackDto {
     private String feedback;
     private Integer page;
     private Integer likeCount;
+    private Boolean isLiked;
     private LocalDateTime feedbackTime;
     private List<ResReplyDto> replies;
 }
