@@ -58,7 +58,7 @@ public class ViewerController {
                 .filter(comment -> comment.getParentComment() == null)
                 .map(comment -> ResCommentDto.builder()
                         .commentId(comment.getCommentId())
-                        .isLiked(finalMyMemberId == null ? null : commentService.findCommentLike(finalMyMemberId, comment.getCommentId()).isPresent())
+                        .isLiked(finalMyMemberId == null ? false : commentService.findCommentLike(finalMyMemberId, comment.getCommentId()).isPresent())
                         .member(new ResMemberInfoDto(comment.getMember().getMemberId(),
                                 comment.getMember().getNickname(),
                                 comment.getMember().getProfileImage()))
@@ -74,7 +74,7 @@ public class ViewerController {
                                                 reply.getMember().getProfileImage()))
                                         .content(reply.getComment())
                                         .likeCount(reply.getCommentLikeCount())
-                                        .isLiked(finalMyMemberId == null ? null : commentService.findCommentLike(finalMyMemberId, reply.getCommentId()).isPresent())
+                                        .isLiked(finalMyMemberId == null ? false : commentService.findCommentLike(finalMyMemberId, reply.getCommentId()).isPresent())
                                         .repliedTime(reply.getCommentedTime())
                                         .build()).collect(Collectors.toList()))
                         .build()).collect(Collectors.toList());
@@ -84,7 +84,7 @@ public class ViewerController {
                 .filter(feedback -> feedback.getParentFeedback() == null)
                 .map(feedback -> ResFeedbackDto.builder()
                         .feedbackId(feedback.getFeedbackId())
-                        .isLiked(finalMyMemberId == null ? null : feedbackService.findFeedbackLike(finalMyMemberId, feedback.getFeedbackId()).isPresent())
+                        .isLiked(finalMyMemberId == null ? false : feedbackService.findFeedbackLike(finalMyMemberId, feedback.getFeedbackId()).isPresent())
                         .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
                                 feedback.getMember().getNickname(),
                                 feedback.getMember().getProfileImage()))
@@ -101,7 +101,7 @@ public class ViewerController {
                                                 reply.getMember().getProfileImage()))
                                         .content(reply.getFeedback())
                                         .likeCount(reply.getFeedbackLikeCount())
-                                        .isLiked(finalMyMemberId == null ? null : feedbackService.findFeedbackLike(finalMyMemberId, reply.getFeedbackId()).isPresent())
+                                        .isLiked(finalMyMemberId == null ? false : feedbackService.findFeedbackLike(finalMyMemberId, reply.getFeedbackId()).isPresent())
                                         .repliedTime(reply.getFeedbackTime())
                                         .build()).collect(Collectors.toList()))
                         .build()).collect(Collectors.toList());
@@ -118,9 +118,9 @@ public class ViewerController {
                 .category(post.getCategory().getName())
                 .title(post.getTitle())
                 .likeCount(post.getLikeCount())
-                .isLiked(finalMyMemberId == null ? null : postService.isThisPostLiked(myMember))
+                .isLiked(finalMyMemberId == null ? false : postService.isThisPostLiked(myMember))
                 .scrapCount(post.getScrapCount())
-                .isScraped(finalMyMemberId == null ? null : postService.isThisPostScraped(myMember))
+                .isScraped(finalMyMemberId == null ? false : postService.isThisPostScraped(myMember))
                 .postingTime(post.getPostingTime().toString())
                 .views(post.getViews())
                 .pageCount(post.getPageCount())
