@@ -1,6 +1,7 @@
 package Remoa.BE.Post.Service;
 
 import Remoa.BE.Member.Domain.*;
+import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Repository.CommentPagingRepository;
 import Remoa.BE.Post.Repository.CommentLikeRepository;
@@ -31,6 +32,7 @@ public class CommentService {
     private final PostService postService;
     private final CommentPagingRepository commentPagingRepository;
     private final CommentFeedbackService commentFeedbackService;
+    private final MemberService memberService;
 
     @Transactional
     public Long writeComment(Comment comment) {
@@ -107,8 +109,10 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId){
-        Comment comment = findOne(commentId);
-        comment.setDeleted(true);
+        Comment commentObj = findOne(commentId);
+        CommentFeedback commentOfCommentFeedback = commentFeedbackService.findComment(commentObj);
+        commentObj.setDeleted(true);
+        commentOfCommentFeedback.setDeleted(true);
     }
 
     public List<Comment> getRecentThreeCommentsExceptReply(Post post) {
@@ -119,26 +123,27 @@ public class CommentService {
     public List<Comment> getParentCommentsReply(Comment parentComment) {
         return commentRepository.findRepliesOfParentComment(parentComment);
     }
-    @Transactional
-    public CommentLike getCommentLikeByMemberIdAndCommentId(Long memberId, Long commentId) {
+
+    public Optional<CommentLike> findCommentLike(Long memberId, Long commentId) {
         return commentLikeRepository.findByMemberMemberIdAndCommentCommentId(memberId, commentId);
     }
 
     @Transactional
-    public void likeComment(Long memberId, Member myMember, Long commentId){
+    public void likeComment(Long memberId, Long commentId){
         Comment commentObj = findOne(commentId);
         Integer commentLikeCount = commentObj.getCommentLikeCount();
+        Member myMember = memberService.findOne(memberId);
 
         // CommentLike를 db에서 조회해보고 조회 결과가 null이면 like+=1, CommentLike 엔티티 생성
         // null이 아니면 like -= 1, 조회결과인 해당 CommentLike 엔티티 삭제
-        CommentLike commentLike = getCommentLikeByMemberIdAndCommentId(memberId, commentId);
-        if(commentLike == null){
+        Optional<CommentLike> commentLike = findCommentLike(memberId, commentId);
+        if(commentLike.isEmpty()){
             commentObj.setCommentLikeCount(commentLikeCount + 1); // 좋아요 수 1 증가
             CommentLike commentLikeObj = CommentLike.createCommentLike(myMember, commentObj);
             commentLikeRepository.save(commentLikeObj);
         }else{
             commentObj.setCommentLikeCount(commentLikeCount - 1); // 좋아요 수 1 차감
-            commentLikeRepository.deleteById(commentLike.getCommentLikeId()); // db에서 삭제
+            commentLikeRepository.deleteById(commentLike.get().getCommentLikeId()); // db에서 삭제
         }
     }
 }

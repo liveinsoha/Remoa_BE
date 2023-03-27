@@ -54,10 +54,8 @@ public class FeedbackService {
         return feedbackRepository.findRepliesOfParentFeedback(parentFeedback);
     }
 
-    @Transactional
-    public FeedbackLike getFeedbackLikeByMemberIdAndFeedbackId(Long memberId, Long feedbackId) {
-        FeedbackLike feedbackLike = feedbackLikeRepository.findByMemberMemberIdAndFeedbackFeedbackId(memberId, feedbackId);
-        return feedbackLike;
+    public Optional<FeedbackLike> findFeedbackLike(Long memberId, Long feedbackId) {
+        return feedbackLikeRepository.findByMemberMemberIdAndFeedbackFeedbackId(memberId, feedbackId);
     }
 
     @Transactional
@@ -100,7 +98,9 @@ public class FeedbackService {
     @Transactional
     public void deleteFeedback(Long feedbackId){
         Feedback feedbackObj = findOne(feedbackId);
-        feedbackRepository.deleteFeedback(feedbackObj);
+        CommentFeedback feedbackOfCommentFeedback = commentFeedbackService.findFeedback(feedbackObj);
+        feedbackObj.setDeleted(true);
+        feedbackOfCommentFeedback.setDeleted(true);
     }
 
     @Transactional
@@ -110,14 +110,14 @@ public class FeedbackService {
 
         //FeedbackLike를 db에서 조회해보고 조회 결과가 null이면 like+=1, FeedbackLike 엔티티 추가
         // null이 아니면 like -=1, 조회결과인 해당 FeedbackLike 엔티티 삭제
-        FeedbackLike feedbackLike = getFeedbackLikeByMemberIdAndFeedbackId(memberId, feedbackId);
-        if(feedbackLike == null){
+        Optional<FeedbackLike> feedbackLike = findFeedbackLike(memberId, feedbackId);
+        if (feedbackLike.isEmpty()){
             feedbackObj.setFeedbackLikeCount(feedbackLikeCount + 1); // 좋아요 수 1 증가
             FeedbackLike feedbackLikeObj = FeedbackLike.createFeedbackLike(myMember, feedbackObj);
             feedbackLikeRepository.save(feedbackLikeObj);
         } else{
             feedbackObj.setFeedbackLikeCount(feedbackLikeCount - 1); // 좋아요 수 1 차감
-            feedbackLikeRepository.deleteById(feedbackLike.getFeedbackLikeId()); // db에서 삭제
+            feedbackLikeRepository.deleteById(feedbackLike.get().getFeedbackLikeId()); // db에서 삭제
         }
     }
 }

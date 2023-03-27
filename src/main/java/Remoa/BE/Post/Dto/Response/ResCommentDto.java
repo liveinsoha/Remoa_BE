@@ -19,6 +19,7 @@ public class ResCommentDto {
     private ResMemberInfoDto member;
     private String comment;
     private Integer likeCount;
+    private Boolean isLiked;
     private LocalDateTime commentedTime;
     private List<ResReplyDto> replies;
 

@@ -183,8 +183,7 @@ public class CommentController {
     public ResponseEntity<Object> likeComment(@PathVariable("comment_id") Long commentId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();
-            Member myMember = memberService.findOne(memberId);
-            commentService.likeComment(memberId, myMember, commentId);
+            commentService.likeComment(memberId, commentId);
             int count = commentService.commentLikeCount(commentId);
             Map<String, Integer> map = Collections.singletonMap("LikeCount", count);
             return successResponse(CustomMessage.OK,map);

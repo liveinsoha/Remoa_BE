@@ -5,7 +5,6 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.PostScarp;
-import Remoa.BE.Post.Dto.Response.ResCommentDto;
 import Remoa.BE.Post.Dto.Response.ResCommentFeedbackDto;
 import Remoa.BE.Post.Dto.Response.ResPostDto;
 import Remoa.BE.Post.Service.CommentFeedbackService;
@@ -61,7 +60,7 @@ public class MyActivityController {
             CommentFeedback commentFeedback = commentFeedbackService.findNewestCommentFeedback(myMember);
 
             ResCommentFeedbackDto commentOrFeedback = null;
-            if (commentFeedback.getType().equals(FEEDBACK)) {
+            if (commentFeedback != null && commentFeedback.getType().equals(FEEDBACK)) {
                 commentOrFeedback = ResCommentFeedbackDto.builder()
                         .title(commentFeedback.getPost().getTitle())
                         .postId(commentFeedback.getPost().getPostId())
@@ -72,7 +71,7 @@ public class MyActivityController {
                         .content(commentFeedback.getFeedback().getFeedback())
                         .likeCount(commentFeedback.getFeedback().getFeedbackLikeCount())
                         .build();
-            } else if (commentFeedback.getType().equals(COMMENT)) {
+            } else if (commentFeedback != null && commentFeedback.getType().equals(COMMENT)) {
                 commentOrFeedback = ResCommentFeedbackDto.builder()
                         .title(commentFeedback.getPost().getTitle())
                         .postId(commentFeedback.getPost().getPostId())

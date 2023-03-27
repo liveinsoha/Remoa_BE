@@ -216,6 +216,14 @@ public class PostService {
         return myMember == member;
     }
 
+    public boolean isThisPostScraped(Member myMember) {
+        return postRepository.findScrapedPost(myMember).isPresent();
+    }
+
+    public boolean isThisPostLiked(Member myMember) {
+        return postRepository.findLikedPost(myMember).isPresent();
+    }
+
 
     @Transactional
     public void deleteReference(Long postId){

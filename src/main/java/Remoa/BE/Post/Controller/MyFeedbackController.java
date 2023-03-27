@@ -84,6 +84,7 @@ public class MyFeedbackController {
                                         reply.getMember().getProfileImage()),
                                 reply.getComment(),
                                 reply.getCommentLikeCount(),
+                                commentService.findCommentLike(myMember.getMemberId(), reply.getCommentId()).isPresent(),
                                 reply.getCommentedTime()));
                     }
 
@@ -94,6 +95,8 @@ public class MyFeedbackController {
                                     parentComment.getMember().getProfileImage()),
                             parentComment.getComment(),
                             parentComment.getCommentLikeCount(),
+                            commentService.findCommentLike(myMember.getMemberId(),
+                                    parentComment.getCommentId()).isPresent(),
                             parentComment.getCommentedTime(),
                             replies));
 

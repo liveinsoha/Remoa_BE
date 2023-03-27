@@ -7,10 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +43,17 @@ public class CommentFeedbackService {
     }
 
     public CommentFeedback findNewestCommentFeedback(Member member) {
-        return commentFeedbackRepository.findByMemberOrderByTime(member);
+        return commentFeedbackRepository.findByMemberOrderByTime(member).orElse(null);
+    }
+
+    public CommentFeedback findComment(Comment comment) {
+        return commentFeedbackRepository.findByComment(comment)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment not found"));
+    }
+
+    public CommentFeedback findFeedback(Feedback feedback) {
+        return commentFeedbackRepository.findByFeedback(feedback)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Feedback not found"));
     }
 
 }
