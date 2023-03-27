@@ -107,8 +107,8 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId){
-        Comment commentObj = findOne(commentId);
-        commentRepository.deleteComment(commentObj);
+        Comment comment = findOne(commentId);
+        comment.setDeleted(true);
     }
 
     public List<Comment> getRecentThreeCommentsExceptReply(Post post) {
