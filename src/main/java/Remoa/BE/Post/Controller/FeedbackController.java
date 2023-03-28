@@ -74,7 +74,7 @@ public class FeedbackController {
                                             .likeCount(reply.getFeedbackLikeCount())
                                             .repliedTime(reply.getFeedbackTime())
                                             .build()).collect(Collectors.toList()))
-                            .build()).toList();
+                            .build()).collect(Collectors.toList());
             return successResponse(CustomMessage.OK,feedbacks);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
@@ -114,7 +114,7 @@ public class FeedbackController {
                                             .likeCount(reply.getFeedbackLikeCount())
                                             .repliedTime(reply.getFeedbackTime())
                                             .build()).collect(Collectors.toList()))
-                            .build()).toList();
+                            .build()).collect(Collectors.toList());
             return successResponse(CustomMessage.OK,feedbacks);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
@@ -149,7 +149,7 @@ public class FeedbackController {
                                             .likeCount(reply.getFeedbackLikeCount())
                                             .repliedTime(reply.getFeedbackTime())
                                             .build()).collect(Collectors.toList()))
-                            .build()).toList();
+                            .build()).collect(Collectors.toList());
             return successResponse(CustomMessage.OK,feedbacks);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
@@ -183,7 +183,7 @@ public class FeedbackController {
                                             .likeCount(reply.getFeedbackLikeCount())
                                             .repliedTime(reply.getFeedbackTime())
                                             .build()).collect(Collectors.toList()))
-                            .build()).toList();
+                            .build()).collect(Collectors.toList());
             return successResponse(CustomMessage.OK,feedbacks);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);

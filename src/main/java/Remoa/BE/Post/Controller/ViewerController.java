@@ -74,7 +74,7 @@ public class ViewerController {
                                                 reply.getMember().getProfileImage()))
                                         .content(reply.getComment())
                                         .likeCount(reply.getCommentLikeCount())
-                                        .isLiked(finalMyMemberId == null ? false : commentService.findCommentLike(finalMyMemberId, reply.getCommentId()).isPresent())
+                                        .isLiked(finalMyMemberId != null && commentService.findCommentLike(finalMyMemberId, reply.getCommentId()).isPresent())
                                         .repliedTime(reply.getCommentedTime())
                                         .build()).collect(Collectors.toList()))
                         .build()).collect(Collectors.toList());
@@ -84,7 +84,7 @@ public class ViewerController {
                 .filter(feedback -> feedback.getParentFeedback() == null)
                 .map(feedback -> ResFeedbackDto.builder()
                         .feedbackId(feedback.getFeedbackId())
-                        .isLiked(finalMyMemberId == null ? false : feedbackService.findFeedbackLike(finalMyMemberId, feedback.getFeedbackId()).isPresent())
+                        .isLiked(finalMyMemberId != null && feedbackService.findFeedbackLike(finalMyMemberId, feedback.getFeedbackId()).isPresent())
                         .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
                                 feedback.getMember().getNickname(),
                                 feedback.getMember().getProfileImage()))

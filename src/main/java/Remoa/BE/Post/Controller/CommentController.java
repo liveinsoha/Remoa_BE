@@ -67,7 +67,7 @@ public class CommentController {
                                             .likeCount(reply.getCommentLikeCount())
                                             .repliedTime(reply.getCommentedTime())
                                             .build()).collect(Collectors.toList()))
-                            .build()).toList();
+                            .build()).collect(Collectors.toList());
             return  successResponse(CustomMessage.OK,comments);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
@@ -105,7 +105,7 @@ public class CommentController {
                                             .likeCount(reply.getCommentLikeCount())
                                             .repliedTime(reply.getCommentedTime())
                                             .build()).collect(Collectors.toList()))
-                            .build()).toList();
+                            .build()).collect(Collectors.toList());
             return  successResponse(CustomMessage.OK,comments);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
@@ -139,7 +139,7 @@ public class CommentController {
                                             .likeCount(reply.getCommentLikeCount())
                                             .repliedTime(reply.getCommentedTime())
                                             .build()).collect(Collectors.toList()))
-                            .build()).toList();
+                            .build()).collect(Collectors.toList());
 
             return  successResponse(CustomMessage.OK,comments);
         }
@@ -173,7 +173,7 @@ public class CommentController {
                                             .likeCount(reply.getCommentLikeCount())
                                             .repliedTime(reply.getCommentedTime())
                                             .build()).collect(Collectors.toList()))
-                            .build()).toList();
+                            .build()).collect(Collectors.toList());
             return  successResponse(CustomMessage.OK,comments);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
