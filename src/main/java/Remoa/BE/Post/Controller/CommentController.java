@@ -5,6 +5,7 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
+import Remoa.BE.Post.Dto.Request.ReqCommentDto;
 import Remoa.BE.Post.Dto.Response.ResCommentDto;
 import Remoa.BE.Post.Dto.Response.ResReplyDto;
 import Remoa.BE.Post.Service.CommentService;
@@ -38,8 +39,8 @@ public class CommentController {
 
     //댓글 작성
     @PostMapping("/reference/{reference_id}/comment")
-    public ResponseEntity<Object> registerComment(@RequestBody Map<String, String> req, @PathVariable("reference_id") Long postId, HttpServletRequest request){
-        String myComment = req.get("comment");
+    public ResponseEntity<Object> registerComment(@RequestBody ReqCommentDto req, @PathVariable("reference_id") Long postId, HttpServletRequest request){
+        String myComment = req.getComment();
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
@@ -75,8 +76,8 @@ public class CommentController {
 
     //대댓글 작성
     @PostMapping("/reference/{reference_id}/comment/{comment_id}")
-    public ResponseEntity<Object> registerCommentReply(@RequestBody Map<String, String> req, @PathVariable("reference_id") Long postId, @PathVariable("comment_id") Long commentId, HttpServletRequest request){
-        String myComment = req.get("comment");
+    public ResponseEntity<Object> registerCommentReply(@RequestBody ReqCommentDto req, @PathVariable("reference_id") Long postId, @PathVariable("comment_id") Long commentId, HttpServletRequest request){
+        String myComment = req.getComment();
         if(authorized(request)){
 
             Long memberId = getMemberId();
@@ -111,8 +112,8 @@ public class CommentController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
     @PutMapping("/reference/comment/{comment_id}")
-    public ResponseEntity<Object> modifyComment(@RequestBody Map<String, String> req, @PathVariable("comment_id") Long commentId, HttpServletRequest request){
-        String myComment = req.get("comment");
+    public ResponseEntity<Object> modifyComment(@RequestBody ReqCommentDto req, @PathVariable("comment_id") Long commentId, HttpServletRequest request){
+        String myComment = req.getComment();
 
         if(authorized(request)){
             commentService.modifyComment(myComment, commentId);
@@ -146,7 +147,7 @@ public class CommentController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @DeleteMapping("/comment/{comment_id}")
+    @DeleteMapping("/reference/comment/{comment_id}")
     public ResponseEntity<Object> deleteComment(@PathVariable("comment_id") Long commentId, HttpServletRequest request){
         if(authorized(request)){
             commentService.deleteComment(commentId);
