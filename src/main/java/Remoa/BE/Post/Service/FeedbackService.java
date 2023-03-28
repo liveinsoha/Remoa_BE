@@ -92,6 +92,9 @@ public class FeedbackService {
     public void modifyFeedback(String feedback, Long feedbackId){
         Feedback feedbackObj = findOne(feedbackId);
         feedbackObj.setFeedback(feedback);
+        if (feedbackObj.getParentFeedback() == null) {
+            commentFeedbackService.findFeedback(feedbackObj).getFeedback().setFeedback(feedback);
+        }
         feedbackRepository.updateFeedback(feedbackObj);
     }
 

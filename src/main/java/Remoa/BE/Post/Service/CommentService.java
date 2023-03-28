@@ -103,6 +103,9 @@ public class CommentService {
     public void modifyComment(String comment, Long commentId){
         Comment commentObj = findOne(commentId);
         commentObj.setComment(comment);
+        if (commentObj.getParentComment() == null) {
+            commentFeedbackService.findComment(commentObj).getComment().setComment(comment);
+        }
         commentRepository.updateComment(commentObj);
     }
 
