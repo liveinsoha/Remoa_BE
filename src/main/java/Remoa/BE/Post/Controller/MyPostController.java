@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -104,7 +105,62 @@ public class MyPostController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
+    @GetMapping("/reference/{member_id}")
+    public ResponseEntity<Object> otherReference( @PathVariable("member_id") Long memberId,
+                                              @RequestParam(required = false, defaultValue = "all") String category,
+                                              @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber,
+                                              @RequestParam(required = false, defaultValue = "newest") String sort,
+                                              @RequestParam(required = false, defaultValue = "") String title) {
+            Member myMember = memberService.findOne(memberId);
 
+            pageNumber -= 1;
+            if (pageNumber < 0) {
+                return errorResponse(CustomMessage.PAGE_NUM_OVER);
+            }
+
+            Page<Post> posts;
+
+            if (category.equals("idea") ||
+                    category.equals("marketing") ||
+                    category.equals("design") ||
+                    category.equals("video") ||
+                    category.equals("etc")) {
+                posts = myPostService.sortAndPaginatePostsByCategoryAndMember(category, pageNumber, sort, myMember,title);
+            } else {
+                posts = myPostService.sortAndPaginatePostsByMember(pageNumber, sort, myMember,title);
+            }
+
+            //조회할 레퍼런스가 db에 있으나, 현재 페이지에 조회할 데이터가 없는 경우 == 페이지 번호를 잘못 입력
+            if ((posts.getContent().isEmpty()) && (posts.getTotalElements() > 0)) {
+                return errorResponse(CustomMessage.PAGE_NUM_OVER);
+            }
+
+            List<ResPostDto> result = new ArrayList<>();
+
+            for (Post post : posts) {
+                ResPostDto map = ResPostDto.builder()
+                        .postingTime(post.getPostingTime().toString())
+                        .postMember(new ResMemberInfoDto(post.getMember().getMemberId(),
+                                post.getMember().getNickname(),
+                                post.getMember().getProfileImage()))
+                        .postId(post.getPostId())
+                        .views(post.getViews())
+                        .categoryName(post.getCategory().getName())
+                        .likeCount(post.getLikeCount())
+                        .thumbnail(post.getThumbnail().getStoreFileUrl())
+                        .scrapCount(post.getScrapCount())
+                        .title(post.getTitle()).build();
+                result.add(map);
+            }
+            //프론트에서 쓰일 조회한 레퍼런스들과 페이지 관련한 값들 map에 담아서 return.
+            Map<String, Object> referencesAndPageInfo = new HashMap<>();
+            referencesAndPageInfo.put("references", result); //조회한 레퍼런스들
+            referencesAndPageInfo.put("totalPages", posts.getTotalPages()); //전체 페이지의 수
+            referencesAndPageInfo.put("totalOfAllReferences", posts.getTotalElements()); //모든 레퍼런스의 수
+            referencesAndPageInfo.put("totalOfPageElements", posts.getNumberOfElements()); //현 페이지의 레퍼런스 수
+
+            return successResponse(CustomMessage.OK, referencesAndPageInfo);
+        }
 
 
 }
