@@ -114,6 +114,7 @@ public class PostService {
                     .scrapCount(0)
                     .deleted(false)
                     .build();
+            postRepository.savePost(post);
         } else {
             //확장자 확인
             String extension = fileExtension(uploadFiles.get(0));
