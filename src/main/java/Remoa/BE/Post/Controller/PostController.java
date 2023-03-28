@@ -94,39 +94,36 @@ public class PostController {
     }
 
 
-    @PostMapping("/reference")  // 게시물 등록
+    @PostMapping("/reference") // 게시물 등록
     public ResponseEntity<Object> share(@RequestPart("data") UploadPostForm uploadPostForm,
                                         @RequestPart("thumbnail")MultipartFile thumbnail,
-                                        @RequestPart(value = "file", required = false) List<MultipartFile> uploadFiles, HttpServletRequest request) throws IOException {
-        if(authorized(request)){
+                                        @RequestPart(value = "file", required = false) List<MultipartFile> uploadFiles,
+                                        HttpServletRequest request) throws IOException {
+        if (authorized(request)) {
             Long memberId = getMemberId();
-
-            Post savePost = postService.registerPost(uploadPostForm,thumbnail,uploadFiles,memberId);
-
-            //잘못된 파일 유형
-            if(savePost == null){
-                return errorResponse(CustomMessage.BAD_FILE);
+            Post savePost = postService.registerPost(uploadPostForm, thumbnail, uploadFiles, memberId);
+            if (savePost != null) {
+                Post post = postService.findOne(savePost.getPostId());
+                ResReferenceRegisterDto resReferenceRegisterDto = ResReferenceRegisterDto.builder()
+                        .postId(post.getPostId())
+                        .title(post.getTitle())
+                        .category(post.getCategory().getName())
+                        .contestAwardType(post.getContestAwardType())
+                        .contestName(post.getContestName())
+                        .youtubeLink(post.getYoutubeLink())
+                        .pageCount(post.getPageCount())
+                        .build();
+                if (post.getUploadFiles() != null) {
+                    resReferenceRegisterDto.setFileNames(post.getUploadFiles().stream()
+                            .map(UploadFile::getOriginalFileName)
+                            .collect(Collectors.toList()));
+                }
+                return successResponse(CustomMessage.OK, resReferenceRegisterDto);
             }
-
-            Post post = postService.findOne(savePost.getPostId());
-
-            ResReferenceRegisterDto resReferenceRegisterDto = ResReferenceRegisterDto.builder()
-                    .postId(post.getPostId())
-                    .title(post.getTitle())
-                    .category(post.getCategory().getName())
-                    .contestAwardType(post.getContestAwardType())
-                    .contestName(post.getContestName())
-                    .youtubeLink(post.getYoutubeLink())
-                    .pageCount(post.getPageCount())
-                    .fileNames(post.getUploadFiles().stream().map(UploadFile::getOriginalFileName).collect(Collectors.toList()))
-                    .build();
-            return successResponse(CustomMessage.OK, resReferenceRegisterDto);
-
-
         }
-
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
+
 
     @PostMapping("/reference/{reference_id}/like")
     public ResponseEntity<Object> likeReference(@PathVariable("reference_id") Long referenceId, HttpServletRequest request) {
