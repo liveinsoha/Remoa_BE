@@ -5,6 +5,7 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
+import Remoa.BE.Post.Dto.Request.ReqFeedbackDto;
 import Remoa.BE.Post.Dto.Response.ResFeedbackDto;
 import Remoa.BE.Post.Dto.Response.ResReplyDto;
 import Remoa.BE.Post.Service.FeedbackService;
@@ -37,11 +38,11 @@ public class FeedbackController {
     private final PostService postService;
 
     @PostMapping("/reference/{reference_id}/{page_number}") // 레퍼런스에 피드백 등록
-    public ResponseEntity<Object> registerFeedback(@RequestBody Map<String, String> req,
+    public ResponseEntity<Object> registerFeedback(@RequestBody ReqFeedbackDto req,
                                                    @PathVariable("reference_id") Long postId,
                                                    @PathVariable("page_number") Integer pageNumber,
                                                    HttpServletRequest request){
-        String myFeedback = req.get("feedback");
+        String myFeedback = req.getFeedback();
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
@@ -81,11 +82,11 @@ public class FeedbackController {
     }
 
     @PostMapping("/reference/{reference_id}/feedback/{feedback_id}") // 레퍼런스에 피드백 대댓글 등록
-    public ResponseEntity<Object> registerFeedbackReply(@RequestBody Map<String, String> req,
+    public ResponseEntity<Object> registerFeedbackReply(@RequestBody ReqFeedbackDto req,
                                                    @PathVariable("reference_id") Long postId,
                                                    @PathVariable("feedback_id") Long feedbackId,
                                                    HttpServletRequest request){
-        String myFeedback = req.get("feedback");
+        String myFeedback = req.getFeedback();
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
@@ -121,8 +122,8 @@ public class FeedbackController {
     }
 
     @PutMapping("/reference/feedback/{feedback_id}") // 피드백 수정
-    public ResponseEntity<Object> modifyFeedback(@RequestBody Map<String, String> req, @PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
-        String myFeedback = req.get("feedback");
+    public ResponseEntity<Object> modifyFeedback(@RequestBody ReqFeedbackDto req, @PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
+        String myFeedback = req.getFeedback();
 
         if(authorized(request)){
             feedbackService.modifyFeedback(myFeedback, feedbackId);
