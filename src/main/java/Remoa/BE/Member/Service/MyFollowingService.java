@@ -36,13 +36,25 @@ public class MyFollowingService {
             // followMember를 팔로우하는 유저 구하기(팔로워)
             List<Member> followingMemberFollower = memberRepository.loadFollowers(followMember);
 
-            ResMypageList resMypageList = ResMypageList.builder()
-                    .profileImage(followMember.getProfileImage())
-                    .userName(followMember.getNickname())
-                    .followingNum(followingMemberFollowing.size())
-                    .followerNum(followingMemberFollower.size())
-                    .build();
-            resMypageLists.add(resMypageList);
+            if(isFollowing == 1){ // 마이페이지 팔로잉 관리 화면
+                ResMypageList resMypageList = ResMypageList.builder()
+                        .profileImage(followMember.getProfileImage())
+                        .userName(followMember.getNickname())
+                        .followingNum(followingMemberFollowing.size())
+                        .followerNum(followingMemberFollower.size())
+                        .oneLineIntroduction(followMember.getOneLineIntroduction())
+                        .build();
+                resMypageLists.add(resMypageList);
+            }else{ // 마이페이지 팔로워 관리 화면
+                ResMypageList resMypageList = ResMypageList.builder()
+                        .profileImage(followMember.getProfileImage())
+                        .userName(followMember.getNickname())
+                        .followingNum(followingMemberFollowing.size())
+                        .followerNum(followingMemberFollower.size())
+                        .oneLineIntroduction(followMember.getOneLineIntroduction())
+                        .build();
+                resMypageLists.add(resMypageList);
+            }
         }
 
         return resMypageLists;

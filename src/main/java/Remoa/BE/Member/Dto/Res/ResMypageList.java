@@ -13,4 +13,6 @@ public class ResMypageList {
     private int followingNum;
 
     private int followerNum;
+
+    private String oneLineIntroduction;
 }
