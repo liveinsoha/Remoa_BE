@@ -51,7 +51,7 @@ public class Post {
     /**
      * 유튜브 링크
      */
-    private String youtubeLink;
+    private String youtubeLink="";
 
     /**
      * 참여한 공모전의 마감 기한

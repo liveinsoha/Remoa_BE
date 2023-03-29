@@ -126,6 +126,7 @@ public class ViewerController {
                 .isScraped(finalMyMemberId != null && postService.isThisPostScraped(myMember))
                 .postingTime(post.getPostingTime().toString())
                 .views(post.getViews())
+                .youtubeLink(post.getYoutubeLink())
                 .pageCount(post.getPageCount())
                 .fileNames(fileNames)
                 .comments(comments)

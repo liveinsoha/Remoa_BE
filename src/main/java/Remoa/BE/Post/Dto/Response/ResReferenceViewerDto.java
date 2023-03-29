@@ -24,6 +24,7 @@ public class ResReferenceViewerDto {
     public String postingTime;
     public Integer views;
     private Integer pageCount;
+    private String youtubeLink;
     private List<String> fileNames;
     private List<ResCommentDto> comments;
     private List<ResFeedbackDto> feedbacks;

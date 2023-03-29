@@ -39,7 +39,6 @@ public class Comment {
     /**
      * Comment의 내용
      */
-    @Lob
     private String comment;
 
     /**
