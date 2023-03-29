@@ -52,7 +52,9 @@ public class FileService {
 
         //썸네일 파일 저장 추가
         saveUploadFile(thumbnail,post,"thumbnail");
-        multipartFile.forEach(file -> saveUploadFile(file, post,"post"));
+        if(multipartFile!=null) {
+            multipartFile.forEach(file -> saveUploadFile(file, post, "post"));
+        }
 
 
         //새로운 인스턴스 만들어서 set하지 않으면 clear 되면서 null이 계속 저장됨.

@@ -66,7 +66,7 @@ public class Member implements UserDetails {
      */
     @Column(name = "one_line_introduction")
     @Lob
-    private String oneLineIntroduction;
+    private String oneLineIntroduction="";
 
     /**
      * 레모아 서비스 이용 약관 동의 여부

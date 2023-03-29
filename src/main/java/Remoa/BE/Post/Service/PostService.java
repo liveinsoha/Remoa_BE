@@ -100,6 +100,9 @@ public class PostService {
 
         // 비디오만 따로 처리
         if (category.getName().equals("video")) {
+            if(uploadFiles != null){
+                throw new IOException();
+            }
             post = Post.builder()
                     .title(uploadPostForm.getTitle())
                     .member(member)
@@ -114,8 +117,12 @@ public class PostService {
                     .scrapCount(0)
                     .deleted(false)
                     .build();
-            postRepository.savePost(post);
-        } else {
+            fileService.saveUploadFiles(post, thumbnail, uploadFiles);
+        }
+        else {
+            if(uploadFiles == null){
+                throw new IOException();
+            }
             //확장자 확인
             String extension = fileExtension(uploadFiles.get(0));
             if (extension.equals("pdf") || extension.equals("jpg") || extension.equals("png")) {
@@ -142,7 +149,8 @@ public class PostService {
                         .build();
 
                 fileService.saveUploadFiles(post, thumbnail, uploadFiles);
-            } else {
+            }
+            else {
                 throw new IOException();
             }
         }

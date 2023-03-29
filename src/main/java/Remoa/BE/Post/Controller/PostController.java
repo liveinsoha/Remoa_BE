@@ -102,25 +102,24 @@ public class PostController {
         if (authorized(request)) {
             Long memberId = getMemberId();
             Post savePost = postService.registerPost(uploadPostForm, thumbnail, uploadFiles, memberId);
-            if (savePost != null) {
-                Post post = postService.findOne(savePost.getPostId());
-                ResReferenceRegisterDto resReferenceRegisterDto = ResReferenceRegisterDto.builder()
-                        .postId(post.getPostId())
-                        .title(post.getTitle())
-                        .category(post.getCategory().getName())
-                        .contestAwardType(post.getContestAwardType())
-                        .contestName(post.getContestName())
-                        .youtubeLink(post.getYoutubeLink())
-                        .pageCount(post.getPageCount())
-                        .build();
-                if (post.getUploadFiles() != null) {
-                    resReferenceRegisterDto.setFileNames(post.getUploadFiles().stream()
-                            .map(UploadFile::getOriginalFileName)
-                            .collect(Collectors.toList()));
-                }
-                return successResponse(CustomMessage.OK, resReferenceRegisterDto);
+            Post post = postService.findOne(savePost.getPostId());
+
+            ResReferenceRegisterDto resReferenceRegisterDto = ResReferenceRegisterDto.builder()
+                    .postId(post.getPostId())
+                    .title(post.getTitle())
+                    .category(post.getCategory().getName())
+                    .contestAwardType(post.getContestAwardType())
+                    .contestName(post.getContestName())
+                    .youtubeLink(post.getYoutubeLink())
+                    .pageCount(post.getPageCount())
+                    .build();
+            if (post.getUploadFiles() != null) {
+                resReferenceRegisterDto.setFileNames(post.getUploadFiles().stream()
+                        .map(UploadFile::getOriginalFileName)
+                        .collect(Collectors.toList()));
             }
-        }
+            return successResponse(CustomMessage.OK, resReferenceRegisterDto);
+    }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 

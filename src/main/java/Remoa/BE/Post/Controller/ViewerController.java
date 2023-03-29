@@ -38,7 +38,7 @@ public class ViewerController {
     private final FeedbackService feedbackService;
     private final MemberService memberService;
 
-    @GetMapping("reference/{reference_id}")
+    @GetMapping("/reference/{reference_id}")
     public ResponseEntity<Object> referenceViewer(HttpServletRequest request,
                                                   @PathVariable("reference_id") Long referenceId) {
 
@@ -58,7 +58,7 @@ public class ViewerController {
                 .filter(comment -> comment.getParentComment() == null)
                 .map(comment -> ResCommentDto.builder()
                         .commentId(comment.getCommentId())
-                        .isLiked(finalMyMemberId == null ? false : commentService.findCommentLike(finalMyMemberId, comment.getCommentId()).isPresent())
+                        .isLiked(finalMyMemberId != null && commentService.findCommentLike(finalMyMemberId, comment.getCommentId()).isPresent())
                         .member(new ResMemberInfoDto(comment.getMember().getMemberId(),
                                 comment.getMember().getNickname(),
                                 comment.getMember().getProfileImage()))
@@ -101,10 +101,13 @@ public class ViewerController {
                                                 reply.getMember().getProfileImage()))
                                         .content(reply.getFeedback())
                                         .likeCount(reply.getFeedbackLikeCount())
-                                        .isLiked(finalMyMemberId == null ? false : feedbackService.findFeedbackLike(finalMyMemberId, reply.getFeedbackId()).isPresent())
+                                        .isLiked(finalMyMemberId != null && feedbackService.findFeedbackLike(finalMyMemberId, reply.getFeedbackId()).isPresent())
                                         .repliedTime(reply.getFeedbackTime())
                                         .build()).collect(Collectors.toList()))
                         .build()).collect(Collectors.toList());
+
+        List<String> fileNames = post.getUploadFiles() != null ?
+                post.getUploadFiles().stream().map(UploadFile::getStoreFileUrl).collect(Collectors.toList()) : null;
 
         // 위에 생성한 CommentDto, FeedbackDto를 이용해 ReferenceViewerDto 매핑.
         ResReferenceViewerDto result = ResReferenceViewerDto.builder()
@@ -118,13 +121,13 @@ public class ViewerController {
                 .category(post.getCategory().getName())
                 .title(post.getTitle())
                 .likeCount(post.getLikeCount())
-                .isLiked(finalMyMemberId == null ? false : postService.isThisPostLiked(myMember))
+                .isLiked(finalMyMemberId != null && postService.isThisPostLiked(myMember))
                 .scrapCount(post.getScrapCount())
-                .isScraped(finalMyMemberId == null ? false : postService.isThisPostScraped(myMember))
+                .isScraped(finalMyMemberId != null && postService.isThisPostScraped(myMember))
                 .postingTime(post.getPostingTime().toString())
                 .views(post.getViews())
                 .pageCount(post.getPageCount())
-                .fileNames(post.getUploadFiles().stream().map(UploadFile::getStoreFileUrl).collect(Collectors.toList()))
+                .fileNames(fileNames)
                 .comments(comments)
                 .feedbacks(feedbacks)
                 .build();

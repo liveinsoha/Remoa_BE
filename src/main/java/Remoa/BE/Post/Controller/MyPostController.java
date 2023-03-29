@@ -105,7 +105,7 @@ public class MyPostController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
-    @GetMapping("/reference/{member_id}")
+    @GetMapping("/user/reference/{member_id}")
     public ResponseEntity<Object> otherReference( @PathVariable("member_id") Long memberId,
                                               @RequestParam(required = false, defaultValue = "all") String category,
                                               @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber,
