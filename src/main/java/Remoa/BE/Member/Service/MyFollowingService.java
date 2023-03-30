@@ -30,14 +30,13 @@ public class MyFollowingService {
             memberList = memberRepository.loadFollowers(member);
         }
 
-        for(int i=0; i<memberList.size(); i++){
-            Member followMember = memberList.get(i);
+        for (Member followMember : memberList) {
             // followMember가 팔로잉하는 유저 구하기
             List<Member> followingMemberFollowing = memberRepository.loadFollows(followMember);
             // followMember를 팔로우하는 유저 구하기(팔로워)
             List<Member> followingMemberFollower = memberRepository.loadFollowers(followMember);
 
-            if(isFollowing == 1){ // 마이페이지 팔로잉 관리 화면
+            if (isFollowing == 1) { // 마이페이지 팔로잉 관리 화면
                 ResMypageList resMypageList = ResMypageList.builder()
                         .profileImage(followMember.getProfileImage())
                         .userName(followMember.getNickname())
@@ -47,7 +46,7 @@ public class MyFollowingService {
                         .memberId(followMember.getMemberId())
                         .build();
                 resMypageLists.add(resMypageList);
-            }else{ // 마이페이지 팔로워 관리 화면
+            } else { // 마이페이지 팔로워 관리 화면
                 ResMypageList resMypageList = ResMypageList.builder()
                         .profileImage(followMember.getProfileImage())
                         .userName(followMember.getNickname())
@@ -72,6 +71,7 @@ public class MyFollowingService {
     public ResMypageFollowing mypageFollowing(Member member){
 
         return ResMypageFollowing.builder()
+                .memberId(member.getMemberId())
                 .userName(member.getNickname())
                 .followNum(member.getFollows().size()) // 내가 팔로우하고 있는 유저 수
                 .resMypageList(findResMypageList(member, 1))
@@ -87,6 +87,7 @@ public class MyFollowingService {
     public ResMypageFollowing mypageFollower(Member member){
 
         return ResMypageFollowing.builder()
+                .memberId(member.getMemberId())
                 .userName(member.getNickname())
                 .followNum(memberRepository.loadFollowers(member).size()) // 나를 팔로우하고 있는 유저 수
                 .resMypageList(findResMypageList(member, 0))

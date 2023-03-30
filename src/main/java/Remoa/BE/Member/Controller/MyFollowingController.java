@@ -36,8 +36,8 @@ public class MyFollowingController {
     public ResponseEntity<Object> mypageFollowing(HttpServletRequest request){
         if(authorized(request)){
             Long myMemberId = getMemberId();
-            Member member = memberService.findOne(myMemberId);
-            ResMypageFollowing resMypageFollowing = myFollowingService.mypageFollowing(member);
+            Member myMember = memberService.findOne(myMemberId);
+            ResMypageFollowing resMypageFollowing = myFollowingService.mypageFollowing(myMember);
 
             return successResponse(CustomMessage.OK, resMypageFollowing);
         }
@@ -48,8 +48,8 @@ public class MyFollowingController {
     public ResponseEntity<Object> mypageFollower(HttpServletRequest request){
         if(authorized(request)){
             Long myMemberId = getMemberId();
-            Member member = memberService.findOne(myMemberId);
-            ResMypageFollowing resMypageFollower = myFollowingService.mypageFollower(member);
+            Member myMember = memberService.findOne(myMemberId);
+            ResMypageFollowing resMypageFollower = myFollowingService.mypageFollower(myMember);
 
             return successResponse(CustomMessage.OK, resMypageFollower);
         }

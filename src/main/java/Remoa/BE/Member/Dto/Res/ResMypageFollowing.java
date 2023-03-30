@@ -9,6 +9,8 @@ import java.util.List;
 @Builder
 public class ResMypageFollowing {
 
+    private Long memberId;
+
     private String userName;
 
     private int followNum;
