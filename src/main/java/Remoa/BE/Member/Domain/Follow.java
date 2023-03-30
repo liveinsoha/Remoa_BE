@@ -10,6 +10,9 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Where(clause = "deleted = false")
+@Table(name = "follow", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"from_member_id", "to_member_id"})
+})
 public class Follow {
 
     @Id
