@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -37,6 +38,13 @@ public class FollowService {
         memberRepository.follow(follow);
 
         return true;
+    }
+
+    public List<Integer> followerAndFollowing(Member member){
+        ArrayList<Integer> arr = new ArrayList<>();
+        arr.add(memberRepository.loadFollowers(member).size());
+        arr.add((member.getFollows().size()));
+        return arr;
     }
 
 

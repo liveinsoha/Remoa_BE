@@ -1,6 +1,7 @@
 package Remoa.BE.Member.Controller;
 
 import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Member.Dto.Res.ResFollowerAndFollowingDto;
 import Remoa.BE.Member.Service.FollowService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.exception.CustomMessage;
@@ -63,19 +64,16 @@ public class FollowController {
     }
 
     /**
-     * Login한 Member가 Follow하는 멤버들의 Member 필드들을 List로 보여줌.
-     * 현재는 모든 필드들을 다 보여주지만, 이후 프론트와의 협의 후에 필요한 필드들만 가져올 수 있게 구현해야함.
-     * @param request
      * @return ResponseEntity<Object>
      */
-    @GetMapping("/user/follow")
-    public ResponseEntity<Object> showFollowers(HttpServletRequest request) {
-        if(authorized(request)){
-            Long myMemberId = getMemberId();
-            Member member = memberService.findOne(myMemberId);
-            List<Member> members = followService.showFollows(member);
-            return successResponse(CustomMessage.OK,members);
-        }
-        return errorResponse(CustomMessage.UNAUTHORIZED);
+    @GetMapping("/follow/{member_id}")
+    public ResponseEntity<Object> showFollowers(@PathVariable("member_id") Long memberId) {
+        Member member = memberService.findOne(memberId);
+        List<Integer> count = followService.followerAndFollowing(member);
+        ResFollowerAndFollowingDto result = ResFollowerAndFollowingDto.builder()
+                .follower(count.get(0))
+                .following(count.get(1))
+                .build();
+        return successResponse(CustomMessage.OK,result);
     }
 }
