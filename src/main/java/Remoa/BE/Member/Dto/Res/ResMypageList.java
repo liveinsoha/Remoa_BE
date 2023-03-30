@@ -15,4 +15,6 @@ public class ResMypageList {
     private int followerNum;
 
     private String oneLineIntroduction;
+
+    private Long memberId;
 }

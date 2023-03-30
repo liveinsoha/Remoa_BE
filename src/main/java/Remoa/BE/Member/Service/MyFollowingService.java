@@ -43,6 +43,7 @@ public class MyFollowingService {
                         .followingNum(followingMemberFollowing.size())
                         .followerNum(followingMemberFollower.size())
                         .oneLineIntroduction(followMember.getOneLineIntroduction())
+                        .memberId(followMember.getMemberId())
                         .build();
                 resMypageLists.add(resMypageList);
             }else{ // 마이페이지 팔로워 관리 화면
@@ -52,6 +53,7 @@ public class MyFollowingService {
                         .followingNum(followingMemberFollowing.size())
                         .followerNum(followingMemberFollower.size())
                         .oneLineIntroduction(followMember.getOneLineIntroduction())
+                        .memberId(followMember.getMemberId())
                         .build();
                 resMypageLists.add(resMypageList);
             }
