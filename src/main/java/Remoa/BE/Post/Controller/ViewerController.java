@@ -2,6 +2,7 @@ package Remoa.BE.Post.Controller;
 
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
+import Remoa.BE.Member.Service.FollowService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Domain.UploadFile;
@@ -37,6 +38,7 @@ public class ViewerController {
     private final PostService postService;
     private final FeedbackService feedbackService;
     private final MemberService memberService;
+    private final FollowService followService;
 
     @GetMapping("/reference/{reference_id}")
     public ResponseEntity<Object> referenceViewer(HttpServletRequest request,
@@ -49,6 +51,7 @@ public class ViewerController {
             myMember = memberService.findOne(myMemberId);
         }
         final Long finalMyMemberId = myMemberId;
+        final Member finalMyMember = myMember;
 
         // query parameter로 넘어온 id값의 post 조회
         Post post = postService.findOneViewPlus(referenceId);
@@ -61,7 +64,8 @@ public class ViewerController {
                         .isLiked(finalMyMemberId != null && commentService.findCommentLike(finalMyMemberId, comment.getCommentId()).isPresent())
                         .member(new ResMemberInfoDto(comment.getMember().getMemberId(),
                                 comment.getMember().getNickname(),
-                                comment.getMember().getProfileImage()))
+                                comment.getMember().getProfileImage(),
+                                finalMyMember != null ? followService.isMyMemberFollowMember(finalMyMember, post.getMember()) : null))
                         .comment(comment.getComment())
                         .likeCount(comment.getCommentLikeCount())
                         .commentedTime(comment.getCommentedTime())
@@ -71,7 +75,8 @@ public class ViewerController {
                                         .replyId(reply.getCommentId())
                                         .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
                                                 reply.getMember().getNickname(),
-                                                reply.getMember().getProfileImage()))
+                                                reply.getMember().getProfileImage(),
+                                                finalMyMember != null ? followService.isMyMemberFollowMember(finalMyMember, post.getMember()) : null))
                                         .content(reply.getComment())
                                         .likeCount(reply.getCommentLikeCount())
                                         .isLiked(finalMyMemberId != null && commentService.findCommentLike(finalMyMemberId, reply.getCommentId()).isPresent())
@@ -87,7 +92,8 @@ public class ViewerController {
                         .isLiked(finalMyMemberId != null && feedbackService.findFeedbackLike(finalMyMemberId, feedback.getFeedbackId()).isPresent())
                         .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
                                 feedback.getMember().getNickname(),
-                                feedback.getMember().getProfileImage()))
+                                feedback.getMember().getProfileImage(),
+                                finalMyMember != null ? followService.isMyMemberFollowMember(finalMyMember, post.getMember()) : null))
                         .feedback(feedback.getFeedback())
                         .page(feedback.getPageNumber())
                         .likeCount(feedback.getFeedbackLikeCount())
@@ -98,7 +104,8 @@ public class ViewerController {
                                         .replyId(reply.getFeedbackId())
                                         .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
                                                 reply.getMember().getNickname(),
-                                                reply.getMember().getProfileImage()))
+                                                reply.getMember().getProfileImage(),
+                                                finalMyMember != null ? followService.isMyMemberFollowMember(finalMyMember, post.getMember()) : null))
                                         .content(reply.getFeedback())
                                         .likeCount(reply.getFeedbackLikeCount())
                                         .isLiked(finalMyMemberId != null && feedbackService.findFeedbackLike(finalMyMemberId, reply.getFeedbackId()).isPresent())
@@ -114,7 +121,8 @@ public class ViewerController {
                 .postId(post.getPostId())
                 .postMember(new ResMemberInfoDto(post.getMember().getMemberId(),
                         post.getMember().getNickname(),
-                        post.getMember().getProfileImage()))
+                        post.getMember().getProfileImage(),
+                        finalMyMember != null ? followService.isMyMemberFollowMember(finalMyMember, post.getMember()) : null))
                 .thumbnail(post.getThumbnail().getStoreFileUrl())
                 .contestName(post.getContestName())
                 .contestAwardType(post.getContestAwardType())

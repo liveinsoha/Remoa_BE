@@ -3,6 +3,7 @@ package Remoa.BE.Post.Controller;
 import Remoa.BE.Member.Domain.Comment;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
+import Remoa.BE.Member.Service.FollowService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Dto.Request.ReqCommentDto;
@@ -36,6 +37,7 @@ public class CommentController {
     private final MemberService memberService;
     private final CommentService commentService;
     private final PostService postService;
+    private final FollowService followService;
 
     //댓글 작성
     @PostMapping("/reference/{reference_id}/comment")
@@ -53,7 +55,8 @@ public class CommentController {
                             .commentId(comment.getCommentId())
                             .member(new ResMemberInfoDto(comment.getMember().getMemberId(),
                                     comment.getMember().getNickname(),
-                                    comment.getMember().getProfileImage()))
+                                    comment.getMember().getProfileImage(),
+                                    null))
                             .comment(comment.getComment())
                             .likeCount(comment.getCommentLikeCount())
                             .commentedTime(comment.getCommentedTime())
@@ -63,7 +66,8 @@ public class CommentController {
                                             .replyId(reply.getCommentId())
                                             .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
                                                     reply.getMember().getNickname(),
-                                                    reply.getMember().getProfileImage()))
+                                                    reply.getMember().getProfileImage(),
+                                                    null))
                                             .content(reply.getComment())
                                             .likeCount(reply.getCommentLikeCount())
                                             .repliedTime(reply.getCommentedTime())
@@ -91,7 +95,8 @@ public class CommentController {
                             .commentId(comment.getCommentId())
                             .member(new ResMemberInfoDto(comment.getMember().getMemberId(),
                                     comment.getMember().getNickname(),
-                                    comment.getMember().getProfileImage()))
+                                    comment.getMember().getProfileImage(),
+                                    null))
                             .comment(comment.getComment())
                             .likeCount(comment.getCommentLikeCount())
                             .commentedTime(comment.getCommentedTime())
@@ -101,7 +106,8 @@ public class CommentController {
                                             .replyId(reply.getCommentId())
                                             .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
                                                     reply.getMember().getNickname(),
-                                                    reply.getMember().getProfileImage()))
+                                                    reply.getMember().getProfileImage(),
+                                                    null))
                                             .content(reply.getComment())
                                             .likeCount(reply.getCommentLikeCount())
                                             .repliedTime(reply.getCommentedTime())
@@ -125,7 +131,8 @@ public class CommentController {
                             .commentId(comment.getCommentId())
                             .member(new ResMemberInfoDto(comment.getMember().getMemberId(),
                                     comment.getMember().getNickname(),
-                                    comment.getMember().getProfileImage()))
+                                    comment.getMember().getProfileImage(),
+                                    null))
                             .comment(comment.getComment())
                             .likeCount(comment.getCommentLikeCount())
                             .commentedTime(comment.getCommentedTime())
@@ -135,7 +142,8 @@ public class CommentController {
                                             .replyId(reply.getCommentId())
                                             .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
                                                     reply.getMember().getNickname(),
-                                                    reply.getMember().getProfileImage()))
+                                                    reply.getMember().getProfileImage(),
+                                                    null))
                                             .content(reply.getComment())
                                             .likeCount(reply.getCommentLikeCount())
                                             .repliedTime(reply.getCommentedTime())
@@ -159,7 +167,8 @@ public class CommentController {
                             .commentId(comment.getCommentId())
                             .member(new ResMemberInfoDto(comment.getMember().getMemberId(),
                                     comment.getMember().getNickname(),
-                                    comment.getMember().getProfileImage()))
+                                    comment.getMember().getProfileImage(),
+                                    null))
                             .comment(comment.getComment())
                             .likeCount(comment.getCommentLikeCount())
                             .commentedTime(comment.getCommentedTime())
@@ -169,7 +178,8 @@ public class CommentController {
                                             .replyId(reply.getCommentId())
                                             .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
                                                     reply.getMember().getNickname(),
-                                                    reply.getMember().getProfileImage()))
+                                                    reply.getMember().getProfileImage(),
+                                                    null))
                                             .content(reply.getComment())
                                             .likeCount(reply.getCommentLikeCount())
                                             .repliedTime(reply.getCommentedTime())

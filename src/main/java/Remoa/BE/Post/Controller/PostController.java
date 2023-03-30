@@ -2,6 +2,7 @@ package Remoa.BE.Post.Controller;
 
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
+import Remoa.BE.Member.Service.FollowService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Domain.UploadFile;
@@ -35,13 +36,21 @@ public class PostController {
 
     private final PostService postService;
     private final MemberService memberService;
+    private final FollowService followService;
 //    private final ModelMapper modelMapper;
 
     @GetMapping("/reference")
-    public ResponseEntity<Object> searchPost(@RequestParam(required = false, defaultValue = "all") String category,
+    public ResponseEntity<Object> searchPost(HttpServletRequest request,
+                                             @RequestParam(required = false, defaultValue = "all") String category,
                                              @RequestParam(required = false, defaultValue = "newest") String sort,
                                              @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber,
                                              @RequestParam(required = false, defaultValue = "") String title) {
+
+        Member myMember = null;
+        if (authorized(request)) {
+            Long myMemberId = getMemberId();
+            myMember = memberService.findOne(myMemberId);
+        }
 
         Map<String, Object> responseData = new HashMap<>();
 
@@ -57,10 +66,10 @@ public class PostController {
                 category.equals("video") ||
                 category.equals("etc")) {
             //sort -> 최신순 : newest, 좋아요순 : like, 스크랩순 : scrap, 조회순 : view
-            allPosts = postService.sortAndPaginatePostsByCategory(category, sort, pageNumber,title);
+            allPosts = postService.sortAndPaginatePostsByCategory(category, sort, pageNumber, title);
         } else {
             //sort -> 최신순 : newest, 좋아요순 : like, 스크랩순 : scrap, 조회순 : view
-            allPosts = postService.sortAndPaginatePosts(sort, pageNumber,title);
+            allPosts = postService.sortAndPaginatePosts(sort, pageNumber, title);
         }
 
         if ((allPosts.getContent().isEmpty()) && (allPosts.getTotalElements() > 0)) {
@@ -79,7 +88,8 @@ public class PostController {
                     .scrapCount(post.getScrapCount())
                     .postMember(new ResMemberInfoDto(post.getMember().getMemberId(),
                             post.getMember().getNickname(),
-                            post.getMember().getProfileImage()))
+                            post.getMember().getProfileImage(),
+                            myMember != null ? followService.isMyMemberFollowMember(myMember, post.getMember()) : null))
                     .build();
 
             result.add(map);

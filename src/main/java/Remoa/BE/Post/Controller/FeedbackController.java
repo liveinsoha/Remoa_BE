@@ -59,7 +59,8 @@ public class FeedbackController {
                             .feedbackId(feedback.getFeedbackId())
                             .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
                                     feedback.getMember().getNickname(),
-                                    feedback.getMember().getProfileImage()))
+                                    feedback.getMember().getProfileImage(),
+                                    null))
                             .feedback(feedback.getFeedback())
                             .page(feedback.getPageNumber())
                             .likeCount(feedback.getFeedbackLikeCount())
@@ -70,7 +71,8 @@ public class FeedbackController {
                                             .replyId(reply.getFeedbackId())
                                             .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
                                                     reply.getMember().getNickname(),
-                                                    reply.getMember().getProfileImage()))
+                                                    reply.getMember().getProfileImage(),
+                                                    null))
                                             .content(reply.getFeedback())
                                             .likeCount(reply.getFeedbackLikeCount())
                                             .repliedTime(reply.getFeedbackTime())
@@ -99,7 +101,8 @@ public class FeedbackController {
                             .feedbackId(feedback.getFeedbackId())
                             .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
                                     feedback.getMember().getNickname(),
-                                    feedback.getMember().getProfileImage()))
+                                    feedback.getMember().getProfileImage(),
+                                    null))
                             .feedback(feedback.getFeedback())
                             .page(feedback.getPageNumber())
                             .likeCount(feedback.getFeedbackLikeCount())
@@ -110,7 +113,8 @@ public class FeedbackController {
                                             .replyId(reply.getFeedbackId())
                                             .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
                                                     reply.getMember().getNickname(),
-                                                    reply.getMember().getProfileImage()))
+                                                    reply.getMember().getProfileImage(),
+                                                    null))
                                             .content(reply.getFeedback())
                                             .likeCount(reply.getFeedbackLikeCount())
                                             .repliedTime(reply.getFeedbackTime())
@@ -134,7 +138,8 @@ public class FeedbackController {
                             .feedbackId(feedback.getFeedbackId())
                             .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
                                     feedback.getMember().getNickname(),
-                                    feedback.getMember().getProfileImage()))
+                                    feedback.getMember().getProfileImage(),
+                                    null))
                             .feedback(feedback.getFeedback())
                             .page(feedback.getPageNumber())
                             .likeCount(feedback.getFeedbackLikeCount())
@@ -145,7 +150,8 @@ public class FeedbackController {
                                             .replyId(reply.getFeedbackId())
                                             .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
                                                     reply.getMember().getNickname(),
-                                                    reply.getMember().getProfileImage()))
+                                                    reply.getMember().getProfileImage(),
+                                                    null))
                                             .content(reply.getFeedback())
                                             .likeCount(reply.getFeedbackLikeCount())
                                             .repliedTime(reply.getFeedbackTime())
@@ -168,7 +174,8 @@ public class FeedbackController {
                             .feedbackId(feedback.getFeedbackId())
                             .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
                                     feedback.getMember().getNickname(),
-                                    feedback.getMember().getProfileImage()))
+                                    feedback.getMember().getProfileImage(),
+                                    null))
                             .feedback(feedback.getFeedback())
                             .page(feedback.getPageNumber())
                             .likeCount(feedback.getFeedbackLikeCount())
@@ -179,7 +186,8 @@ public class FeedbackController {
                                             .replyId(reply.getFeedbackId())
                                             .member(new ResMemberInfoDto(reply.getMember().getMemberId(),
                                                     reply.getMember().getNickname(),
-                                                    reply.getMember().getProfileImage()))
+                                                    reply.getMember().getProfileImage(),
+                                                    null))
                                             .content(reply.getFeedback())
                                             .likeCount(reply.getFeedbackLikeCount())
                                             .repliedTime(reply.getFeedbackTime())

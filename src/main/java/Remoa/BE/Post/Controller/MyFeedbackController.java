@@ -3,6 +3,7 @@ package Remoa.BE.Post.Controller;
 import Remoa.BE.Member.Domain.Comment;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
+import Remoa.BE.Member.Service.FollowService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Dto.Response.ResCommentDto;
@@ -39,6 +40,7 @@ public class MyFeedbackController {
     private final MemberService memberService;
     private final MyPostService myPostService;
     private final CommentService commentService;
+    private final FollowService followService;
 
     @GetMapping("/user/feedback")
     public ResponseEntity<Object> receivedFeedback(HttpServletRequest request,
@@ -94,7 +96,8 @@ public class MyFeedbackController {
                                 reply.getCommentId(),
                                 new ResMemberInfoDto(reply.getMember().getMemberId(),
                                         reply.getMember().getNickname(),
-                                        reply.getMember().getProfileImage()),
+                                        reply.getMember().getProfileImage(),
+                                        followService.isMyMemberFollowMember(myMember, reply.getMember())),
                                 reply.getComment(),
                                 reply.getCommentLikeCount(),
                                 commentService.findCommentLike(myMember.getMemberId(), reply.getCommentId()).isPresent(),
@@ -105,7 +108,8 @@ public class MyFeedbackController {
                             parentComment.getCommentId(),
                             new ResMemberInfoDto(parentComment.getMember().getMemberId(),
                                     parentComment.getMember().getNickname(),
-                                    parentComment.getMember().getProfileImage()),
+                                    parentComment.getMember().getProfileImage(),
+                                    followService.isMyMemberFollowMember(myMember, parentComment.getMember())),
                             parentComment.getComment(),
                             parentComment.getCommentLikeCount(),
                             commentService.findCommentLike(myMember.getMemberId(),

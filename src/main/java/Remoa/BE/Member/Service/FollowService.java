@@ -40,6 +40,10 @@ public class FollowService {
         return true;
     }
 
+    public Boolean isMyMemberFollowMember(Member myMember, Member member) {
+        return memberRepository.isFollow(myMember, member);
+    }
+
     public List<Integer> followerAndFollowing(Member member){
         ArrayList<Integer> arr = new ArrayList<>();
         arr.add(memberRepository.loadFollowers(member).size());

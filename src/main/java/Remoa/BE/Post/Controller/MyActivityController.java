@@ -3,6 +3,7 @@ package Remoa.BE.Post.Controller;
 import Remoa.BE.Member.Domain.CommentFeedback;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
+import Remoa.BE.Member.Service.FollowService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.PostScarp;
 import Remoa.BE.Post.Dto.Response.ResCommentFeedbackDto;
@@ -40,6 +41,7 @@ public class MyActivityController {
     private final MemberService memberService;
     private final CommentFeedbackService commentFeedbackService;
     private final PostService postService;
+    private final FollowService followService;
 
     /**
      * 내 활동 관리
@@ -67,7 +69,8 @@ public class MyActivityController {
                         .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
                         .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
                                 commentFeedback.getMember().getNickname(),
-                                commentFeedback.getMember().getProfileImage()))
+                                commentFeedback.getMember().getProfileImage(),
+                                null))
                         .content(commentFeedback.getFeedback().getFeedback())
                         .likeCount(commentFeedback.getFeedback().getFeedbackLikeCount())
                         .build();
@@ -78,7 +81,8 @@ public class MyActivityController {
                         .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
                         .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
                                 commentFeedback.getMember().getNickname(),
-                                commentFeedback.getMember().getProfileImage()))
+                                commentFeedback.getMember().getProfileImage(),
+                                null))
                         .content(commentFeedback.getComment().getComment())
                         .likeCount(commentFeedback.getComment().getCommentLikeCount())
                         .build();
@@ -94,7 +98,8 @@ public class MyActivityController {
                             .postId(post.getPostId())
                             .postMember(new ResMemberInfoDto(post.getMember().getMemberId(),
                                     post.getMember().getNickname(),
-                                    post.getMember().getProfileImage()))
+                                    post.getMember().getProfileImage(),
+                                    followService.isMyMemberFollowMember(myMember, post.getMember())))
                             .thumbnail(post.getThumbnail().getStoreFileUrl())
                             .title(post.getTitle())
                             .likeCount(post.getLikeCount())
@@ -145,7 +150,8 @@ public class MyActivityController {
                             .postId(post.getPostId())
                             .postMember(new ResMemberInfoDto(post.getMember().getMemberId(),
                                     post.getMember().getNickname(),
-                                    post.getMember().getProfileImage()))
+                                    post.getMember().getProfileImage(),
+                                    followService.isMyMemberFollowMember(myMember, post.getMember())))
                             .thumbnail(post.getThumbnail().getStoreFileUrl())
                             .title(post.getTitle())
                             .likeCount(post.getLikeCount())
@@ -196,7 +202,8 @@ public class MyActivityController {
                             .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
                             .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
                                     commentFeedback.getMember().getNickname(),
-                                    commentFeedback.getMember().getProfileImage()))
+                                    commentFeedback.getMember().getProfileImage(),
+                                    null))
                             .content(commentFeedback.getFeedback().getFeedback())
                             .likeCount(commentFeedback.getFeedback().getFeedbackLikeCount()).build();
                 } else if (commentFeedback.getType().equals(COMMENT)) {
@@ -206,7 +213,8 @@ public class MyActivityController {
                             .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
                             .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
                                     commentFeedback.getMember().getNickname(),
-                                    commentFeedback.getMember().getProfileImage()))
+                                    commentFeedback.getMember().getProfileImage(),
+                                    null))
                             .content(commentFeedback.getComment().getComment())
                             .likeCount(commentFeedback.getComment().getCommentLikeCount()).build();
                 }
