@@ -110,7 +110,7 @@ public class PostService {
                     .category(category)
                     .youtubeLink(uploadPostForm.getYoutubeLink())
                     .contestAwardType(uploadPostForm.getContestAwardType())
-                    .pageCount(0)
+                    .pageCount(1)
                     .postingTime(LocalDateTime.now())
                     .likeCount(0)
                     .views(0)

@@ -69,7 +69,7 @@ public class Post {
      * Post에 대한 좋아요 수
      */
     @Column(name = "like_count")
-    private Integer likeCount;
+    private Integer likeCount = 0;
 
     /**
      * Post가 작성된 시간
@@ -84,7 +84,7 @@ public class Post {
 
     private Integer scrapCount = 0;
 
-    private Integer pageCount;
+    private Integer pageCount = 1;
 
     /**
      * Post에 작성되어진 Comment
