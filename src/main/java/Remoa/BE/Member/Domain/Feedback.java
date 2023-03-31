@@ -42,7 +42,6 @@ public class Feedback {
     /**
      * Feedback의 내용
      */
-    @Lob
     private String feedback;
 
     /**
