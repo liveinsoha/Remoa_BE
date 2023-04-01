@@ -5,6 +5,8 @@ import Remoa.BE.Member.Domain.CommentFeedback;
 import Remoa.BE.Member.Domain.Feedback;
 import Remoa.BE.Member.Domain.Member;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -89,25 +91,30 @@ public class Post {
     /**
      * Post에 작성되어진 Comment
      */
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Feedback> feedbacks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CommentFeedback> commentFeedbacks = new ArrayList<>();
 
     /**
      * Post에서 쓰인 files
      */
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
     private List<UploadFile> uploadFiles;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<PostScarp> postScarps = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<PostLike> postLikes = new ArrayList<>();
 
     /**
