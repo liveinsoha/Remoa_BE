@@ -37,7 +37,7 @@ public class AwsS3Service {
 
     public String editProfileImg(String profileImgUrl,MultipartFile multipartFile) throws IOException {
 
-        if(!Objects.equals(profileImgUrl, "https://remoa.s3.ap-northeast-2.amazonaws.com/img/profile_img.png")) {
+        if(!Objects.equals(profileImgUrl, "https://remoafiles.s3.ap-northeast-2.amazonaws.com/img/profile_img.png")) {
             //기존 프로필 사진 s3에서 삭제
             removeProfileUrl(profileImgUrl);
         }

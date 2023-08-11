@@ -67,7 +67,7 @@ public class Comment {
     private CommentFeedback commentFeedback;
 
     @OneToMany(mappedBy = "comment", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CommentLike> commentLikes;
 
     private Boolean deleted = Boolean.FALSE;
