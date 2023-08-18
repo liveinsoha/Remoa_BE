@@ -64,6 +64,7 @@ public class Comment {
     private Integer commentLikeCount = 0;
 
     @OneToOne
+    @Column(name = "comment_feedback_id")
     private CommentFeedback commentFeedback;
 
     @OneToMany(mappedBy = "comment", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
