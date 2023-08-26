@@ -12,5 +12,5 @@ public interface CommentFeedbackCustomRepository {
     Optional<CommentFeedback> findByMemberOrderByTime(Member member);
     Optional<CommentFeedback> findByComment(Comment comment);
     Optional<CommentFeedback> findByFeedback(Feedback feedback);
-
+    void deleteByMember(Member member);
 }

@@ -1,9 +1,6 @@
 package Remoa.BE.Post.Repository;
 
-import Remoa.BE.Member.Domain.Comment;
-import Remoa.BE.Member.Domain.CommentBookmark;
-import Remoa.BE.Member.Domain.CommentLike;
-import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Member.Domain.*;
 import Remoa.BE.Post.Domain.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,5 +101,24 @@ public class CommentRepository {
 
     public void deleteComment(Comment comment){
         em.remove(comment);
+    }
+
+    public List<Comment> findAllByMember(Member member) {
+        return em.createQuery("select c from Comment c " +
+                "where c.member = :member", Comment.class)
+                .setParameter("member", member)
+                .getResultList();
+    }
+
+    public void deleteCommentByMember(Member member) {
+        em.createQuery("delete from Comment c where c.member = :member")
+                .setParameter("member", member)
+                .executeUpdate();
+    }
+
+    public void deleteChildCommentByParentFeedback(Comment comment){
+        em.createQuery("delete from Comment c where c.parentComment = :comment")
+                .setParameter("comment", comment)
+                .executeUpdate();
     }
 }

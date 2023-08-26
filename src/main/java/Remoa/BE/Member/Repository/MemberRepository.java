@@ -4,6 +4,8 @@ import Remoa.BE.Member.Domain.Follow;
 import Remoa.BE.Member.Domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -131,13 +133,28 @@ public class MemberRepository {
         em.remove(result);
     }
 
+    /**
+     * 회원 탈퇴시 팔로우 관계를 모두 삭제.
+     * @param member
+     */
+    public void deleteAllFollowshipByMember(Member member){
+        List<Follow> results = em.createQuery("select f from Follow f " +
+                "where (f.fromMember = :member or f.toMember = :member)", Follow.class)
+                .setParameter("member", member)
+                .getResultList();
+        results.stream().forEach(res -> {
+            em.remove(res);
+        });
+    }
+
 
     //soft delete 메소드로 사용하려 하였으나, 영속성 컨텍스트를 통한 엔티티의 deleted 필드값 교체만으로도 동작이 가능해서 현재 잠정 폐기
-/*    @Query("update Member m set m.deleted = true where m.memberId = :id")
-    @Modifying*/
-    /*public void deleteSoftlyById(Member member) {
+    @Deprecated
+    @Query("update Member m set m.deleted = true where m.memberId = :id")
+    @Modifying
+    public void deleteSoftlyById(Member member) {
         log.info("delete member...");
         em.createQuery("update Member m set m.deleted = true where m.memberId = :id")
                 .setParameter("id", member.getMemberId());
-    }*/
+    }
 }

@@ -34,4 +34,11 @@ public class UploadFileRepository {
                 .map(file -> file.getSaveFileName())
                 .collect(Collectors.toList());
     }
+
+    public void deleteById(UploadFile file) {
+        em.createQuery("delete from UploadFile u where u.uploadFileId = :id")
+                .setParameter("id", file.getUploadFileId())
+                .executeUpdate();
+    }
+
 }

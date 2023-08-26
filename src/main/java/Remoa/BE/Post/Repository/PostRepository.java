@@ -80,8 +80,14 @@ public class PostRepository {
         em.persist(comment);
     }
 
-    public void deletePost(Long postId){
+    public void deletePost(Long postId) {
         Post post = em.find(Post.class, postId);
         em.remove(post);
+    }
+
+    public void deletePostByMember(Member member) {
+        em.createQuery("delete from Post p where p.member = :member")
+                .setParameter("member", member)
+                .executeUpdate();
     }
 }

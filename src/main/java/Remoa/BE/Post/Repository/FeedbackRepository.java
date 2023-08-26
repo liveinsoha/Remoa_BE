@@ -102,4 +102,23 @@ public class FeedbackRepository {
     public void deleteFeedback(Feedback feedback){
         em.remove(feedback);
     }
+
+    public List<Feedback> findAllByMember(Member member) {
+        return em.createQuery("select f from Feedback f " +
+                        "where f.member = :member", Feedback.class)
+                .setParameter("member", member)
+                .getResultList();
+    }
+
+    public void deleteFeedbackByMember(Member member) {
+        em.createQuery("delete from Feedback f where f.member = :member")
+                .setParameter("member", member)
+                .executeUpdate();
+    }
+
+    public void deleteChildFeedbackByParentFeedback(Feedback feedback){
+        em.createQuery("delete from Feedback f where f.parentFeedback = :feedback")
+                .setParameter("feedback", feedback)
+                .executeUpdate();
+    }
 }
