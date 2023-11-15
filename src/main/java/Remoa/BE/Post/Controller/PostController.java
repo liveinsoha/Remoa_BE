@@ -129,7 +129,7 @@ public class PostController {
                         .collect(Collectors.toList()));
             }
             return successResponse(CustomMessage.OK, resReferenceRegisterDto);
-    }
+        }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
