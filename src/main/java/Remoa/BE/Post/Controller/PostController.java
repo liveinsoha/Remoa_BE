@@ -13,6 +13,7 @@ import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class PostController {
     private final PostService postService;
     private final MemberService memberService;
     private final FollowService followService;
-//    private final ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @GetMapping("/reference")
     public ResponseEntity<Object> searchPost(HttpServletRequest request,
