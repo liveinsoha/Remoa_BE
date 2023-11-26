@@ -71,4 +71,10 @@ public class WithdrewController {
         return new ResponseEntity<>("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<String> test(HttpServletRequest request) {
+
+        return new ResponseEntity<>("테스트입니다.", HttpStatus.OK);
+    }
+
 }
