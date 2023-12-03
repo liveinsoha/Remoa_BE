@@ -48,14 +48,13 @@ public class FileService {
      * 파일들을 저장해준다
      */
     @Transactional
-    public void saveUploadFiles(Post post,MultipartFile thumbnail, List<MultipartFile> multipartFile){
+    public void saveUploadFiles(Post post, MultipartFile thumbnail, List<MultipartFile> multipartFile){
 
         //썸네일 파일 저장 추가
         saveUploadFile(thumbnail,post,"thumbnail");
         if(multipartFile!=null) {
             multipartFile.forEach(file -> saveUploadFile(file, post, "post"));
         }
-
 
         //새로운 인스턴스 만들어서 set하지 않으면 clear 되면서 null이 계속 저장됨.
         UploadFile uploadFile = uploadFileList.get(0);
@@ -69,10 +68,45 @@ public class FileService {
 
     /**
      *
+     * @param post 수정할 게시글
+     * @param multipartFile 해당 게시글의 수정할 파일 리스트
+     * Post 엔티티의 file들을 수정해준다
+     */
+    @Transactional
+    public void modifyUploadFiles(Post post, MultipartFile thumbnail, List<MultipartFile> multipartFile){
+
+        List<UploadFile> recentFiles = uploadFileRepository.findFilesByPost(post);
+        // 이미 해당하는 post에 파일 정보를 삭제처리
+        if(recentFiles.size() > 0){
+            recentFiles.forEach(file -> {
+                file.setDeleted(true); // DB 삭제 처리(delete 컬럼 update 1)
+                uploadFileRepository.modifyFile(file);
+                amazonS3.deleteObject(new DeleteObjectRequest(bucket, file.getSaveFileName())); // S3에서 삭제처리
+            });
+        }
+
+        //썸네일 파일 저장 추가
+        saveUploadFile(thumbnail,post,"thumbnail");
+        if(multipartFile!=null) {
+            multipartFile.forEach(file -> saveUploadFile(file, post, "post"));
+        }
+
+        //새로운 인스턴스 만들어서 set하지 않으면 clear 되면서 null이 계속 저장됨.
+        UploadFile uploadFile = uploadFileList.get(0);
+        post.setThumbnail(uploadFile);
+
+        post.setUploadFiles(new ArrayList<>(uploadFileList.subList(1, uploadFileList.size())));
+        postRepository.modifyPost(post);
+
+        uploadFileList.clear();
+    }
+
+    /**
+     *
      * @param multipartFile 파일
      */
     @Transactional
-    public void saveUploadFile(MultipartFile multipartFile, Post post,String folderName){
+    public void saveUploadFile(MultipartFile multipartFile, Post post, String folderName){
 
         //파일 타입과 사이즈 저장
         ObjectMetadata objectMetadata = new ObjectMetadata();

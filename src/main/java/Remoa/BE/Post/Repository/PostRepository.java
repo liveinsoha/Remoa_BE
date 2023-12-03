@@ -29,6 +29,10 @@ public class PostRepository {
         em.persist(post);
     }
 
+    public void modifyPost(Post post) {
+        em.merge(post);
+    }
+
     public List<Post> findAll(){
         return em.createQuery("SELECT p FROM Post p", Post.class).getResultList();
     }

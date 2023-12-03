@@ -37,7 +37,7 @@ public enum CustomMessage {
     //401권한오류
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"권한이 없습니다","인증에 필요한 쿠키 정보가 없습니다"),
     // 403 권한오류
-    CAN_NOT_ACCESS(HttpStatus.FORBIDDEN, "권한이 없습니다","다른 사람이 작성한 글을 삭제할 수 없습니다");
+    CAN_NOT_ACCESS(HttpStatus.FORBIDDEN, "권한이 없습니다","다른 사람이 작성한 글에 접근할 수 없습니다");
 
     private final HttpStatus httpStatus;
     private final String message;

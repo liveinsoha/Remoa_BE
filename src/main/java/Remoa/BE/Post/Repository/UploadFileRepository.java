@@ -26,12 +26,15 @@ public class UploadFileRepository {
         em.persist(file);
     }
 
-    public List<String> findFilesByPost(Post post) {
+    public void modifyFile(UploadFile file) {
+        em.merge(file);
+    }
+
+    public List<UploadFile> findFilesByPost(Post post) {
         return em.createQuery("select uf from UploadFile uf where uf.post = :post", UploadFile.class)
                 .setParameter("post", post)
                 .getResultList()
                 .stream()
-                .map(file -> file.getSaveFileName())
                 .collect(Collectors.toList());
     }
 

@@ -134,6 +134,40 @@ public class PostController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
+    @PutMapping("/reference/{reference_id}") // 게시물 수정
+    public ResponseEntity<Object> modify(@PathVariable("reference_id") Long referenceId,
+                                       @RequestPart("data") UploadPostForm uploadPostForm,
+                                       @RequestPart("thumbnail")MultipartFile thumbnail,
+                                       @RequestPart(value = "file", required = false) List<MultipartFile> uploadFiles,
+                                       HttpServletRequest request) throws IOException {
+        if (authorized(request)) {
+            Long memberId = getMemberId();
+            Post post = postService.findOne(referenceId);
+            if(memberId != post.getMember().getMemberId()){
+                return errorResponse(CustomMessage.CAN_NOT_ACCESS);
+            }
+            Post modifiedPost = postService.modifyPost(uploadPostForm, thumbnail, uploadFiles, post);
+
+
+            ResReferenceRegisterDto resReferenceRegisterDto = ResReferenceRegisterDto.builder()
+                    .postId(modifiedPost.getPostId())
+                    .title(modifiedPost.getTitle())
+                    .category(modifiedPost.getCategory().getName())
+                    .contestAwardType(modifiedPost.getContestAwardType())
+                    .contestName(modifiedPost.getContestName())
+                    .youtubeLink(modifiedPost.getYoutubeLink())
+                    .pageCount(modifiedPost.getPageCount())
+                    .build();
+            if (modifiedPost.getUploadFiles() != null) {
+                resReferenceRegisterDto.setFileNames(modifiedPost.getUploadFiles().stream()
+                        .map(UploadFile::getOriginalFileName)
+                        .collect(Collectors.toList()));
+            }
+            return successResponse(CustomMessage.OK, resReferenceRegisterDto);
+        }
+        return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
+
 
     @PostMapping("/reference/{reference_id}/like")
     public ResponseEntity<Object> likeReference(@PathVariable("reference_id") Long referenceId, HttpServletRequest request) {

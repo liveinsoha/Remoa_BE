@@ -117,7 +117,7 @@ public class PostService {
                     .scrapCount(0)
                     .deleted(false)
                     .build();
-            fileService.saveUploadFiles(post, thumbnail, uploadFiles);
+            fileService.saveUploadFiles(post, thumbnail, null);
         }
         else {
             if(uploadFiles == null){
@@ -158,6 +158,61 @@ public class PostService {
         return post;
     }
 
+    @Transactional
+    public Post modifyPost(UploadPostForm uploadPostForm, MultipartFile thumbnail, List<MultipartFile> uploadFiles, Post originPost) throws IOException {
+        Category category = categoryRepository.findByCategoryName(uploadPostForm.getCategory());
+
+        Member member = memberService.findOne(originPost.getMember().getMemberId());
+
+        log.info("thumbnail = " + thumbnail.getOriginalFilename());
+
+        // 비디오만 따로 처리
+        if (category.getName().equals("video")) {
+            if(uploadFiles != null){
+                throw new IOException();
+            }
+
+            originPost.setTitle(uploadPostForm.getTitle());
+            originPost.setContestName(uploadPostForm.getContestName());
+            originPost.setCategory(category);
+            originPost.setYoutubeLink(uploadPostForm.getYoutubeLink());
+            originPost.setContestAwardType(uploadPostForm.getContestAwardType());
+            originPost.setPageCount(1);
+
+
+            fileService.modifyUploadFiles(originPost, thumbnail, null);
+        }
+        else {
+            if(uploadFiles == null){
+                throw new IOException();
+            }
+            //확장자 확인
+            String extension = fileExtension(uploadFiles.get(0));
+            if (extension.equals("pdf") || extension.equals("jpg") || extension.equals("png")) {
+                int pageCount;
+                if (extension.equals("pdf")) {
+                    PDDocument document = PDDocument.load(uploadFiles.get(0).getInputStream());
+                    pageCount = document.getNumberOfPages();
+                } else {
+                    pageCount = uploadFiles.size();
+                }
+
+                originPost.setTitle(uploadPostForm.getTitle());
+                originPost.setContestName(uploadPostForm.getContestName());
+                originPost.setCategory(category);
+                originPost.setYoutubeLink(uploadPostForm.getYoutubeLink());
+                originPost.setContestAwardType(uploadPostForm.getContestAwardType());
+                originPost.setPageCount(pageCount);
+
+                fileService.modifyUploadFiles(originPost, thumbnail, uploadFiles);
+            }
+            else {
+                throw new IOException();
+            }
+        }
+
+        return originPost;
+    }
 
     public Page<Post> sortAndPaginatePosts(String sort, int pageNumber, String title) {
         Page<Post> Posts;
