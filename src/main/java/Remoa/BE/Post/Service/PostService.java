@@ -266,7 +266,8 @@ public class PostService {
     }
 
     @Transactional
-    public void scrapPost(Long memberId, Member myMember, Long referenceId) {
+    public boolean scrapPost(Long memberId, Member myMember, Long referenceId) {
+        boolean isScrapAction = true;
         Post post = findOne(referenceId);
         Integer postScrapCount = post.getScrapCount(); // 이 게시물을 스크랩한 수
 
@@ -277,10 +278,13 @@ public class PostService {
             post.setScrapCount(postScrapCount + 1); // 스크랩 수 1 증가
             PostScarp postScrapObj = PostScarp.createPostScrap(myMember, post);
             postScrapRepository.save(postScrapObj);
+            isScrapAction = true;
         } else {
             post.setScrapCount(post.getScrapCount() - 1); // 스크랩 수 1 차감
             postScrapRepository.deleteById(postScarp.getPostScrapId()); // db에서 삭제
+            isScrapAction = false;
         }
+        return isScrapAction;
     }
 
     public Page<PostScarp> findScrapedPost(int page, Member member) {

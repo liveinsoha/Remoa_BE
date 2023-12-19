@@ -63,29 +63,9 @@ public class MyActivityController {
 
             ResCommentFeedbackDto commentOrFeedback = null;
             if (commentFeedback != null && commentFeedback.getType().equals(FEEDBACK)) {
-                commentOrFeedback = ResCommentFeedbackDto.builder()
-                        .title(commentFeedback.getPost().getTitle())
-                        .postId(commentFeedback.getPost().getPostId())
-                        .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
-                        .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
-                                commentFeedback.getMember().getNickname(),
-                                commentFeedback.getMember().getProfileImage(),
-                                null))
-                        .content(commentFeedback.getFeedback().getFeedback())
-                        .likeCount(commentFeedback.getFeedback().getFeedbackLikeCount())
-                        .build();
+                commentOrFeedback = feedbackBuilder(commentFeedback);
             } else if (commentFeedback != null && commentFeedback.getType().equals(COMMENT)) {
-                commentOrFeedback = ResCommentFeedbackDto.builder()
-                        .title(commentFeedback.getPost().getTitle())
-                        .postId(commentFeedback.getPost().getPostId())
-                        .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
-                        .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
-                                commentFeedback.getMember().getNickname(),
-                                commentFeedback.getMember().getProfileImage(),
-                                null))
-                        .content(commentFeedback.getComment().getComment())
-                        .likeCount(commentFeedback.getComment().getCommentLikeCount())
-                        .build();
+                commentOrFeedback = commentBuilder(commentFeedback);
             }
             result.put("content", commentOrFeedback);
 
@@ -196,27 +176,9 @@ public class MyActivityController {
             List<ResCommentFeedbackDto> contents = commentOrFeedback.stream().map(commentFeedback -> {
                 ResCommentFeedbackDto map = null;
                 if (commentFeedback.getType().equals(FEEDBACK)) {
-                    map = ResCommentFeedbackDto.builder()
-                            .title(commentFeedback.getPost().getTitle())
-                            .postId(commentFeedback.getPost().getPostId())
-                            .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
-                            .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
-                                    commentFeedback.getMember().getNickname(),
-                                    commentFeedback.getMember().getProfileImage(),
-                                    null))
-                            .content(commentFeedback.getFeedback().getFeedback())
-                            .likeCount(commentFeedback.getFeedback().getFeedbackLikeCount()).build();
+                    map = feedbackBuilder(commentFeedback);
                 } else if (commentFeedback.getType().equals(COMMENT)) {
-                    map = ResCommentFeedbackDto.builder()
-                            .title(commentFeedback.getPost().getTitle())
-                            .postId(commentFeedback.getPost().getPostId())
-                            .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
-                            .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
-                                    commentFeedback.getMember().getNickname(),
-                                    commentFeedback.getMember().getProfileImage(),
-                                    null))
-                            .content(commentFeedback.getComment().getComment())
-                            .likeCount(commentFeedback.getComment().getCommentLikeCount()).build();
+                    map = commentBuilder(commentFeedback);
                 }
                 return map;
             }).collect(Collectors.toList());
@@ -229,5 +191,33 @@ public class MyActivityController {
             return successResponse(CustomMessage.OK, result);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
+    }
+
+    private ResCommentFeedbackDto commentBuilder(CommentFeedback commentFeedback) {
+        return ResCommentFeedbackDto.builder()
+                .title(commentFeedback.getPost().getTitle())
+                .postId(commentFeedback.getPost().getPostId())
+                .commentId(commentFeedback.getComment().getCommentId())
+                .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
+                .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
+                        commentFeedback.getMember().getNickname(),
+                        commentFeedback.getMember().getProfileImage(),
+                        null))
+                .content(commentFeedback.getComment().getComment())
+                .likeCount(commentFeedback.getComment().getCommentLikeCount()).build();
+    }
+
+    private ResCommentFeedbackDto feedbackBuilder(CommentFeedback commentFeedback) {
+        return ResCommentFeedbackDto.builder()
+                .title(commentFeedback.getPost().getTitle())
+                .postId(commentFeedback.getPost().getPostId())
+                .feedbackId(commentFeedback.getFeedback().getFeedbackId())
+                .thumbnail(commentFeedback.getPost().getThumbnail().getStoreFileUrl())
+                .member(new ResMemberInfoDto(commentFeedback.getMember().getMemberId(),
+                        commentFeedback.getMember().getNickname(),
+                        commentFeedback.getMember().getProfileImage(),
+                        null))
+                .content(commentFeedback.getFeedback().getFeedback())
+                .likeCount(commentFeedback.getFeedback().getFeedbackLikeCount()).build();
     }
 }

@@ -13,6 +13,8 @@ public class ResCommentFeedbackDto {
 
     private String title;
     private Long postId;
+    private Long commentId;
+    private Long feedbackId;
     private String thumbnail;
     private ResMemberInfoDto member;
     private String content;

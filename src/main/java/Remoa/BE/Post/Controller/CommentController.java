@@ -125,6 +125,10 @@ public class CommentController {
             commentService.modifyComment(myComment, commentId);
             Comment c = commentService.findOne(commentId);
 
+            if(c.getMember().getMemberId() != getMemberId()) {
+                return errorResponse(CustomMessage.CAN_NOT_ACCESS);
+            }
+
             List<ResCommentDto> comments = commentService.findAllCommentsOfPost(c.getPost()).stream()
                     .filter(comment -> comment.getParentComment() == null)
                     .map(comment -> ResCommentDto.builder()
@@ -160,6 +164,10 @@ public class CommentController {
         if(authorized(request)){
             commentService.deleteComment(commentId);
             Comment c = commentService.findOne(commentId);
+
+            if(c.getMember().getMemberId() != getMemberId()) {
+                return errorResponse(CustomMessage.CAN_NOT_ACCESS);
+            }
 
             List<ResCommentDto> comments = commentService.findAllCommentsOfPost(c.getPost()).stream()
                     .filter(comment -> comment.getParentComment() == null)

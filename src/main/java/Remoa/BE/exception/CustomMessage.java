@@ -14,8 +14,12 @@ public enum CustomMessage {
 
     OK_UNFOLLOW(HttpStatus.OK,"올바른 요청","회원을 언팔로잉 합니다"),
 
+    OK_SCRAP(HttpStatus.OK,"올바른 요청","정상적으로 스크랩 되었습니다."),
+
     //201 한 api에서 정상처리상 구분이 필요할떄 사용
     OK_FOLLOW(HttpStatus.CREATED,"올바른 요청","회원을 팔로잉 합니다"),
+
+    OK_UNSCRAP(HttpStatus.CREATED,"올바른 요청","정상적으로 스크랩이 해제됐습니다."),
 
     OK_SIGNUP(HttpStatus.CREATED,"올바른 요청","회원가입하는 회원입니다"),
 

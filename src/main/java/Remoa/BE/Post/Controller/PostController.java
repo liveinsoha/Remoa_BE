@@ -187,10 +187,12 @@ public class PostController {
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
-            postService.scrapPost(memberId, myMember, referenceId);
+            boolean isScrapAction = postService.scrapPost(memberId, myMember, referenceId);
             int count = postService.findScrapCount(referenceId);
             Map<String, Integer> map = Collections.singletonMap("scrapCount", count);
-            return successResponse(CustomMessage.OK,map);
+            // 스크랩의 경우 : 200 OK, 스크랩 해제의 경우 : 201 CREATED
+            CustomMessage customMessage = isScrapAction ? CustomMessage.OK_SCRAP : CustomMessage.OK_UNSCRAP;
+            return successResponse(customMessage, map);
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }

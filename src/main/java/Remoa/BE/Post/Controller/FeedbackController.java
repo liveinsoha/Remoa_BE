@@ -1,5 +1,6 @@
 package Remoa.BE.Post.Controller;
 
+import Remoa.BE.Member.Domain.Comment;
 import Remoa.BE.Member.Domain.Feedback;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMemberInfoDto;
@@ -132,6 +133,11 @@ public class FeedbackController {
         if(authorized(request)){
             feedbackService.modifyFeedback(myFeedback, feedbackId);
             Feedback f = feedbackService.findOne(feedbackId);
+
+            if(f.getMember().getMemberId() != getMemberId()) {
+                return errorResponse(CustomMessage.CAN_NOT_ACCESS);
+            }
+
             List<ResFeedbackDto> feedbacks = feedbackService.findAllFeedbacksOfPost(f.getPost()).stream()
                     .filter(feedback -> feedback.getParentFeedback() == null)
                     .map(feedback -> ResFeedbackDto.builder()
@@ -166,8 +172,12 @@ public class FeedbackController {
     public ResponseEntity<Object> deleteFeedback(@PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
         if(authorized(request)){
             feedbackService.deleteFeedback(feedbackId);
-
             Feedback f = feedbackService.findOne(feedbackId);
+
+            if(f.getMember().getMemberId() != getMemberId()) {
+                return errorResponse(CustomMessage.CAN_NOT_ACCESS);
+            }
+
             List<ResFeedbackDto> feedbacks = feedbackService.findAllFeedbacksOfPost(f.getPost()).stream()
                     .filter(feedback -> feedback.getParentFeedback() == null)
                     .map(feedback -> ResFeedbackDto.builder()
