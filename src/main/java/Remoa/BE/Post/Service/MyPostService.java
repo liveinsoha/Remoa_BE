@@ -28,10 +28,10 @@ public class MyPostService {
         PageRequest pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         //switch문을 통해 각 옵션에 맞게 sorting
         switch (sort) {
-            case "view":
+            case "views":
                 posts = postPagingRepository.findByMemberAndTitleContainingOrderByViewsDesc(pageable, myMember,title);
                 break;
-            case "like":
+            case "likes":
                 posts =  postPagingRepository.findByMemberAndTitleContainingOrderByLikeCountDesc(pageable, myMember,title);
                 break;
             case "scrap":
