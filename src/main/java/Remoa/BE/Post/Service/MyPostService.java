@@ -49,10 +49,10 @@ public class MyPostService {
         Page<Post> posts;
         PageRequest pageable;
         switch (sort) {
-            case "view":
+            case "views":
                 pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("views").descending());
                 break;
-            case "like":
+            case "likes":
                 pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("likeCount").descending());
                 break;
             case "scrap":
