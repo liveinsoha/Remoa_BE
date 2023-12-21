@@ -198,16 +198,19 @@ public class PostController {
     }
 
     @DeleteMapping("/user/reference/{reference_id}")
-    public ResponseEntity<Object> deleteReference(@PathVariable("reference_id") Long postId, HttpServletRequest request){
+    public ResponseEntity<Object> deleteReference(@PathVariable("reference_id") Long[] postId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
 
             // 현재 로그인한 사용자가 올린 게시글이 맞는지 확인/예외처리
-            if(postService.checkMemberPost(myMember, postId)){
-                postService.deleteReference(postId);
-                return new ResponseEntity<>(HttpStatus.OK);
+            for(int i=0; i<postId.length;i++) {
+                if (postService.checkMemberPost(myMember, postId[i])) {
+                    postService.deleteReference(postId[i]);
+
+                }
             }
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return errorResponse(CustomMessage.CAN_NOT_ACCESS);
     }
