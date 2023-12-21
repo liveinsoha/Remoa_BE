@@ -218,7 +218,7 @@ public class PostService {
         Page<Post> Posts;
         Pageable pageable;
         switch (sort) {
-            case "like":
+            case "likes":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
                 Posts = postPagingRepository.findByTitleContaining(pageable, title);
                 break;
@@ -226,7 +226,7 @@ public class PostService {
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
                 Posts = postPagingRepository.findByTitleContaining(pageable, title);
                 break;
-            case "view":
+            case "views":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("views").descending());
                 Posts = postPagingRepository.findByTitleContaining(pageable, title);
                 break;
@@ -243,13 +243,13 @@ public class PostService {
         Page<Post> Posts;
         Pageable pageable;
         switch (sort) {
-            case "like":
+            case "likes":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
                 break;
             case "scrap":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
                 break;
-            case "view":
+            case "views":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("views").descending());
                 break;
             default:
