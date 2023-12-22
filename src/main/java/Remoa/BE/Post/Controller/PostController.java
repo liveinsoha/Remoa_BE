@@ -9,8 +9,10 @@ import Remoa.BE.Post.Domain.UploadFile;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
 import Remoa.BE.Post.Dto.Response.ResHomeReferenceDto;
 import Remoa.BE.Post.Dto.Response.ResReferenceRegisterDto;
+import Remoa.BE.Post.Service.MyPostService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.utill.CommonFunction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -36,6 +38,7 @@ import static Remoa.BE.utill.MemberInfo.getMemberId;
 public class PostController {
 
     private final PostService postService;
+    private final MyPostService myPostService;
     private final MemberService memberService;
     private final FollowService followService;
     private final ModelMapper modelMapper;
@@ -214,5 +217,20 @@ public class PostController {
         }
         return errorResponse(CustomMessage.CAN_NOT_ACCESS);
     }
+
+    @DeleteMapping("/user/referenceCatagory/{category}")
+    public ResponseEntity<Object> deleteReferenceCategory(@PathVariable("category") String category, HttpServletRequest request){
+        if(authorized(request)){
+            Long categoryId = CommonFunction.getCategoryId(category); // 카테고리 id 추출.
+            Long memberId = getMemberId();
+            myPostService.deleteReferenceCategory(memberId,categoryId);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.CAN_NOT_ACCESS);
+    }
+
+
+
 
 }

@@ -3,7 +3,9 @@ package Remoa.BE.Post.Service;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Repository.CategoryRepository;
+import Remoa.BE.Post.Repository.MyReferenceRepository;
 import Remoa.BE.Post.Repository.PostPagingRepository;
+import Remoa.BE.Post.Repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -20,6 +24,9 @@ public class MyPostService {
 
     private final PostPagingRepository postPagingRepository;
     private final CategoryRepository categoryRepository;
+
+    private final MyReferenceRepository  myReferenceRepository;
+
     private static final int PAGE_SIZE = 12;
     private static final int RECEIVED_COMMENT_PAGE_SIZE = 3;
 
@@ -100,5 +107,19 @@ public class MyPostService {
         PageRequest pageable = PageRequest.of(0, size, Sort.by("postingTime").descending());
         return postPagingRepository.findByMemberAndCommentsIsNotEmpty(pageable, member);
     }
+
+    @Transactional
+    public void deleteReferenceCategory(Long memberId, Long categoryId){
+        try {
+            List<Post> postList = myReferenceRepository.findByMemberMemberIdAndCategoryCategoryId(memberId,categoryId);
+            myReferenceRepository.deleteAll(postList);
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+
+    }
+
 
 }
