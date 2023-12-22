@@ -218,7 +218,7 @@ public class PostController {
         return errorResponse(CustomMessage.CAN_NOT_ACCESS);
     }
 
-    @DeleteMapping("/user/referenceCatagory/{category}")
+    @DeleteMapping("/user/referenceCategory/{category}")
     public ResponseEntity<Object> deleteReferenceCategory(@PathVariable("category") String category, HttpServletRequest request){
         if(authorized(request)){
             Long categoryId = CommonFunction.getCategoryId(category); // 카테고리 id 추출.
