@@ -20,6 +20,8 @@ public class MyFollowingService {
 
     private final MemberRepository memberRepository;
 
+    private final FollowService followService;
+
     public List<ResMypageList> findResMypageList(Member member, int isFollowing){
         List<ResMypageList> resMypageLists = new ArrayList<>();
         List<Member> memberList;
@@ -44,6 +46,8 @@ public class MyFollowingService {
                         .followerNum(followingMemberFollower.size())
                         .oneLineIntroduction(followMember.getOneLineIntroduction())
                         .memberId(followMember.getMemberId())
+                        // 팔로잉 목록에서는 팔로워를 팔로잉하는지 확인할 필요가 없으므로 null처리
+                        .isFollow(null)
                         .build();
                 resMypageLists.add(resMypageList);
             } else { // 마이페이지 팔로워 관리 화면
@@ -54,6 +58,8 @@ public class MyFollowingService {
                         .followerNum(followingMemberFollower.size())
                         .oneLineIntroduction(followMember.getOneLineIntroduction())
                         .memberId(followMember.getMemberId())
+                        // 팔로워를 팔로잉하는지 확인 - ture : 팔로우 함 / false : 팔로우 안 함
+                        .isFollow(followService.isMyMemberFollowMember(member, followMember))
                         .build();
                 resMypageLists.add(resMypageList);
             }
