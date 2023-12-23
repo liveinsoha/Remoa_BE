@@ -9,8 +9,10 @@ import Remoa.BE.Post.Domain.UploadFile;
 import Remoa.BE.Post.Dto.Request.UploadPostForm;
 import Remoa.BE.Post.Dto.Response.ResHomeReferenceDto;
 import Remoa.BE.Post.Dto.Response.ResReferenceRegisterDto;
+import Remoa.BE.Post.Service.MyPostService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.utill.CommonFunction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -36,6 +38,7 @@ import static Remoa.BE.utill.MemberInfo.getMemberId;
 public class PostController {
 
     private final PostService postService;
+    private final MyPostService myPostService;
     private final MemberService memberService;
     private final FollowService followService;
     private final ModelMapper modelMapper;
@@ -198,18 +201,36 @@ public class PostController {
     }
 
     @DeleteMapping("/user/reference/{reference_id}")
-    public ResponseEntity<Object> deleteReference(@PathVariable("reference_id") Long postId, HttpServletRequest request){
+    public ResponseEntity<Object> deleteReference(@PathVariable("reference_id") Long[] postId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
 
             // 현재 로그인한 사용자가 올린 게시글이 맞는지 확인/예외처리
-            if(postService.checkMemberPost(myMember, postId)){
-                postService.deleteReference(postId);
-                return new ResponseEntity<>(HttpStatus.OK);
+            for(int i=0; i<postId.length;i++) {
+                if (postService.checkMemberPost(myMember, postId[i])) {
+                    postService.deleteReference(postId[i]);
+
+                }
             }
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return errorResponse(CustomMessage.CAN_NOT_ACCESS);
     }
+
+    @DeleteMapping("/user/referenceCategory/{category}")
+    public ResponseEntity<Object> deleteReferenceCategory(@PathVariable("category") String category, HttpServletRequest request){
+        if(authorized(request)){
+            Long categoryId = CommonFunction.getCategoryId(category); // 카테고리 id 추출.
+            Long memberId = getMemberId();
+            myPostService.deleteReferenceCategory(memberId,categoryId);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return errorResponse(CustomMessage.CAN_NOT_ACCESS);
+    }
+
+
+
 
 }
