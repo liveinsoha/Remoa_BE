@@ -28,8 +28,9 @@ public class DbInit {
             Category marketing = new Category("marketing");
             Category design = new Category("design");
             Category video = new Category("video");
+            Category digital = new Category("digital");
             Category etc = new Category("etc");
-            this.categoryService.persistCategory(idea, marketing, design, video, etc);
+            this.categoryService.persistCategory(idea, marketing, design, video, digital, etc);
             log.info("==========Setting Categories completely==========");
         }
     }
