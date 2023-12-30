@@ -12,14 +12,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ResInquiryDto {
 
-    private Long inquiryId;
+    private Long noticeId;
     private String author;
     private String title;
     private LocalDate postingTime;
     private int view;
 
     public ResInquiryDto(Inquiry inquiry) {
-        this.inquiryId = inquiry.getInquiryId();
+        this.noticeId = inquiry.getInquiryId();
         this.author = inquiry.getAuthor();
         this.title = inquiry.getTitle();
         this.postingTime = inquiry.getPostingTime().toLocalDate();
