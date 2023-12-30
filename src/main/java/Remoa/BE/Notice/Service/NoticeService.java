@@ -54,7 +54,7 @@ public class NoticeService {
     public void NoticeViewCount(int view) {
         Notice notice = noticeRepository.findById((long) view).orElseThrow(() ->
                 new NotFoundException("해당 공지를 찾을 수 없습니다."));
-        notice.addNoticeViewCount(notice.getView());
+        notice.addNoticeViewCount();
         noticeRepository.save(notice);
 
     }

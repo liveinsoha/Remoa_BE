@@ -28,8 +28,8 @@ public class Notice {
 
     private int view;
 
-    public void addNoticeViewCount(int viewCount) {
-        this.view = viewCount + 1;
+    public void addNoticeViewCount() {
+        this.view = this.view + 1;
     }
 
 }

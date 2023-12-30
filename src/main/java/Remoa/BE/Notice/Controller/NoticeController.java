@@ -41,13 +41,8 @@ public class NoticeController {
         if (pageNumber < 0) {
             return errorResponse(CustomMessage.PAGE_NUM_OVER);
         }
-        HashMap<String, Object> notices = noticeService.getNotice(pageNumber);
 
-        if ((int)notices.get("content") == 0 && ((int)notices.get("totalOfAllNotices") > 0)) {
-            return errorResponse(CustomMessage.PAGE_NUM_OVER);
-        }
-
-        return successResponse(CustomMessage.OK, notices);
+        return successResponse(CustomMessage.OK, noticeService.getNotice(pageNumber));
 
     }
 

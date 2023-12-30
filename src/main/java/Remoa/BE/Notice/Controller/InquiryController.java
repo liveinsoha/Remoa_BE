@@ -42,13 +42,8 @@ public class InquiryController {
         if (pageNumber < 0) {
             return errorResponse(CustomMessage.PAGE_NUM_OVER);
         }
-        HashMap<String, Object> inquiry = inquiryService.getInquiry(pageNumber);
 
-        if ((int)inquiry.get("content") == 0 && ((int)inquiry.get("totalOfAllNotices") > 0)) {
-            return errorResponse(CustomMessage.PAGE_NUM_OVER);
-        }
-
-        return successResponse(CustomMessage.OK, inquiry);
+        return successResponse(CustomMessage.OK, inquiryService.getInquiry(pageNumber));
 
     }
     @GetMapping("/inquiry/view")
