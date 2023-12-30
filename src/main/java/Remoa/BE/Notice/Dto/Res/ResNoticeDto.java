@@ -16,7 +16,7 @@ public class ResNoticeDto {
     private Long noticeId;
     private String title;
     private LocalDate postingTime;
-    private Integer view ;
+    private int view ;
 
     public ResNoticeDto(Notice entity) {
         this.noticeId = entity.getNoticeId();

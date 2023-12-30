@@ -26,7 +26,7 @@ public class Notice {
 
     private LocalDateTime postingTime;
 
-    private Integer view;
+    private int view;
 
     public void addNoticeViewCount(int viewCount) {
         this.view = viewCount + 1;

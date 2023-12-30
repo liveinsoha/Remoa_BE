@@ -25,7 +25,7 @@ public class Inquiry {
 
     private LocalDateTime postingTime;
 
-    private Integer view;
+    private int view;
 
     public void addInquiryViewCount(int viewCount) {
         this.view = viewCount + 1;

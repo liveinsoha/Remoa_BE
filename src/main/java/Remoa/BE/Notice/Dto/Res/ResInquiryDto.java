@@ -15,7 +15,7 @@ public class ResInquiryDto {
     private Long inquiryId;
     private String title;
     private LocalDate postingTime;
-    private Integer view;
+    private int view;
 
     public ResInquiryDto(Inquiry inquiry) {
         this.inquiryId = inquiry.getInquiryId();
