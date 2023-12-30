@@ -6,6 +6,7 @@ import Remoa.BE.Notice.Service.InquiryService;
 import Remoa.BE.Notice.domain.Inquiry;
 import Remoa.BE.Notice.domain.Notice;
 import Remoa.BE.exception.CustomMessage;
+import com.amazonaws.services.kms.model.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,31 +42,29 @@ public class InquiryController {
         if (pageNumber < 0) {
             return errorResponse(CustomMessage.PAGE_NUM_OVER);
         }
-        Page<Inquiry> inquiries =inquiryService.getInquiry(pageNumber);
+        HashMap<String, Object> inquiry = inquiryService.getInquiry(pageNumber);
 
-        if ((inquiries.getContent().isEmpty()) && (inquiries.getTotalElements() > 0)) {
+        if ((int)inquiry.get("content") == 0 && ((int)inquiry.get("totalOfAllNotices") > 0)) {
             return errorResponse(CustomMessage.PAGE_NUM_OVER);
         }
 
-        Map<String, Object> responseData = new HashMap<>();
+        return successResponse(CustomMessage.OK, inquiry);
 
-        List<Object> result = new ArrayList<>();
+    }
+    @GetMapping("/inquiry/view")
+    public ResponseEntity<Object> getInquiryDetail(@RequestParam int view,
+                                                  HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String sessionKey = "InquiryViewed_" + view;
 
-        for(Inquiry inquiry:inquiries) {
-            ResNoticeDto resNoticeDto = ResNoticeDto.builder()
-                    .noticeId(inquiry.getInquiryId())
-                    .title(inquiry.getTitle())
-                    .postingTime(inquiry.getPostingTime().toLocalDate())
-                    .view(10)
-                    .build();
-            result.add(resNoticeDto);
+        if (session.getAttribute(sessionKey) == null) {
+            inquiryService.inquiryViewCount(view);
+            session.setAttribute(sessionKey, true);
         }
-
-        responseData.put("inquiries", result); //조회한 레퍼런스들
-        responseData.put("totalPages", inquiries.getTotalPages()); //전체 페이지의 수
-        responseData.put("totalOfAllNotices", inquiries.getTotalElements()); //모든 레퍼런스의 수
-        responseData.put("totalOfPageElements", inquiries.getNumberOfElements()); //현 페이지의 레퍼런스 수
-
-        return successResponse(CustomMessage.OK, responseData);
+        try {
+            return successResponse(CustomMessage.OK, inquiryService.getInquiryView(view));
+        } catch (NotFoundException e) {
+            return errorResponse(CustomMessage.NO_ID);
+        }
     }
 }

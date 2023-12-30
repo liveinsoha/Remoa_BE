@@ -1,8 +1,6 @@
 package Remoa.BE.Notice.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +12,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Inquiry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +24,11 @@ public class Inquiry {
     private String content;
 
     private LocalDateTime postingTime;
+
+    private Integer view;
+
+    public void addInquiryViewCount(int viewCount) {
+        this.view = viewCount + 1;
+    }
 
 }

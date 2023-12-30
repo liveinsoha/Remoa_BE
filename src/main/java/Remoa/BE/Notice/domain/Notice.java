@@ -1,9 +1,6 @@
 package Remoa.BE.Notice.domain;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +12,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Notice {
 
     @Id
@@ -26,5 +25,11 @@ public class Notice {
     private String content;
 
     private LocalDateTime postingTime;
+
+    private Integer view;
+
+    public void addNoticeViewCount(int viewCount) {
+        this.view = viewCount + 1;
+    }
 
 }
