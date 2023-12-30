@@ -19,6 +19,8 @@ public class Inquiry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inquiryId;
 
+    private String author;
+
     private String title;
 
     private String content;

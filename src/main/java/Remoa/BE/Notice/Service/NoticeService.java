@@ -1,6 +1,7 @@
 package Remoa.BE.Notice.Service;
 
 import Remoa.BE.Notice.Dto.Req.ReqNoticeDto;
+import Remoa.BE.Notice.Dto.Res.ResAllNoticeDto;
 import Remoa.BE.Notice.Dto.Res.ResNoticeDto;
 import Remoa.BE.Notice.Repository.NoticeRepository;
 import Remoa.BE.Notice.domain.Notice;
@@ -44,8 +45,9 @@ public class NoticeService {
 
     }
 
-    public Notice getNoticeView(int view) {
-        return noticeRepository.findById((long) view).orElseThrow(() ->
+    @Transactional(readOnly = true)
+    public ResAllNoticeDto getNoticeView(int view) {
+        return noticeRepository.findById((long) view).map(ResAllNoticeDto::new).orElseThrow(() ->
                 new NotFoundException("해당 공지를 찾을 수 없습니다."));
     }
 

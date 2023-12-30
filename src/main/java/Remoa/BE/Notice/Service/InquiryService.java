@@ -1,6 +1,7 @@
 package Remoa.BE.Notice.Service;
 
 import Remoa.BE.Notice.Dto.Req.ReqNoticeDto;
+import Remoa.BE.Notice.Dto.Res.ResAllInquiryDto;
 import Remoa.BE.Notice.Dto.Res.ResInquiryDto;
 import Remoa.BE.Notice.Dto.Res.ResNoticeDto;
 import Remoa.BE.Notice.Repository.InquiryRepository;
@@ -47,8 +48,8 @@ public class InquiryService {
         return resultMap;
     }
 
-    public Inquiry getInquiryView(int view) {
-        return inquiryRepository.findById((long) view).orElseThrow(() ->
+    public ResAllInquiryDto getInquiryView(int view) {
+        return inquiryRepository.findById((long) view).map(ResAllInquiryDto::new).orElseThrow(() ->
                 new NotFoundException("해당 문의를 찾을 수 없습니다."));
     }
 
