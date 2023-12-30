@@ -49,16 +49,17 @@ public class NoticeController {
     @GetMapping("/notice/view")
     public ResponseEntity<Object> getNoticeDetail(@RequestParam int view,
                                                   HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String sessionKey = "NoticeViewed_" + view;
-
-        if (session.getAttribute(sessionKey) == null) {
-            noticeService.NoticeViewCount(view);
-            session.setAttribute(sessionKey, true);
-        }
         try {
+            HttpSession session = request.getSession();
+            String sessionKey = "NoticeViewed_" + view;
+
+            if (session.getAttribute(sessionKey) == null) {
+                noticeService.NoticeViewCount(view);
+                session.setAttribute(sessionKey, true);
+            }
+
             return successResponse(CustomMessage.OK, noticeService.getNoticeView(view));
-        } catch (NotFoundException e) {
+        } catch (Exception e) {
             return errorResponse(CustomMessage.NO_ID);
         }
     }

@@ -49,16 +49,17 @@ public class InquiryController {
     @GetMapping("/inquiry/view")
     public ResponseEntity<Object> getInquiryDetail(@RequestParam int view,
                                                   HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String sessionKey = "InquiryViewed_" + view;
-
-        if (session.getAttribute(sessionKey) == null) {
-            inquiryService.inquiryViewCount(view);
-            session.setAttribute(sessionKey, true);
-        }
         try {
+            HttpSession session = request.getSession();
+            String sessionKey = "InquiryViewed_" + view;
+
+            if (session.getAttribute(sessionKey) == null) {
+                inquiryService.inquiryViewCount(view);
+                session.setAttribute(sessionKey, true);
+            }
+
             return successResponse(CustomMessage.OK, inquiryService.getInquiryView(view));
-        } catch (NotFoundException e) {
+        } catch (Exception e) {
             return errorResponse(CustomMessage.NO_ID);
         }
     }
