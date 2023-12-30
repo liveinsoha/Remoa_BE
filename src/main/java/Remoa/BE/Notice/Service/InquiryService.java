@@ -40,7 +40,7 @@ public class InquiryService {
 
         Page<Inquiry> notices = inquiryRepository.findAll(PageRequest.of(pageNumber, INQUIRY_NUMBER, Sort.by("postingTime").descending()));
 
-        resultMap.put("inquiry", notices.stream().map(ResInquiryDto::new).collect(Collectors.toList())); //조회한 레퍼런스들
+        resultMap.put("inquiries", notices.stream().map(ResInquiryDto::new).collect(Collectors.toList())); //조회한 레퍼런스들
         resultMap.put("totalPages", notices.getTotalPages()); //전체 페이지의 수
         resultMap.put("totalOfAllNotices", notices.getTotalElements()); //모든 레퍼런스의 수
         resultMap.put("totalOfPageElements", notices.getNumberOfElements()); //현 페이지의 레퍼런스 수
