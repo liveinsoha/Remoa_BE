@@ -303,12 +303,12 @@ public class PostService {
         return myMember == member;
     }
 
-    public boolean isThisPostScraped(Member myMember) {
-        return postRepository.findScrapedPost(myMember).isPresent();
+    public boolean isThisPostScraped(Member myMember, Post post) {
+        return postRepository.findScrapedPost(myMember, post).isPresent();
     }
 
-    public boolean isThisPostLiked(Member myMember) {
-        return postRepository.findLikedPost(myMember).isPresent();
+    public boolean isThisPostLiked(Member myMember, Post post) {
+        return postRepository.findLikedPost(myMember, post).isPresent();
     }
 
 

@@ -60,16 +60,18 @@ public class PostRepository {
         em.persist(postScarp);
     }
 
-    public Optional<PostScarp> findScrapedPost(Member member) {
-        return em.createQuery("select ps from PostScarp ps where ps.member = :member", PostScarp.class)
+    public Optional<PostScarp> findScrapedPost(Member member, Post post) {
+        return em.createQuery("select ps from PostScarp ps where ps.member = :member and ps.post = :post", PostScarp.class)
                 .setParameter("member", member)
+                .setParameter("post", post)
                 .getResultStream()
                 .findAny();
     }
 
-    public Optional<PostLike> findLikedPost(Member member) {
-        return em.createQuery("select pl from PostLike pl where pl.member = :member", PostLike.class)
-                .setParameter("member", member)
+    public Optional<PostLike> findLikedPost(Member myMember, Post post) {
+        return em.createQuery("select pl from PostLike pl where pl.member = :member and pl.post = :post", PostLike.class)
+                .setParameter("member", myMember)
+                .setParameter("post", post)
                 .getResultStream()
                 .findAny();
     }

@@ -83,9 +83,11 @@ public class MyActivityController {
                             .thumbnail(post.getThumbnail().getStoreFileUrl())
                             .title(post.getTitle())
                             .likeCount(post.getLikeCount())
+                            .isLikedPost((myMember != null && !post.getMember().getMemberId().equals(myMember.getMemberId())) ? postService.isThisPostLiked(myMember, post) : null)
                             .postingTime(post.getPostingTime().toString())
                             .views(post.getViews())
                             .scrapCount(post.getScrapCount())
+                            .isScrapedPost((myMember != null && !post.getMember().getMemberId().equals(myMember.getMemberId())) ? postService.isThisPostScraped(myMember, post) : null)
                             .categoryName(post.getCategory().getName())
                             .build()).collect(Collectors.toList());
 
@@ -135,9 +137,11 @@ public class MyActivityController {
                             .thumbnail(post.getThumbnail().getStoreFileUrl())
                             .title(post.getTitle())
                             .likeCount(post.getLikeCount())
+                            .isLikedPost((myMember != null && !post.getMember().getMemberId().equals(myMember.getMemberId())) ? postService.isThisPostLiked(myMember, post) : null)
                             .postingTime(post.getPostingTime().toString())
                             .views(post.getViews())
                             .scrapCount(post.getScrapCount())
+                            .isScrapedPost((myMember != null && !post.getMember().getMemberId().equals(myMember.getMemberId())) ? postService.isThisPostScraped(myMember, post) : null)
                             .categoryName(post.getCategory().getName()).build())
                     .collect(Collectors.toList()));
             result.put("totalPages", posts.getTotalPages()); //전체 페이지의 수

@@ -8,6 +8,7 @@ import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Dto.Response.ResPostDto;
 import Remoa.BE.Post.Service.CommentService;
 import Remoa.BE.Post.Service.MyPostService;
+import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ import static Remoa.BE.utill.MemberInfo.getMemberId;
 public class MyPostController {
 
     private final MemberService memberService;
+    private final PostService postService;
     private final MyPostService myPostService;
     private final FollowService followService;
 
@@ -160,8 +162,10 @@ public class MyPostController {
                     .views(post.getViews())
                     .categoryName(post.getCategory().getName())
                     .likeCount(post.getLikeCount())
+                    .isLikedPost((myMember != null && !post.getMember().getMemberId().equals(myMember.getMemberId())) ? postService.isThisPostLiked(myMember, post) : null)
                     .thumbnail(post.getThumbnail().getStoreFileUrl())
                     .scrapCount(post.getScrapCount())
+                    .isScrapedPost((myMember != null && !post.getMember().getMemberId().equals(myMember.getMemberId())) ? postService.isThisPostScraped(myMember, post) : null)
                     .title(post.getTitle()).build();
             result.add(map);
         }

@@ -16,9 +16,11 @@ public class ResPostDto {
     public String thumbnail;
     public String title;
     public Integer likeCount;
+    public Boolean isLikedPost;
     public String postingTime;
     public Integer views;
     public Integer scrapCount;
+    public Boolean isScrapedPost;
     public String categoryName;
 
 }
