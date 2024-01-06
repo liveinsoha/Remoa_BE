@@ -113,9 +113,11 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId){
         Comment commentObj = findOne(commentId);
-        CommentFeedback commentOfCommentFeedback = commentFeedbackService.findComment(commentObj);
+        if(commentObj.getParentComment() == null) {
+            CommentFeedback commentOfCommentFeedback = commentFeedbackService.findComment(commentObj);
+            commentOfCommentFeedback.setDeleted(true);
+        }
         commentObj.setDeleted(true);
-        commentOfCommentFeedback.setDeleted(true);
     }
 
     public List<Comment> getRecentThreeCommentsExceptReply(Post post) {

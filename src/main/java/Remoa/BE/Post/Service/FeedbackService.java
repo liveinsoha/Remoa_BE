@@ -101,9 +101,11 @@ public class FeedbackService {
     @Transactional
     public void deleteFeedback(Long feedbackId){
         Feedback feedbackObj = findOne(feedbackId);
-        CommentFeedback feedbackOfCommentFeedback = commentFeedbackService.findFeedback(feedbackObj);
+        if(feedbackObj.getParentFeedback() == null) {
+            CommentFeedback feedbackOfCommentFeedback = commentFeedbackService.findFeedback(feedbackObj);
+            feedbackOfCommentFeedback.setDeleted(true);
+        }
         feedbackObj.setDeleted(true);
-        feedbackOfCommentFeedback.setDeleted(true);
     }
 
     @Transactional
