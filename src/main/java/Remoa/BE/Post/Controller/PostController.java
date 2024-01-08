@@ -90,7 +90,9 @@ public class PostController {
                     .title(post.getTitle())
                     .views(post.getViews())
                     .likeCount(post.getLikeCount())
+                    .isLikedPost(isLikedPost(myMember, post))
                     .scrapCount(post.getScrapCount())
+                    .isScrapedPost(isScrapedPost(myMember, post))
                     .postMember(new ResMemberInfoDto(post.getMember().getMemberId(),
                             post.getMember().getNickname(),
                             post.getMember().getProfileImage(),
@@ -231,7 +233,13 @@ public class PostController {
         return errorResponse(CustomMessage.CAN_NOT_ACCESS);
     }
 
+    private Boolean isLikedPost(Member myMember, Post post) {
+        return myMember != null && postService.isThisPostLiked(myMember, post);
+    }
 
+    private Boolean isScrapedPost(Member myMember, Post post) {
+        return myMember != null && postService.isThisPostScraped(myMember, post);
+    }
 
 
 }

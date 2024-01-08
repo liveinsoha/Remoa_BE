@@ -13,6 +13,8 @@ public class ResHomeReferenceDto {
     private String title;
     private int views;
     private int likeCount;
+    private Boolean isLikedPost;
     private int scrapCount;
+    private Boolean isScrapedPost;
     private ResMemberInfoDto postMember;
 }
