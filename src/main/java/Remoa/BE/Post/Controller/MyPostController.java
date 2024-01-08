@@ -69,6 +69,7 @@ public class MyPostController {
                     category.equals("marketing") ||
                     category.equals("design") ||
                     category.equals("video") ||
+                    category.equals("digital") ||
                     category.equals("etc")) {
                 posts = myPostService.sortAndPaginatePostsByCategoryAndMember(category, pageNumber, sort, myMember,title);
             } else {
@@ -138,6 +139,7 @@ public class MyPostController {
                 category.equals("marketing") ||
                 category.equals("design") ||
                 category.equals("video") ||
+                category.equals("digital") ||
                 category.equals("etc")) {
             posts = myPostService.sortAndPaginatePostsByCategoryAndMember(category, pageNumber, sort, selectedMember, title);
         } else {

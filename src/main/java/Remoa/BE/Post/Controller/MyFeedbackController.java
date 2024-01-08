@@ -62,6 +62,7 @@ public class MyFeedbackController {
                     category.equals("marketing") ||
                     category.equals("design") ||
                     category.equals("video") ||
+                    category.equals("digital") ||
                     category.equals("etc")) {
 
                 posts = myPostService.getNewestThreePostsSortCategory(pageNumber, myMember, category);

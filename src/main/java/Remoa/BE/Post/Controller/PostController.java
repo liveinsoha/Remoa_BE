@@ -68,6 +68,7 @@ public class PostController {
                 category.equals("marketing") ||
                 category.equals("design") ||
                 category.equals("video") ||
+                category.equals("digital") ||
                 category.equals("etc")) {
             //sort -> 최신순 : newest, 좋아요순 : like, 스크랩순 : scrap, 조회순 : view
             allPosts = postService.sortAndPaginatePostsByCategory(category, sort, pageNumber, title);
