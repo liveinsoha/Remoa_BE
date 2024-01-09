@@ -82,9 +82,7 @@ public class CommentFeedbackCustomRepositoryImpl implements CommentFeedbackCusto
             resultCommentFeedbacks = jpaQueryFactory.select(commentFeedback)
                     .from(commentFeedback)
                     .join(commentFeedback.post, this.post)
-                    .where(
-                            this.post.member.eq(member)
-                    )
+                    .where(this.post.member.eq(member))
                     .orderBy(commentFeedback.time.desc())
                     .offset(pageable.getOffset())   // 페이지 번호
                     .limit(pageable.getPageSize())  // 페이지 사이즈
@@ -94,11 +92,7 @@ public class CommentFeedbackCustomRepositoryImpl implements CommentFeedbackCusto
         JPAQuery<CommentFeedback> countQuery = jpaQueryFactory
                 .selectFrom(commentFeedback)
                 .join(commentFeedback.post, this.post)
-                .where(
-                        this.post.member.eq(member)
-                )
-                .orderBy(commentFeedback.time.desc());
-
+                .where(this.post.member.eq(member));
         // count 쿼리가 필요없는 경우는 실행하지 않는다
         return PageableExecutionUtils.getPage(resultCommentFeedbacks, pageable, () -> countQuery.fetch().size());
     }
