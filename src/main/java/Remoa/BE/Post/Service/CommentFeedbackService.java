@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -67,16 +64,11 @@ public class CommentFeedbackService {
 
     public Page<CommentFeedback> findReceivedCommentOrFeedback(Member myMember, int pageNum, String categoryString) {
         Category category = null;
-        if ("idea".equals(categoryString) ||
-                "marketing".equals(categoryString) ||
-                "design".equals(categoryString) ||
-                "video".equals(categoryString) ||
-                "digital".equals(categoryString) ||
-                "etc".equals(categoryString)) {
+        List<String> categoryList = Arrays.asList("idea", "marketing", "design", "video", "digital", "etc");
+        if (categoryList.contains(categoryString)) {
             category = categoryRepository.findByCategoryName(categoryString);
         }
-        PageRequest pageable;
-        pageable = PageRequest.of(pageNum, RECEIVED_PAGE_SIZE);
+        PageRequest pageable = PageRequest.of(pageNum, RECEIVED_PAGE_SIZE);
         return commentFeedbackRepository.findRecentReceivedCommentFeedback(myMember, pageable, category);
     }
 

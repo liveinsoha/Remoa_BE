@@ -16,5 +16,5 @@ public interface CommentFeedbackCustomRepository {
     Optional<CommentFeedback> findByComment(Comment comment);
     Optional<CommentFeedback> findByFeedback(Feedback feedback);
     void deleteByMember(Member member);
-    public Page<CommentFeedback> findRecentReceivedCommentFeedback(Member member, Pageable pageable, Category category);
+    Page<CommentFeedback> findRecentReceivedCommentFeedback(Member member, Pageable pageable, Category category);
 }

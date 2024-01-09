@@ -78,7 +78,7 @@ public class CommentFeedbackCustomRepositoryImpl implements CommentFeedbackCusto
                     .offset(pageable.getOffset())   // 페이지 번호
                     .limit(pageable.getPageSize())  // 페이지 사이즈
                     .fetch();
-        } else {
+        } else { // 카테고리 구분없이 전체 조회
             resultCommentFeedbacks = jpaQueryFactory.select(commentFeedback)
                     .from(commentFeedback)
                     .join(commentFeedback.post, this.post)
@@ -90,7 +90,7 @@ public class CommentFeedbackCustomRepositoryImpl implements CommentFeedbackCusto
                     .limit(pageable.getPageSize())  // 페이지 사이즈
                     .fetch();
         }
-
+        // 페이지네이션 기능을 위한 쿼리
         JPAQuery<CommentFeedback> countQuery = jpaQueryFactory
                 .selectFrom(commentFeedback)
                 .join(commentFeedback.post, this.post)
