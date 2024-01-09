@@ -197,6 +197,46 @@ public class MyActivityController {
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
+    @GetMapping("/user/receive")
+    public ResponseEntity<Object> receivedCommentFeedback(HttpServletRequest request,
+                                                          @RequestParam(required = false, defaultValue = "all") String category,
+                                                          @RequestParam(required = false, defaultValue = "1", name = "page") int pageNum) {
+        if (authorized(request)) {
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+
+            pageNum -= 1;
+            if (pageNum < 0) {
+                return errorResponse(CustomMessage.PAGE_NUM_OVER);
+            }
+
+            Map<String, Object> result = new HashMap<>();
+
+            Page<CommentFeedback> commentOrFeedbacks = commentFeedbackService.findReceivedCommentOrFeedback(myMember, pageNum, category);
+
+            List<ResCommentFeedbackDto> contents = commentOrFeedbacks
+                    .stream()
+                    .map(commentFeedback -> {
+                ResCommentFeedbackDto map = null;
+                if (commentFeedback.getType().equals(FEEDBACK)) {
+                    map = feedbackBuilder(commentFeedback);
+                } else if (commentFeedback.getType().equals(COMMENT)) {
+                    map = commentBuilder(commentFeedback);
+                }
+                return map;
+            }).collect(Collectors.toList());
+
+            result.put("contents", contents);
+            result.put("totalPages", commentOrFeedbacks.getTotalPages()); //전체 페이지의 수
+            result.put("totalOfAllComments", commentOrFeedbacks.getTotalElements()); //모든 코멘트의 수
+            result.put("totalOfPageElements", commentOrFeedbacks.getNumberOfElements()); //현 페이지 피드백의 수
+
+            return successResponse(CustomMessage.OK, result);
+        } else {
+            return errorResponse(CustomMessage.UNAUTHORIZED);
+        }
+    }
+
     private ResCommentFeedbackDto commentBuilder(CommentFeedback commentFeedback) {
         return ResCommentFeedbackDto.builder()
                 .title(commentFeedback.getPost().getTitle())

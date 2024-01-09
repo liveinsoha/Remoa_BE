@@ -1,18 +1,25 @@
 package Remoa.BE.Post.Service;
 
 import Remoa.BE.Member.Domain.*;
+import Remoa.BE.Post.Domain.Category;
 import Remoa.BE.Post.Domain.Post;
+import Remoa.BE.Post.Repository.CategoryRepository;
 import Remoa.BE.Post.Repository.CommentFeedbackRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.pdfbox.cos.COSObjectKey;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,7 +27,9 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class CommentFeedbackService {
     private static final int CONTENT_PAGE_SIZE = 4;
+    private static final int RECEIVED_PAGE_SIZE = 4;
     private final CommentFeedbackRepository commentFeedbackRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public CommentFeedback saveCommentFeedback(Comment comment, Feedback feedback, ContentType type,
@@ -54,6 +63,21 @@ public class CommentFeedbackService {
     public CommentFeedback findFeedback(Feedback feedback) {
         return commentFeedbackRepository.findByFeedback(feedback)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Feedback not found"));
+    }
+
+    public Page<CommentFeedback> findReceivedCommentOrFeedback(Member myMember, int pageNum, String categoryString) {
+        Category category = null;
+        if ("idea".equals(categoryString) ||
+                "marketing".equals(categoryString) ||
+                "design".equals(categoryString) ||
+                "video".equals(categoryString) ||
+                "digital".equals(categoryString) ||
+                "etc".equals(categoryString)) {
+            category = categoryRepository.findByCategoryName(categoryString);
+        }
+        PageRequest pageable;
+        pageable = PageRequest.of(pageNum, RECEIVED_PAGE_SIZE);
+        return commentFeedbackRepository.findRecentReceivedCommentFeedback(myMember, pageable, category);
     }
 
 }
