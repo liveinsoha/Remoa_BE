@@ -176,6 +176,10 @@ public class PostController {
         if (authorized(request)) {
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
+            Member postedMember = postService.getPostedMember(referenceId);
+            if(myMember.equals(postedMember)) {
+                return errorResponse(CustomMessage.SELF_LIKE);
+            }
             postService.likePost(memberId, myMember, referenceId);
             int count = postService.findLikeCount(referenceId);
             Map<String, Integer> map = Collections.singletonMap("likeCount", count);
@@ -189,6 +193,10 @@ public class PostController {
         if(authorized(request)){
             Long memberId = getMemberId();
             Member myMember = memberService.findOne(memberId);
+            Member postedMember = postService.getPostedMember(referenceId);
+            if(myMember.equals(postedMember)) {
+                return errorResponse(CustomMessage.SELF_SCRAP);
+            }
             boolean isScrapAction = postService.scrapPost(memberId, myMember, referenceId);
             int count = postService.findScrapCount(referenceId);
             Map<String, Integer> map = Collections.singletonMap("scrapCount", count);

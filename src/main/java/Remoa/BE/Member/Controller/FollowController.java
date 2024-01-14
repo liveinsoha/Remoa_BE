@@ -44,7 +44,7 @@ public class FollowController {
             Long myMemberId = getMemberId();
             if (Objects.equals(memberId, myMemberId)) {
 
-                return errorResponse(CustomMessage.FOLLOW_ME);
+                return errorResponse(CustomMessage.SELF_FOLLOW);
             } else {
                 Member member = memberService.findOne(myMemberId);
                 boolean check = followService.followFunction(memberId, member);

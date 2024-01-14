@@ -27,7 +27,11 @@ public enum CustomMessage {
     VALIDATED(HttpStatus.BAD_REQUEST,"잘못된 요청","요청한 값이 유효성검사를 통과하지 못했습니다"),
     NO_ID(HttpStatus.BAD_REQUEST,"잘못된 요청","요청한 Id가 존재하지 않습니다"),
 
-    FOLLOW_ME(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","자신을 팔로우할 수 없습니다"),
+    SELF_FOLLOW(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","자신을 팔로우할 수 없습니다"),
+
+    SELF_LIKE(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","자신의 게시물을 좋아요할 수 없습니다"),
+
+    SELF_SCRAP(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","자신을 게시물을 스크랩할 수 없습니다"),
 
     BAD_DUPLICATE(HttpStatus.BAD_REQUEST,"서비스 로직상 오류","닉네임이 중복되었습니다"),
 

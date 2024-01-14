@@ -311,9 +311,13 @@ public class PostService {
         return postRepository.findLikedPost(myMember, post).isPresent();
     }
 
-
     @Transactional
     public void deleteReference(Long postId){
         postRepository.deletePost(postId);
+    }
+
+    public Member getPostedMember(Long postId) {
+        return postRepository.findPostedMember(postId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found"));
     }
 }

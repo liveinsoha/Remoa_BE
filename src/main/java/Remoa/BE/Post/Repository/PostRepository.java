@@ -96,4 +96,11 @@ public class PostRepository {
                 .setParameter("member", member)
                 .executeUpdate();
     }
+
+    public Optional<Member> findPostedMember(Long postId) {
+        return em.createQuery("select p.member from Post p where p.postId = :postId", Member.class)
+                .setParameter("postId", postId)
+                .getResultStream()
+                .findAny();
+    }
 }
