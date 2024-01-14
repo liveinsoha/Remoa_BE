@@ -78,7 +78,7 @@ public class MemberRepository {
      */
     public Follow loadFollow(Member fromMember, Member toMember) {
         return em.createQuery("select f from Follow f " +
-                        "where f.fromMember = :fromMember and f.toMember = :toMember", Follow.class)
+                                "where f.fromMember = :fromMember and f.toMember = :toMember", Follow.class)
                 .setParameter("fromMember", fromMember)
                 .setParameter("toMember", toMember)
                 .getResultList()
@@ -92,7 +92,8 @@ public class MemberRepository {
      */
     public List<Member> loadFollows(Member member) {
         return em.createQuery("select f.toMember from Follow f " +
-                        "where f.fromMember = :member", Member.class)
+                                "where f.fromMember = :member " +
+                                "order by f.toMember.nickname", Member.class)
                 .setParameter("member", member)
                 .getResultList();
     }
@@ -104,7 +105,8 @@ public class MemberRepository {
      */
     public List<Member> loadFollowers(Member member){
         return em.createQuery("select f.fromMember from Follow f " +
-                "where f.toMember = :member", Member.class)
+                                "where f.toMember = :member " +
+                                "order by f.fromMember.nickname", Member.class)
                 .setParameter("member", member)
                 .getResultList();
     }
@@ -115,7 +117,7 @@ public class MemberRepository {
      * @return
      */
     public List<Long> loadFollowsId(Member member) {
-        return em.createQuery("select f.toMember.id from Follow f " +
+        return em.createQuery("select f.toMember.memberId from Follow f " +
                         "where f.fromMember = :member", Long.class)
                 .setParameter("member", member)
                 .getResultList();

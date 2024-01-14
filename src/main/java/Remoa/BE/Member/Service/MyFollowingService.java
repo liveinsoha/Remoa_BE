@@ -28,8 +28,12 @@ public class MyFollowingService {
 
         if(isFollowing == 1) { // 마이페이지 팔로잉 관리 화면
             memberList = memberRepository.loadFollows(member); // member가 팔로우하는 유저 확인
+            log.warn("followList : ");
+            memberList.forEach(m -> log.warn(m.getNickname()));
         } else{ // 마이페이지 팔로워 관리 화면
             memberList = memberRepository.loadFollowers(member);
+            log.warn("followerList : ");
+            memberList.forEach(m -> log.warn(m.getNickname()));
         }
 
         for (Member followMember : memberList) {
@@ -37,7 +41,6 @@ public class MyFollowingService {
             List<Member> followingMemberFollowing = memberRepository.loadFollows(followMember);
             // followMember를 팔로우하는 유저 구하기(팔로워)
             List<Member> followingMemberFollower = memberRepository.loadFollowers(followMember);
-
             if (isFollowing == 1) { // 마이페이지 팔로잉 관리 화면
                 ResMypageList resMypageList = ResMypageList.builder()
                         .profileImage(followMember.getProfileImage())
