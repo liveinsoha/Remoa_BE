@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -22,8 +23,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -40,7 +44,9 @@ public class ProfileController {
     private final ProfileService profileService;
     private final MemberService memberService;
     private final AwsS3Service awsS3Service;
-
+    private static final long PROFILE_IMG_MAX_SIZE = 2097152L;
+    private static final int PROFILE_IMG_MIN_WIDTH_PIXEL = 110;
+    private static final int PROFILE_IMG_MIN_HEIGHT_PIXEL = 110;
     // 프로필 수정 범위 : 닉네임(중복확인), 핸드폰번호, 대학교, 한줄소개
     @GetMapping("/user")
     public ResponseEntity<Object> userInfo(HttpServletRequest request) {
@@ -112,22 +118,36 @@ public class ProfileController {
 
         if(authorized(request)) {
 
-            //jpg랑 png만 가능합니다
+            // 확장자는 jpg, png만 가능
             String extension = fileExtension(multipartFile);
-            if(extension.equals("png") ||extension.equals("jpg")) {
-
-                Long memberId = getMemberId();
-                Member myMember = memberService.findOne(memberId);
-
-
-                String editProfileImg = awsS3Service.editProfileImg(myMember.getProfileImage(), multipartFile);
-                myMember.setProfileImage(editProfileImg);
-                memberService.join(myMember);
-                return new ResponseEntity<>(HttpStatus.OK);
+            if(!"png".equals(extension) && !"jpg".equals(extension)) {
+                return failResponse(CustomMessage.BAD_FILE
+                        , "이미지 파일은 jpg, png만 지원합니다. 현재 이미지 파일은 " + extension + "입니다");
             }
-            else{
-                throw new IOException();
+
+            // 이미지 용량 체크
+            if(PROFILE_IMG_MAX_SIZE < multipartFile.getSize()){
+                return failResponse(CustomMessage.FILE_SIZE_OVER, "프로필 사진은 2MB를 초과할 수 없습니다.");
             }
+
+            // 이미지 사이즈(픽셀) 체크
+            Map<String, Integer> imageSizeMap = checkImageSize(multipartFile); // 필요시 IOException 핸들링 할 것
+            int widthPixel = imageSizeMap.get("width");
+            int heightPixel = imageSizeMap.get("height");
+            if(widthPixel < PROFILE_IMG_MIN_WIDTH_PIXEL || heightPixel < PROFILE_IMG_MIN_HEIGHT_PIXEL) {
+                return failResponse(CustomMessage.IMAGE_PIXEL_LACK
+                        , "가로/세로 110픽셀 이상만 가능합니다. 현재 가로 : " + widthPixel + " / 세로 : " + heightPixel + "입니다.");
+            }
+
+            Long memberId = getMemberId();
+            Member myMember = memberService.findOne(memberId);
+
+            String editProfileImg = awsS3Service.editProfileImg(myMember.getProfileImage(), multipartFile);
+            myMember.setProfileImage(editProfileImg);
+            memberService.join(myMember);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+
         }
         return errorResponse(CustomMessage.UNAUTHORIZED);
     }
@@ -166,5 +186,18 @@ public class ProfileController {
         } else {
             return successResponse(CustomMessage.OK, true);
         }
+    }
+
+    private Map<String, Integer> checkImageSize(MultipartFile file) throws IOException {
+        BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
+        int width = bufferedImage.getWidth();
+        int height = bufferedImage.getHeight();
+        log.warn("width  = " + width);
+        log.warn("height = " + height);
+
+        Map<String, Integer> imageSizeMap = new HashMap<>();
+        imageSizeMap.put("width", width);
+        imageSizeMap.put("height", height);
+        return imageSizeMap;
     }
 }
