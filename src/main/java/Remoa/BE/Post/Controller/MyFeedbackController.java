@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static Remoa.BE.config.DbInit.categoryList;
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
 import static Remoa.BE.utill.MemberInfo.authorized;
@@ -58,12 +59,7 @@ public class MyFeedbackController {
 
 //            Page<Post> posts = myPostService.getNewestThreePosts(pageNumber, myMember);
             Page<Post> posts;
-            if (category.equals("idea") ||
-                    category.equals("marketing") ||
-                    category.equals("design") ||
-                    category.equals("video") ||
-                    category.equals("digital") ||
-                    category.equals("etc")) {
+            if (categoryList.contains(category)) {
 
                 posts = myPostService.getNewestThreePostsSortCategory(pageNumber, myMember, category);
 

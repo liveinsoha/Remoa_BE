@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static Remoa.BE.config.DbInit.categoryList;
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
 import static Remoa.BE.utill.MemberInfo.authorized;
@@ -65,12 +66,7 @@ public class MyPostController {
 
             Page<Post> posts;
 
-            if (category.equals("idea") ||
-                    category.equals("marketing") ||
-                    category.equals("design") ||
-                    category.equals("video") ||
-                    category.equals("digital") ||
-                    category.equals("etc")) {
+            if (categoryList.contains(category)) {
                 posts = myPostService.sortAndPaginatePostsByCategoryAndMember(category, pageNumber, sort, myMember,title);
             } else {
                 posts = myPostService.sortAndPaginatePostsByMember(pageNumber, sort, myMember,title);
@@ -135,12 +131,7 @@ public class MyPostController {
 
         Page<Post> posts;
 
-        if (category.equals("idea") ||
-                category.equals("marketing") ||
-                category.equals("design") ||
-                category.equals("video") ||
-                category.equals("digital") ||
-                category.equals("etc")) {
+        if (categoryList.contains(category)) {
             posts = myPostService.sortAndPaginatePostsByCategoryAndMember(category, pageNumber, sort, selectedMember, title);
         } else {
             posts = myPostService.sortAndPaginatePostsByMember(pageNumber, sort, selectedMember, title);

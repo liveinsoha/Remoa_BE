@@ -9,12 +9,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class DbInit {
     private final CategoryService categoryService;
+
+    public static final List<String> categoryList = List.of("idea", "marketing", "design", "video", "digital", "etc");
     /**
      * @PostConstruct로 Category를 세팅해주는 메서드
      */
@@ -24,12 +27,12 @@ public class DbInit {
             //do nothing
             log.info("==========Categories are already set==========");
         } else {
-            Category idea = new Category("idea");
-            Category marketing = new Category("marketing");
-            Category design = new Category("design");
-            Category video = new Category("video");
-            Category digital = new Category("digital");
-            Category etc = new Category("etc");
+            Category idea = new Category(categoryList.get(0));
+            Category marketing = new Category(categoryList.get(1));
+            Category design = new Category(categoryList.get(2));
+            Category video = new Category(categoryList.get(3));
+            Category digital = new Category(categoryList.get(4));
+            Category etc = new Category(categoryList.get(5));
             this.categoryService.persistCategory(idea, marketing, design, video, digital, etc);
             log.info("==========Setting Categories completely==========");
         }

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static Remoa.BE.config.DbInit.categoryList;
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
 import static Remoa.BE.utill.MemberInfo.authorized;
@@ -64,12 +65,7 @@ public class PostController {
         }
 
         Page<Post> allPosts;
-        if (category.equals("idea") ||
-                category.equals("marketing") ||
-                category.equals("design") ||
-                category.equals("video") ||
-                category.equals("digital") ||
-                category.equals("etc")) {
+        if (categoryList.contains(category)) {
             //sort -> 최신순 : newest, 좋아요순 : like, 스크랩순 : scrap, 조회순 : view
             allPosts = postService.sortAndPaginatePostsByCategory(category, sort, pageNumber, title);
         } else {
