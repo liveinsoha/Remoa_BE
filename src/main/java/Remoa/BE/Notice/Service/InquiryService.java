@@ -61,4 +61,9 @@ public class InquiryService {
         inquiryRepository.save(inquiry);
 
     }
+
+    @Transactional
+    public void modifying_Inquiry_NickName(String newNick, String oldNick) {
+        inquiryRepository.modifyingInquiryAuthor(newNick, oldNick);
+    }
 }

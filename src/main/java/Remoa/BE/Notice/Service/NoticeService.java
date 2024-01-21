@@ -59,4 +59,9 @@ public class NoticeService {
         noticeRepository.save(notice);
 
     }
+
+    @Transactional
+    public void modifying_Notice_NickName(String newNick, String oldNick) {
+        noticeRepository.modifyingNoticeAuthor(newNick, oldNick);
+    }
 }

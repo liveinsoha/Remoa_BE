@@ -1,6 +1,8 @@
 package Remoa.BE.Member.Service;
 
 import Remoa.BE.Member.Dto.Req.EditProfileForm;
+import Remoa.BE.Notice.Service.InquiryService;
+import Remoa.BE.Notice.Service.NoticeService;
 import com.amazonaws.services.s3.AmazonS3;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -33,6 +35,8 @@ import java.util.UUID;
 public class ProfileService {
 
     private final MemberService memberService;
+    private final InquiryService inquiryService;
+    private final NoticeService noticeService;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     private final AmazonS3 amazonS3;
@@ -40,6 +44,12 @@ public class ProfileService {
     @Transactional
     public void editProfile(Long memberId, EditProfileForm profile) {
         Member member = memberService.findOne(memberId);
+
+        String oldNickname = member.getNickname();
+        String newNickname = profile.getNickname();
+        //공지사항 및 문의사항에 변경된 닉네임 반영
+        noticeService.modifying_Notice_NickName(oldNickname, newNickname);
+        inquiryService.modifying_Inquiry_NickName(oldNickname, newNickname);
 
         // 사용자의 프로필 정보 수정
         member.setNickname(profile.getNickname());
