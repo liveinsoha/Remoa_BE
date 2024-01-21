@@ -61,7 +61,7 @@ public class KakaoController {
          * 에러메세지를 exception 패키지처럼 한곳에 모아놓고 쓰는 것도 좋습니다.
          */
         if (member.isPresent()) {
-            securityLoginWithoutLoginForm(member.get(), request);
+            securityLoginWithoutLoginForm(member.get());
             //if문에 걸리지 않았다면 이미 회원가입이 진행돼 db에 kakaoId가 있는 유저이므로 kakaoMember가 존재하므로 LoginController처럼 로그인 처리 하면 됩니다.
             return successResponse(CustomMessage.OK, member.get().getNickname());
 
@@ -99,7 +99,7 @@ public class KakaoController {
         member.setTermConsent(form.getTermConsent());
 
         memberService.join(member);
-        securityLoginWithoutLoginForm(member, request);
+        securityLoginWithoutLoginForm(member);
 
         ResSignupDto result =  ResSignupDto.builder().
                 kakaoId(member.getKakaoId()).

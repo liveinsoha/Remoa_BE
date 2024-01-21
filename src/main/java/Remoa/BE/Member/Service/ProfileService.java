@@ -3,6 +3,7 @@ package Remoa.BE.Member.Service;
 import Remoa.BE.Member.Dto.Req.EditProfileForm;
 import Remoa.BE.Notice.Service.InquiryService;
 import Remoa.BE.Notice.Service.NoticeService;
+import Remoa.BE.utill.MemberInfo;
 import com.amazonaws.services.s3.AmazonS3;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +58,9 @@ public class ProfileService {
         member.setPhoneNumber(profile.getPhoneNumber());
         member.setUniversity(profile.getUniversity());
         member.setOneLineIntroduction(profile.getOneLineIntroduction());
+
+        //변경된 정보 contextholder에 반영
+        MemberInfo.securityLoginWithoutLoginForm(member);
     }
 
     public String editProfileImg(String nickname,String profileImageUrl) throws IOException {

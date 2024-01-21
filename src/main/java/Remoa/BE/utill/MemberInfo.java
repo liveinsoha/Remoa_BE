@@ -35,7 +35,7 @@ public class MemberInfo {
      * Spring Security가 기본값으로 form data를 사용해 로그인을 진행하는데, Rest API를 이용해 json을 주고받는 방식으로 로그인을 처리하기 위해
      * 우회적인 방식으로 Spring Security를 이용할 수 있게 해주는 메서드.
      */
-    public static void securityLoginWithoutLoginForm(Member member, HttpServletRequest request) {
+    public static void securityLoginWithoutLoginForm(Member member) {
 
         //로그인 세션에 들어갈 권한을 설정합니다.
         List<GrantedAuthority> list = new ArrayList<>();
