@@ -10,6 +10,7 @@ import Remoa.BE.Post.Service.CommentService;
 import Remoa.BE.Post.Service.MyPostService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -50,6 +51,7 @@ public class MyPostController {
      * 내 작업물 목록 페이지
      */
     @GetMapping("/user/reference")
+    @Operation(summary = "내 작업물 목록 조회", description = "내가 작성한 작업물 목록을 조회합니다.")
     public ResponseEntity<Object> myReference(HttpServletRequest request,
                                               @RequestParam(required = false, defaultValue = "all") String category,
                                               @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber,
@@ -108,6 +110,7 @@ public class MyPostController {
     }
 
     @GetMapping("/user/reference/{member_id}")
+    @Operation(summary = "다른 사용자의 작업물 목록 조회", description = "다른 사용자가 작성한 작업물 목록을 조회합니다.")
     public ResponseEntity<Object> otherReference(HttpServletRequest request,
                                                  @PathVariable("member_id") Long memberId,
                                                  @RequestParam(required = false, defaultValue = "all") String category,

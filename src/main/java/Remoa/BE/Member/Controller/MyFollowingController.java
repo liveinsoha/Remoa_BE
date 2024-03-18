@@ -6,6 +6,7 @@ import Remoa.BE.Member.Dto.Res.ResMypageList;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Member.Service.MyFollowingService;
 import Remoa.BE.exception.CustomMessage;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
@@ -33,6 +34,7 @@ public class MyFollowingController {
     private final MyFollowingService myFollowingService;
 
     @GetMapping("/following") // 마이페이지 팔로잉 관리화면
+    @Operation(summary = "마이페이지 팔로잉 관리화면", description = "현재 로그인된 사용자의 팔로잉 목록을 조회합니다.")
     public ResponseEntity<Object> mypageFollowing(HttpServletRequest request){
         if(authorized(request)){
             Long myMemberId = getMemberId();
@@ -45,6 +47,7 @@ public class MyFollowingController {
     }
 
     @GetMapping("/follower") // 마이페이지 팔로워 관리화면
+    @Operation(summary = "마이페이지 팔로워 관리화면", description = "현재 로그인된 사용자의 팔로워 목록을 조회합니다.")
     public ResponseEntity<Object> mypageFollower(HttpServletRequest request){
         if(authorized(request)){
             Long myMemberId = getMemberId();

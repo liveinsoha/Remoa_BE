@@ -16,6 +16,7 @@ import Remoa.BE.Post.Service.CommentService;
 import Remoa.BE.Post.Service.FeedbackService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,7 @@ public class ViewerController {
     private final FollowService followService;
 
     @GetMapping("/reference/{reference_id}")
+    @Operation(summary = "레퍼런스 조회", description = "특정 레퍼런스의 상세 정보를 조회합니다.")
     public ResponseEntity<Object> referenceViewer(HttpServletRequest request,
                                                   @PathVariable("reference_id") Long referenceId) {
 

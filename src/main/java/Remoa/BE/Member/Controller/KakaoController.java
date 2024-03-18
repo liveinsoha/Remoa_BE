@@ -7,6 +7,7 @@ import Remoa.BE.Member.Service.KakaoService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Member.Service.ProfileService;
 import Remoa.BE.exception.CustomMessage;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,7 @@ public class KakaoController {
      * 파악해 존재할 때는 로그인, 없을 땐 회원가입 페이지로 넘어가게 해줌.
      */
     @GetMapping("/login/kakao")
+    @Operation(summary = "카카오 로그인", description = "카카오 로그인을 통해 사용자를 식별하고 로그인 또는 회원가입 처리합니다.")
     public ResponseEntity<Object> getCI(@RequestParam String code, HttpServletRequest request) throws IOException {
         log.info("code = " + code);
 
@@ -117,6 +119,7 @@ public class KakaoController {
      세션무효화, jsession쿠키를 제거,
      */
     @PostMapping ("/user/logout")
+    @Operation(summary = "로그아웃", description = "현재 로그인된 사용자를 로그아웃 처리합니다.")
     public ResponseEntity<Object> logout(HttpServletRequest request){
         if(authorized(request)) {
 

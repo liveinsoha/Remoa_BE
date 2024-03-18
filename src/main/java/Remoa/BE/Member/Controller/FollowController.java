@@ -5,6 +5,7 @@ import Remoa.BE.Member.Dto.Res.ResFollowerAndFollowingDto;
 import Remoa.BE.Member.Service.FollowService;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.exception.CustomMessage;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,7 @@ public class FollowController {
      * @return ResponseEntity<String>
      */
     @PostMapping("/follow/{member_id}")
+    @Operation(summary = "팔로우 기능", description = "특정 회원을 팔로우하거나 언팔로우합니다.")
     public ResponseEntity<Object> follow(@PathVariable("member_id") Long memberId, HttpServletRequest request) {
 
         if (authorized(request)) {
@@ -67,6 +69,7 @@ public class FollowController {
      * @return ResponseEntity<Object>
      */
     @GetMapping("/follow/{member_id}")
+    @Operation(summary = "팔로워 및 팔로잉 조회", description = "특정 회원의 팔로워 및 팔로잉 수를 조회합니다.")
     public ResponseEntity<Object> showFollowers(@PathVariable("member_id") Long memberId) {
         Member member = memberService.findOne(memberId);
         List<Integer> count = followService.followerAndFollowing(member);
