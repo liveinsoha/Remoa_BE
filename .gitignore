@@ -33,6 +33,4 @@ out/
 /nbdist/
 /.nb-gradle/
 
-# Exclude files
-SecureConfig
-SwaggerConfig
+
