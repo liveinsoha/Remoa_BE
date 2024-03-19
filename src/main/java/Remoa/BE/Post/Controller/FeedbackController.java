@@ -12,6 +12,7 @@ import Remoa.BE.Post.Dto.Response.ResReplyDto;
 import Remoa.BE.Post.Service.FeedbackService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,7 @@ public class FeedbackController {
     private final PostService postService;
 
     @PostMapping("/reference/{reference_id}/{page_number}") // 레퍼런스에 피드백 등록
+    @Operation(summary = "피드백 등록", description = "특정 게시물 페이지에 피드백을 등록합니다.")
     public ResponseEntity<Object> registerFeedback(@RequestBody ReqFeedbackDto req,
                                                    @PathVariable("reference_id") Long postId,
                                                    @PathVariable("page_number") Integer pageNumber,
@@ -85,6 +87,7 @@ public class FeedbackController {
     }
 
     @PostMapping("/reference/{reference_id}/feedback/{feedback_id}") // 레퍼런스에 피드백 대댓글 등록
+    @Operation(summary = "피드백 대댓글 등록", description = "특정 피드백에 대댓글을 등록합니다.")
     public ResponseEntity<Object> registerFeedbackReply(@RequestBody ReqFeedbackDto req,
                                                    @PathVariable("reference_id") Long postId,
                                                    @PathVariable("feedback_id") Long feedbackId,
@@ -127,6 +130,7 @@ public class FeedbackController {
     }
 
     @PutMapping("/reference/feedback/{feedback_id}") // 피드백 수정
+    @Operation(summary = "피드백 수정", description = "작성한 피드백을 수정합니다.")
     public ResponseEntity<Object> modifyFeedback(@RequestBody ReqFeedbackDto req, @PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
         String myFeedback = req.getFeedback();
 
@@ -169,6 +173,7 @@ public class FeedbackController {
     }
 
     @DeleteMapping("/reference/feedback/{feedback_id}")
+    @Operation(summary = "피드백 삭제", description = "작성한 피드백을 삭제합니다.")
     public ResponseEntity<Object> deleteFeedback(@PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
         if(authorized(request)){
             feedbackService.deleteFeedback(feedbackId);
@@ -209,6 +214,7 @@ public class FeedbackController {
     }
 
     @PostMapping("/reference/feedback/{feedback_id}/like") // 피드백 좋아요
+    @Operation(summary = "피드백 좋아요", description = "피드백에 좋아요를 누릅니다.")
     public ResponseEntity<Object> likeFeedback(@PathVariable("feedback_id") Long feedbackId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();

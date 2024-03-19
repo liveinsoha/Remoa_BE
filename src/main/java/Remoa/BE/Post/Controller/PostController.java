@@ -13,6 +13,7 @@ import Remoa.BE.Post.Service.MyPostService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
 import Remoa.BE.utill.CommonFunction;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -45,6 +46,7 @@ public class PostController {
     private final ModelMapper modelMapper;
 
     @GetMapping("/reference")
+    @Operation(summary = "레퍼런스 검색", description = "레퍼런스를 검색합니다.")
     public ResponseEntity<Object> searchPost(HttpServletRequest request,
                                              @RequestParam(required = false, defaultValue = "all") String category,
                                              @RequestParam(required = false, defaultValue = "newest") String sort,
@@ -108,6 +110,7 @@ public class PostController {
 
 
     @PostMapping("/reference") // 게시물 등록
+    @Operation(summary = "게시물 등록", description = "게시물을 등록합니다.")
     public ResponseEntity<Object> share(@RequestPart("data") UploadPostForm uploadPostForm,
                                         @RequestPart("thumbnail")MultipartFile thumbnail,
                                         @RequestPart(value = "file", required = false) List<MultipartFile> uploadFiles,
@@ -137,6 +140,7 @@ public class PostController {
     }
 
     @PutMapping("/reference/{reference_id}") // 게시물 수정
+    @Operation(summary = "게시물 수정", description = "게시물을 수정합니다.")
     public ResponseEntity<Object> modify(@PathVariable("reference_id") Long referenceId,
                                        @RequestPart("data") UploadPostForm uploadPostForm,
                                        @RequestPart("thumbnail")MultipartFile thumbnail,
@@ -172,6 +176,7 @@ public class PostController {
 
 
     @PostMapping("/reference/{reference_id}/like")
+    @Operation(summary = "레퍼런스 좋아요", description = "레퍼런스에 좋아요를 합니다.")
     public ResponseEntity<Object> likeReference(@PathVariable("reference_id") Long referenceId, HttpServletRequest request) {
         if (authorized(request)) {
             Long memberId = getMemberId();
@@ -189,6 +194,7 @@ public class PostController {
     }
 
     @PostMapping("/reference/{reference_id}/scrap")
+    @Operation(summary = "레퍼런스 스크랩", description = "레퍼런스를 스크랩합니다.")
     public ResponseEntity<Object> scrapReference(@PathVariable("reference_id") Long referenceId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();
@@ -208,6 +214,7 @@ public class PostController {
     }
 
     @DeleteMapping("/user/reference/{reference_id}")
+    @Operation(summary = "레퍼런스 삭제", description = "레퍼런스를 삭제합니다.")
     public ResponseEntity<Object> deleteReference(@PathVariable("reference_id") Long[] postId, HttpServletRequest request){
         if(authorized(request)){
             Long memberId = getMemberId();
@@ -226,6 +233,7 @@ public class PostController {
     }
 
     @DeleteMapping("/user/referenceCategory/{category}")
+    @Operation(summary = "레퍼런스 카테고리 삭제", description = "레퍼런스 카테고리를 삭제합니다.")
     public ResponseEntity<Object> deleteReferenceCategory(@PathVariable("category") String category, HttpServletRequest request){
         if(authorized(request)){
             Long categoryId = CommonFunction.getCategoryId(category); // 카테고리 id 추출.

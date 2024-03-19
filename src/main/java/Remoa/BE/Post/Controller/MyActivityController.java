@@ -11,6 +11,7 @@ import Remoa.BE.Post.Dto.Response.ResPostDto;
 import Remoa.BE.Post.Service.CommentFeedbackService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.exception.CustomMessage;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -51,6 +52,7 @@ public class MyActivityController {
      *     "posts" : 내가 스크랩한 post들을 가장 최근 스크랩한 순서의 List(12개).
      */
     @GetMapping("/user/activity")
+    @Operation(summary = "내 활동 조회", description = "내가 작성한 최신 댓글(Comment, Feedback 무관 1개)와 스크랩한 게시물들을 조회합니다.")
     public ResponseEntity<Object> myActivity(HttpServletRequest request) {
 
         if (authorized(request)) {
@@ -99,6 +101,7 @@ public class MyActivityController {
     }
 
     @GetMapping("/user/scrap") // 내가 스크랩한 게시글 확인
+    @Operation(summary = "내가 스크랩한 게시글 조회", description = "내가 스크랩한 게시글들을 확인합니다.")
     public ResponseEntity<Object> myScrap(HttpServletRequest request,
                                           @RequestParam(name = "page", defaultValue = "1", required = false) int pageNum){
 
@@ -154,6 +157,7 @@ public class MyActivityController {
     }
 
     @GetMapping("/user/comment")
+    @Operation(summary = "내가 작성한 댓글 조회", description = "내가 작성한 최신 댓글들을 조회합니다.")
     public ResponseEntity<Object> myComment(HttpServletRequest request,
                                             @RequestParam(name = "page", defaultValue = "1", required = false) int pageNum){
         if (authorized(request)) {
@@ -198,6 +202,7 @@ public class MyActivityController {
     }
 
     @GetMapping("/user/receive")
+    @Operation(summary = "내가 받은 댓글/피드백 조회", description = "내가 받은 최신 댓글/피드백들을 조회합니다.")
     public ResponseEntity<Object> receivedCommentFeedback(HttpServletRequest request,
                                                           @RequestParam(required = false, defaultValue = "all") String category,
                                                           @RequestParam(required = false, defaultValue = "1", name = "page") int pageNum) {

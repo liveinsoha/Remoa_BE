@@ -9,6 +9,7 @@ import Remoa.BE.Member.Service.AwsS3Service;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Member.Service.ProfileService;
 import Remoa.BE.exception.CustomMessage;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,7 @@ public class ProfileController {
     private static final int PROFILE_IMG_MIN_HEIGHT_PIXEL = 110;
     // 프로필 수정 범위 : 닉네임(중복확인), 핸드폰번호, 대학교, 한줄소개
     @GetMapping("/user")
+    @Operation(summary = "사용자 정보 조회", description = "현재 로그인한 사용자의 정보를 조회합니다.")
     public ResponseEntity<Object> userInfo(HttpServletRequest request) {
 
         if(authorized(request)) {
@@ -70,6 +72,7 @@ public class ProfileController {
     }
 
     @PutMapping("/user")
+    @Operation(summary = "프로필 수정", description = "현재 로그인한 사용자의 프로필 정보를 수정합니다.")
     public ResponseEntity<Object> editProfile(@RequestBody EditProfileForm form, HttpServletRequest request) {
 
         if(authorized(request)){
@@ -103,6 +106,7 @@ public class ProfileController {
 
     // 프로필 사진 불러오기
     @GetMapping("/user/img")
+    @Operation(summary = "프로필 사진 조회", description = "현재 로그인한 사용자의 프로필 사진 URL을 조회합니다.")
     public ResponseEntity<Object> showImage(HttpServletRequest request) {
         if(authorized(request)) {
             Long memberId = getMemberId();
@@ -114,6 +118,7 @@ public class ProfileController {
 
     // 프로필 사진 업로드
     @PutMapping("/user/img")
+    @Operation(summary = "프로필 사진 업로드", description = "현재 로그인한 사용자의 프로필 사진을 업로드합니다.")
     public ResponseEntity<Object> upload(@RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) throws IOException {
 
         if(authorized(request)) {
@@ -153,6 +158,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("/user/img")
+    @Operation(summary = "프로필 사진 삭제", description = "현재 로그인한 사용자의 프로필 사진을 삭제합니다.")
     public ResponseEntity<Object> remove(HttpServletRequest request) throws MalformedURLException {
         if(authorized(request)) {
 
@@ -180,6 +186,7 @@ public class ProfileController {
      * @return ResponseEntity
      */
     @GetMapping("/nickname")
+    @Operation(summary = "닉네임 중복 확인", description = "사용자가 입력한 닉네임이 이미 사용 중인지 확인합니다.")
     public ResponseEntity<Object> checkNicknameDuplicate(@RequestParam String nickname) {
         if (memberService.isNicknameDuplicate(nickname)) {
             return successResponse(CustomMessage.OK, false);

@@ -3,6 +3,7 @@ package Remoa.BE.Member.Controller;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Member.Service.WithdrewService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class WithdrewController {
      * @return 로그인 되지 않은 상태면 403(forbidden), 다른 id 값을 통한 잘못된 요청을 하면 401(Unauthorized), 올바른 탈퇴 요청이면 200(OK)
      */
     @DeleteMapping("/delete/{member_id}")
+    @Operation(summary = "회원 탈퇴 (PathVariable)", description = "로그인한 사용자가 자신의 계정을 탈퇴합니다.")
     public ResponseEntity<String> withdrewRemoa(@PathVariable("member_id") Long memberId, HttpServletRequest request) {
 
         HttpSession session = request.getSession(false);
@@ -56,6 +58,7 @@ public class WithdrewController {
      * @return 로그인 되지 않은 상태면 403(forbidden), 올바른 탈퇴 요청이면 200(OK)
      */
     @DeleteMapping("/delete")
+    @Operation(summary = "회원 탈퇴", description = "로그인한 사용자가 자신의 계정을 탈퇴합니다.")
     public ResponseEntity<String> withdrewRemoaWithoutPathVariable(HttpServletRequest request) {
 
         HttpSession session = request.getSession(false);

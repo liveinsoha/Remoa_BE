@@ -12,6 +12,7 @@ import Remoa.BE.Post.Dto.Response.ResReplyDto;
 import Remoa.BE.Post.Service.CommentService;
 import Remoa.BE.Post.Service.MyPostService;
 import Remoa.BE.exception.CustomMessage;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,7 @@ public class MyFeedbackController {
     private final FollowService followService;
 
     @GetMapping("/user/feedback")
+    @Operation(summary = "내가 받은 피드백 조회", description = "내가 받은 최신 피드백들을 조회합니다.")
     public ResponseEntity<Object> receivedFeedback(HttpServletRequest request,
                                                    @RequestParam(required = false, defaultValue = "all") String category,
                                                    @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber) {
