@@ -1,25 +1,17 @@
 package Remoa.BE.Member.Service;
 
+import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Req.EditProfileForm;
 import Remoa.BE.Notice.Service.InquiryService;
 import Remoa.BE.Notice.Service.NoticeService;
 import Remoa.BE.utill.MemberInfo;
 import com.amazonaws.services.s3.AmazonS3;
-
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-
-import Remoa.BE.Member.Domain.Member;
-import org.springframework.util.FileCopyUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

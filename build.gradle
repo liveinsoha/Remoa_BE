@@ -1,21 +1,15 @@
-// Query DSL 관련 스크립트 및 설정
-buildscript {
-	ext {
-		queryDslVersion = "5.0.0"
-	}
-}
-
 plugins {
-	id 'org.springframework.boot' version '2.7.7'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-	//QueryDSL
-	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
+	id 'org.springframework.boot' version '3.2.3'
+	id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'Remoa'
+group = 'toward'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+
+java {
+	sourceCompatibility = '17'
+}
 
 configurations {
 	compileOnly {
@@ -30,62 +24,61 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-//	implementation 'mysql:mysql-connector-java:8.0.35-0ubuntu0.22.04.1'
 	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
-	//json simple
-	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+	//SQL파라미터
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+
+	//타임리프
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+	//jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+
+	//swagger
+//	implementation 'io.springfox:springfox-boot-starter:3.0.0' 스프링 3 자바 17과 맞지 않음
+//	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+	//java-jwt
+	implementation 'com.auth0:java-jwt:4.4.0'
 
 	// S3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+	//modelmapper
+	implementation 'org.modelmapper:modelmapper:3.1.0'
 
-	//ModelMapper 라이브러리 추가
-	implementation 'org.modelmapper:modelmapper:2.4.2'
+	// Querydsl 추가
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-	//파일 관련
-	implementation 'org.apache.pdfbox:pdfbox:2.0.24'
+	//pdf 처리
+	implementation 'org.apache.pdfbox:pdfbox:2.0.29'
 
-	//QueryDSL
-	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+	implementation group: 'com.twelvemonkeys.imageio', name: 'imageio-core', version: '3.8.2'
 
-	//spring doc
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
-
-
+	//json simple
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 }
 
-test {
+tasks.named('test') {
 	useJUnitPlatform()
 }
 
-//querydsl 추가 시작
-def querydslDir = "$buildDir/generated/querydsl"
-
-querydsl {
-	jpa = true
-	querydslSourcesDir = querydslDir
-}
-
-sourceSets {
-	main.java.srcDir querydslDir
-}
-
-compileQuerydsl {
-	options.annotationProcessorPath = configurations.querydsl
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-	querydsl.extendsFrom compileClasspath
-//querydsl 추가 끝
+jar {
+	enabled = false
 }

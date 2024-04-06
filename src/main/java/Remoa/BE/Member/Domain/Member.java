@@ -1,30 +1,34 @@
 package Remoa.BE.Member.Domain;
 
 import Remoa.BE.Post.Domain.Post;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Where(clause = "deleted = false")
-public class Member implements UserDetails {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long memberId;
 
+    //23.1.19 추가
+    private String nickname;
     /**
      * 카카오 api에서 받아오는 고유 id값
      */
@@ -49,8 +53,7 @@ public class Member implements UserDetails {
     /**
      * 카카오 api에서 받아오는 nickname 값
      */
-    //23.1.19 추가
-    private String nickname;
+
 
     private String birth;
 
@@ -107,7 +110,8 @@ public class Member implements UserDetails {
     /**
      * ADMIN과 일반 USER를 구분하기 위해 존재. Spring Security 이용하기 위함
      */
-    private String role = "ROLE_USER";
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     private Boolean deleted = Boolean.FALSE;
 
@@ -139,15 +143,6 @@ public class Member implements UserDetails {
         return passwordEncoder.matches(plainPassword, this.password);
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-
-        for(String role : role.split(",")){
-            authorities.add(new SimpleGrantedAuthority(role));
-        }
-        return authorities;
-    }
 
     public String getUsername() {
         return null;

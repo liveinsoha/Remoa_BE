@@ -2,12 +2,22 @@ package Remoa.BE.Member.Controller;
 
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Req.ReqSignupDto;
+import Remoa.BE.Member.Dto.Res.KakaoLoginResponseDto;
 import Remoa.BE.Member.Dto.Res.ResSignupDto;
 import Remoa.BE.Member.Service.KakaoService;
 import Remoa.BE.Member.Service.MemberService;
-import Remoa.BE.Member.Service.ProfileService;
 import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.exception.response.BaseException;
+import Remoa.BE.exception.response.BaseResponse;
+import Remoa.BE.exception.response.ErrorResponse;
+import Remoa.BE.utill.MessageUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,61 +26,44 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 
-import static Remoa.BE.exception.CustomBody.*;
-import static Remoa.BE.utill.MemberInfo.*;
+import static Remoa.BE.utill.MemberInfo.securityLoginWithoutLoginForm;
 
 
+@Tag(name = "kakao", description = "카카오 로그인 API")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 public class KakaoController {
 
-
-
-    private final KakaoService ks;
+    private final KakaoService kakaoService;
     private final MemberService memberService;
-    private final ProfileService profileService;
 
     /**
      * 카카오 로그인을 통해 code를 query string으로 받아오면, 코드를 통해 토큰, 토큰을 통해 사용자 정보를 얻어와 db에 해당 사용자가 존재하는지 여부를
      * 파악해 존재할 때는 로그인, 없을 땐 회원가입 페이지로 넘어가게 해줌.
      */
+    // 프론트에서 인가코드 받아오는 url
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = MessageUtils.SUCCESS),
+            @ApiResponse(responseCode = "400", description = MessageUtils.ERROR,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping("/login/kakao")
     @Operation(summary = "카카오 로그인", description = "카카오 로그인을 통해 사용자를 식별하고 로그인 또는 회원가입 처리합니다.")
-    public ResponseEntity<Object> getCI(@RequestParam String code, HttpServletRequest request) throws IOException {
+    public ResponseEntity<BaseResponse<KakaoLoginResponseDto>> getCI(@RequestParam String code) throws IOException {
         log.info("code = " + code);
+        KakaoLoginResponseDto kakaoLoginResponseDto = kakaoService.kakaoLogin(code);
 
-        // 액세스 토큰과 유저정보 받기
-        String access_token = ks.getToken(code);
-        Map<String, Object> userInfo = ks.getUserInfo(access_token);
-
-        log.info("userInfo = {}", userInfo.values());
-
-        Long kakaoId = Long.parseLong((String) userInfo.get("id"));
-        Optional<Member> member = memberService.findByKakaoId(kakaoId);
-
-        log.info("kakaoId = {}", kakaoId);
-
-        /*
-         * 백에서 보낼 게 없을 때에도 정상 처리됐다는 메세지 정도는 같이 보내주는 게 좋습니다.
-         * 상태메세지는 body에, 상태코드는 head에 들어갑니다.
-         * 에러메세지를 exception 패키지처럼 한곳에 모아놓고 쓰는 것도 좋습니다.
-         */
-        if (member.isPresent()) {
-            securityLoginWithoutLoginForm(member.get());
-            //if문에 걸리지 않았다면 이미 회원가입이 진행돼 db에 kakaoId가 있는 유저이므로 kakaoMember가 존재하므로 LoginController처럼 로그인 처리 하면 됩니다.
-            return successResponse(CustomMessage.OK, member.get().getNickname());
-
-        } else {
-            //kakaoId가 db에 없으므로 kakaoMember가 null이므로 회원가입하지 않은 회원. 따라서 회원가입이 필요하므로 회원가입하는 uri로 redirect 시켜주어야 함.
-            return successResponse(CustomMessage.OK_SIGNUP, userInfo);
-        }
+        BaseResponse<KakaoLoginResponseDto> response = new BaseResponse<>(CustomMessage.OK, kakaoLoginResponseDto);
+        return ResponseEntity.ok().body(response);
+//        return SuccessResponse.<KakaoLoginResponseDto>builder()
+//                .message(CustomMessage.OK.getMessage())
+//                .detail(CustomMessage.OK.getDetail())
+//                .data(kakaoLoginResponseDto)
+//                .build();
     }
 
     /**
@@ -78,7 +71,7 @@ public class KakaoController {
      */
     @PostMapping("/signup/kakao")
     @Operation(summary = "카카오 회원가입", description = "카카오에서 제공하는 사용자 정보를 이용하여 회원가입을 진행합니다.")
-    public ResponseEntity<Object> signupKakaoMember(@RequestBody @Validated ReqSignupDto form, HttpServletRequest request) throws IOException {
+    public ResponseEntity<BaseResponse<ResSignupDto>> signupKakaoMember(@RequestBody @Validated ReqSignupDto form, HttpServletRequest request) throws IOException {
 
         Member member = new Member();
         Random random = new Random();
@@ -95,7 +88,8 @@ public class KakaoController {
 
         //카카오에서 받은 프로필 사진 url 링크를 토대로 s3에 저장
         if (memberService.findByKakaoId(form.getKakaoId()).isPresent()) {
-            return failResponse(CustomMessage.VALIDATED, "kakaoId가 이미 가입되어 있습니다.");
+            throw new BaseException(CustomMessage.VALIDATED);
+            //return failResponse(CustomMessage.VALIDATED, "kakaoId가 이미 가입되어 있습니다.");
         }
         member.setKakaoId(form.getKakaoId());
         member.setEmail(form.getEmail());
@@ -104,7 +98,7 @@ public class KakaoController {
         memberService.join(member);
         securityLoginWithoutLoginForm(member);
 
-        ResSignupDto result =  ResSignupDto.builder().
+        ResSignupDto result = ResSignupDto.builder().
                 kakaoId(member.getKakaoId()).
                 email(member.getEmail()).
                 nickname(member.getNickname()).
@@ -112,26 +106,22 @@ public class KakaoController {
                 termConsent(member.getTermConsent()).
                 build();
 
-        return successResponse(CustomMessage.OK,result);
+        BaseResponse<ResSignupDto> response = new BaseResponse<>(CustomMessage.OK, result);
+        return ResponseEntity.ok().body(response);
     }
 
     /**
      * 로그아웃 기능
-     세션무효화, jsession쿠키를 제거,
+     * 세션무효화, jsession쿠키를 제거,
      */
-    @PostMapping ("/user/logout")
+    @PostMapping("/user/logout")
     @Operation(summary = "로그아웃", description = "현재 로그인된 사용자를 로그아웃 처리합니다.")
-    public ResponseEntity<Object> logout(HttpServletRequest request){
-        if(authorized(request)) {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        SecurityContextHolder.clearContext();
+        request.getSession().invalidate();
 
-            SecurityContextHolder.clearContext();
-            request.getSession().invalidate();
+        return new ResponseEntity<>(HttpStatus.OK);
 
-            return new ResponseEntity<>(HttpStatus.OK);
-
-        }
-
-        return errorResponse(CustomMessage.UNAUTHORIZED);
     }
 
 

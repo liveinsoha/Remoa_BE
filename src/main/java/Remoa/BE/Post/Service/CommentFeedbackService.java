@@ -6,18 +6,17 @@ import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Repository.CategoryRepository;
 import Remoa.BE.Post.Repository.CommentFeedbackRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.pdfbox.cos.COSObjectKey;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

@@ -1,63 +1,77 @@
 package Remoa.BE.config;
 
+import Remoa.BE.Member.Domain.Role;
+import Remoa.BE.config.auth.AuthConstant;
+import Remoa.BE.config.jwt.CustomAuthenticationEntryPoint;
+import Remoa.BE.config.jwt.JwtAccessDeniedHandler;
+import Remoa.BE.config.jwt.JwtAuthenticationFilter;
+import Remoa.BE.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
+
+import static Remoa.BE.config.auth.AuthConstant.*;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 public class SecureConfig {
 
+    public static final String FRONT_URL = "http://localhost:3000";
+
+    private final CorsFilter corsFilter;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
-    /**
-     * Spring Security에서 사용할 password encoder로 BCryptPasswordEncoder 지정
-     */
+
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    /**
-     * Spring Security 설정
-     */
-    @Bean
-    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        http.csrf(CsrfConfigurer::disable)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .addFilter(corsFilter);
 
+        http.authorizeHttpRequests(request -> request
+                        //  .requestMatchers(AUTH_BLACKLIST).authenticated()
+                        .requestMatchers(HttpMethod.GET, GET_AUTH_BLACKLIST).authenticated()
+                        .requestMatchers(HttpMethod.POST, POST_AUTH_BLACKLIST).authenticated()
+                        .requestMatchers(HttpMethod.PUT, PUT_AUTH_BLACKLIST).authenticated()
+                        .requestMatchers(HttpMethod.DELETE, DELETE_AUTH_BLACKLIST).authenticated().
+                        requestMatchers(ADMIN_AUTH_BLACKLIST).hasAuthority(Role.ADMIN.toString()) // ADMIN 권한
+                        //인증되어야 들어갈 수 있다.
+                        .anyRequest().permitAll())
+                // 나머지는 모두 허용
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(new JwtAccessDeniedHandler())); //권한 403 관련
+        /**
+         AuthenticationEntryPoint
+         인증이 되지않은 유저가 요청을 했을때 동작함
+         */
 
-        http.formLogin().disable();
-
-        http
-                .authorizeRequests()
-                //api 명세 확정 후 재확인 핋요
-                .antMatchers("/**").permitAll()
-                /*.antMatchers("/").permitAll()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/logout").permitAll()
-                .antMatchers("/upload").permitAll()
-                .antMatchers("/download").permitAll()
-                .antMatchers("/signup/**").permitAll()
-                .antMatchers("/mypage").authenticated()*/
-                .antMatchers("/admin").hasRole("ADMIN")
-                .antMatchers("/user").hasAnyRole("ADMIN", "USER")
-                .anyRequest().authenticated()
-                .and()
-
-                .sessionManagement()
-                .maximumSessions(-1) //세션 제한 없음
-                .maxSessionsPreventsLogin(false); //중복 접속시 마지막 세션만 유지
-
-        http.csrf().disable();
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 
 }

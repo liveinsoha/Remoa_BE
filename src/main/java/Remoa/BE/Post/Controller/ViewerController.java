@@ -15,23 +15,24 @@ import Remoa.BE.Post.Dto.Response.ResReplyDto;
 import Remoa.BE.Post.Service.CommentService;
 import Remoa.BE.Post.Service.FeedbackService;
 import Remoa.BE.Post.Service.PostService;
+import Remoa.BE.config.auth.MemberDetails;
 import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.exception.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Remoa.BE.exception.CustomBody.successResponse;
-import static Remoa.BE.utill.MemberInfo.authorized;
-import static Remoa.BE.utill.MemberInfo.getMemberId;
-
+@Tag(name = "레퍼런스 상세 기능", description = "레퍼런스 상세 기능 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -45,13 +46,13 @@ public class ViewerController {
 
     @GetMapping("/reference/{reference_id}")
     @Operation(summary = "레퍼런스 조회", description = "특정 레퍼런스의 상세 정보를 조회합니다.")
-    public ResponseEntity<Object> referenceViewer(HttpServletRequest request,
-                                                  @PathVariable("reference_id") Long referenceId) {
+    public ResponseEntity<BaseResponse<ResReferenceViewerDto>> referenceViewer(@PathVariable("reference_id") Long referenceId,
+                                                                               @AuthenticationPrincipal MemberDetails memberDetails) {
 
         Long myMemberId = null;
         Member myMember = null;
-        if (authorized(request)) {
-            myMemberId = getMemberId();
+        if (memberDetails != null) {
+            myMemberId = memberDetails.getMemberId();
             myMember = memberService.findOne(myMemberId);
         }
         final Long finalMyMemberId = myMemberId;
@@ -94,7 +95,9 @@ public class ViewerController {
                 .feedbacks(feedbacks)
                 .build();
 
-        return successResponse(CustomMessage.OK, result);
+        BaseResponse<ResReferenceViewerDto> response = new BaseResponse<>(CustomMessage.OK, result);
+        return ResponseEntity.ok(response);
+        //return successResponse(CustomMessage.OK, result);
     }
 
     private Boolean isMymMemberFollowMember(Member myMember, Member member) {

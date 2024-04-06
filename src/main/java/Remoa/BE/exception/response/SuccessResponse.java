@@ -1,5 +1,6 @@
 package Remoa.BE.exception.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,9 +13,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class SuccessResponse {
+public class SuccessResponse{
+
+    @Schema(description = "전달 메시지", example = "올바른 요청")
     private String message;
+
+    @Schema(description = "상세 설명", example = "이러이러한 이유입니다")
     private String detail;
+
+    @Schema(description = "전달 데이터")
     private Object data;
 
 }

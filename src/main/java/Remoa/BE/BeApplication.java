@@ -5,7 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
 
-import javax.annotation.PostConstruct;
+
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +14,10 @@ import java.nio.file.Paths;
 
 @SpringBootApplication
 public class BeApplication {
+
+	static {
+		System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
+	}
 
 	@Value("${uploadFolder}")
 	private String uploadFolder;

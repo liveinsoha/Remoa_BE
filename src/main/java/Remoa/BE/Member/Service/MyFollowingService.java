@@ -3,13 +3,14 @@ package Remoa.BE.Member.Service;
 import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Member.Dto.Res.ResMypageFollowing;
 import Remoa.BE.Member.Dto.Res.ResMypageList;
+import Remoa.BE.Member.Repository.FollowRepository;
 import Remoa.BE.Member.Repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyFollowingService {
 
-    private final MemberRepository memberRepository;
+    private final FollowRepository followRepository;
 
     private final FollowService followService;
 
@@ -27,20 +28,20 @@ public class MyFollowingService {
         List<Member> memberList;
 
         if(isFollowing == 1) { // 마이페이지 팔로잉 관리 화면
-            memberList = memberRepository.loadFollows(member); // member가 팔로우하는 유저 확인
+            memberList = followRepository.loadFollows(member); // member가 팔로우하는 유저 확인
             log.warn("followList : ");
             memberList.forEach(m -> log.warn(m.getNickname()));
         } else{ // 마이페이지 팔로워 관리 화면
-            memberList = memberRepository.loadFollowers(member);
+            memberList = followRepository.loadFollowers(member);
             log.warn("followerList : ");
             memberList.forEach(m -> log.warn(m.getNickname()));
         }
 
         for (Member followMember : memberList) {
             // followMember가 팔로잉하는 유저 구하기
-            List<Member> followingMemberFollowing = memberRepository.loadFollows(followMember);
+            List<Member> followingMemberFollowing = followRepository.loadFollows(followMember);
             // followMember를 팔로우하는 유저 구하기(팔로워)
-            List<Member> followingMemberFollower = memberRepository.loadFollowers(followMember);
+            List<Member> followingMemberFollower = followRepository.loadFollowers(followMember);
             if (isFollowing == 1) { // 마이페이지 팔로잉 관리 화면
                 ResMypageList resMypageList = ResMypageList.builder()
                         .profileImage(followMember.getProfileImage())
@@ -98,7 +99,7 @@ public class MyFollowingService {
         return ResMypageFollowing.builder()
                 .memberId(member.getMemberId())
                 .userName(member.getNickname())
-                .followNum(memberRepository.loadFollowers(member).size()) // 나를 팔로우하고 있는 유저 수
+                .followNum(followRepository.loadFollowers(member).size()) // 나를 팔로우하고 있는 유저 수
                 .resMypageList(findResMypageList(member, 0))
                 .build();
     }

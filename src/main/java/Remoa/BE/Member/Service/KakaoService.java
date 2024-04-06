@@ -1,21 +1,21 @@
 package Remoa.BE.Member.Service;
 
+import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Member.Dto.Req.KakaoLoginRequestDto;
+import Remoa.BE.Member.Dto.Res.KakaoLoginResponseDto;
+import Remoa.BE.Member.Dto.kakaoLoginDto.KakaoProfile;
+import Remoa.BE.Member.Dto.kakaoLoginDto.OAuthToken;
 import Remoa.BE.Member.Repository.MemberRepository;
-import com.amazonaws.services.s3.AmazonS3;
+import Remoa.BE.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j
@@ -24,170 +24,76 @@ public class KakaoService {
 
     //카카오 로그인시 접속해야 할 링크 : https://kauth.kakao.com/oauth/authorize?client_id=139febf9e13da4d124d1c1faafcf3f86&redirect_uri=http://localhost:8080/login/kakao&response_type=code
 
+    private static String password = "password";
+    private final MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    /**
-     * 카카오 인증 서버에 code를 보내고 token을 발급받는 메서드
-     * @param code
-     * @return token
-     * @throws IOException
-     */
-    public String getToken(String code) throws IOException {
-        //토큰을 받아올 카카오 인증 서버. 레모아 서버가 클리아언트로, 카카오 인증 서버가 서버로 동작한다고 보면 됩니다.
-        String host = "https://kauth.kakao.com/oauth/token";
-        //카카오 인증 서버와 통신하기 위한 설정
-        URL url = new URL(host);
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        String token = "";
+    public KakaoLoginResponseDto kakaoLogin(String code) {
 
-        try {
-            // OutputStream으로 POST 데이터를 넘겨주겠다는 옵션
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setDoOutput(true);
+        OAuthToken accessToken = getAccessToken(code);
+        KakaoProfile kakaoProfile = getKakaoProfile(accessToken);
 
-            //x-www-form-urlencoded 타입으로 Body에 담아 카카오 인증 서버에 Post로 요청하기 위한 버퍼 스트림 생성
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
-            StringBuilder sb = new StringBuilder();
-            sb.append("grant_type=authorization_code");
-            sb.append("&client_id=139febf9e13da4d124d1c1faafcf3f86");
+        log.info("kakaoProfile = {}", kakaoProfile);
 
-            // 02.26. 프론트와 연동하는데 여기 3000으로 바꿔달라고 하셔서 바꿔놓았습니다 -광휘
-            sb.append("&redirect_uri=http://localhost:3000/login/kakao");
-            sb.append("&code=" + code);
-            sb.append("&client_secret=5IueqXws75WoH1e3gCSI2aNxQgOGMdBG");
-
-            bw.write(sb.toString());
-
-            //write 되어 버퍼에 있던 데이터를 flush를 통해 출력 스트림으로 출력하고, 카카오 인증 서버에 요청 전송
-            bw.flush();
-
-            //========카카오 인증 서버에 요청 후 응답 받음========//
-
-            //카카오 인증 서버에서 응답으로 받은 response code 값
-            int responseCode = urlConnection.getResponseCode();
-            log.debug("responseCode = {}", responseCode);
-
-            //카카오 인증 서버에서 받은 응답을 받기 위한 버퍼 스트림 생성(참고-요청과는 달리 JSON 데이터를 보내줌)
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            String line = "";
-            String result = "";
-            //다양한 형식(한 줄 이상의 JSON 데이터)를 받기 위한 작업
-            while ((line = br.readLine()) != null) {
-                result += line;
-            }
-
-            //JSON parsing
-            JSONParser parser = new JSONParser();
-            JSONObject elem = (JSONObject) parser.parse(result);
-
-            //access 토큰값 -> 카카오 api 서버에 사용자 정보를 받아오기 위해서 사용될 토큰
-            String access_token = elem.get("access_token").toString();
-            //refresh 토큰은 현재 서비스 구조상 카카오 api 서버에서 사용자 정보만 가져오면 되므로 필요하지 않음
-//            String refresh_token = elem.get("refresh_token").toString();
-
-            token = access_token;
-
-            //버퍼스트림 닫기
-            br.close();
-            bw.close();
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
+        KakaoLoginRequestDto kakaoLoginRequestDto = new KakaoLoginRequestDto(kakaoProfile);
+        Member member = memberRepository.findByKakaoId(kakaoLoginRequestDto.getKakaoIdentifier()).orElseGet(() -> null);
+        if (member == null) {
+            log.info("카카오로 회원가입");
+            member = memberRepository.save(kakaoLoginRequestDto.toEntity());
         }
+        String token = jwtTokenProvider.createToken(member.getNickname()); //임의로 만든 account로 토큰 생성.
+        return new KakaoLoginResponseDto(token, member.getName(), member.getMemberId(), member.getNickname());
+    } // 그냥 회원 가입 할 경우는 로그인을 따로 진행해야 토큰을 주고, 카카오 로그인을 할 경우 처음 등록시에도 토큰을 부여? -> yes
 
+    //(2)
+    // 발급 받은 accessToken 으로 카카오 회원 정보 얻기
+    public KakaoProfile getKakaoProfile(OAuthToken oAuthToken) {
+        RestTemplate restTemplate = new RestTemplate();
 
-        return token;
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Authorization", "Bearer " + oAuthToken.getAccess_token());
+        httpHeaders.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest2 = new HttpEntity<>(httpHeaders); //헤더만 가지고 요청헤더를 만들 수 있다.
+        KakaoProfile kakaoProfile = restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST, kakaoProfileRequest2, KakaoProfile.class).getBody();
+
+        return kakaoProfile;
     }
 
-    /**
-     * 카카오 api 서버에 token을 보내고 사용자 정보를 발급받는 메서드
-     * @param access_token
-     * @return 카카오 사용자 정보((kakao)id, nickname, email, profileImage)
-     * @throws IOException
-     */
-    public Map<String, Object> getUserInfo(String access_token) {
-
-        //사용자 정보를 받아올 카카오 api 서버. 레모아 서버가 클리아언트로, 카카오 api 서버가 서버로 동작한다고 보면 됩니다.
-        String host = "https://kapi.kakao.com/v2/user/me";
-        //사용자 정보를 받을 Map 객체 생성
-        Map<String, Object> result = new HashMap<>();
-        try {
-            URL url = new URL(host);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            //Request Header에 토큰 인증 관련 값을 설정하고, GET을 통해 카카오 api 서버에 요청한다는 옵션
-            urlConnection.setRequestProperty("Authorization", "Bearer " + access_token);
-            urlConnection.setRequestMethod("GET");
-
-            //========카카오 api 서버에 요청 후 응답 받음========//
-
-            int responseCode = urlConnection.getResponseCode();
-            log.debug("responseCode = {}", responseCode);
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
-            String line = "";
-            String res = "";
-            //다양한 형식(한 줄 이상의 JSON 데이터)를 받기 위한 작업
-            while ((line=br.readLine()) != null)
-            {
-                res+=line;
-            }
-
-            //JSON parsing
-            JSONParser parser = new JSONParser();
-            JSONObject obj = (JSONObject) parser.parse(res);
-
-            String id = obj.get("id").toString();
-
-            JSONObject kakao_account = (JSONObject) obj.get("kakao_account");
-            String email = kakao_account.get("email").toString();
-
-            result.put("id", id);
-            result.put("email", email);
-
-            br.close();
+    // (1)넘어온 인가 코드를 통해 access_token 발급
+    public OAuthToken getAccessToken(String code) {
+        //POST 방식으로 key=value 데이터를 요청
+        //Post 요청을 하는 다양한 라이브러리가 있다 Retrofit(안드로이드), OkHttp, RestTempate
+        RestTemplate restTemplate = new RestTemplate();
 
 
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
+        //Haeder 오브젝트 생성
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        return result;
-    }
+        log.info("before");
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", "adf170bad1bb693217a3ee4dc49ccf0c");
+        params.add("redirect_uri", "http://localhost:3000/login/callback");
+        params.add("code", code);
+        //params.add("client_secret", client_secret);
 
+        log.info("after");
+        /**
+         * 토큰을 발급할때 좀 더 보안을 강화하기 위해 Client Secret을 사용할 수 있다.
+         * Client Secret을 받는 위치는 내 애플리케이션 -> 제품 설정 -> 카카오로그인 -> 보안 입니다.
+         * Client Secret을 받고난후 밑에 활성화 상태를 사용함으로 변경해주어야한다.
+         */
 
+        //HttpHeader와 HttpBody를 하나의 오브젝트에 담는다
+        //HttpHeader와 HttpBody 담기기
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, httpHeaders); //
 
+        //Http요청하기 그리고 response 변수의 응답 받음.
+        OAuthToken oAuthToken = restTemplate.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, kakaoTokenRequest, OAuthToken.class).getBody();
 
-    /**
-     * 사용자의 카카오 api 동의 내역을 확인하는 메서드.
-     * <a href="https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#check-consent">kakao developers 공식문서</a> <- 참고
-     * @param access_token
-     * @return 사용자의 동의항목 JSON 데이터
-     */
-    public String getAgreementInfo(String access_token)
-    {
-        String result = "";
-        String host = "https://kapi.kakao.com/v2/user/scopes";
-        try{
-            URL url = new URL(host);
-            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty("Authorization", "Bearer " + access_token);
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            String line = "";
-            while((line=br.readLine())!=null)
-            {
-                result += line;
-            }
-
-            int responseCode = urlConnection.getResponseCode();
-            log.debug("responseCode = {}", responseCode);
-
-            // result는 json 포멧.
-            br.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
+        return oAuthToken;
     }
 
 }

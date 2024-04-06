@@ -1,5 +1,8 @@
 package Remoa.BE.exception;
 
+import Remoa.BE.exception.response.BaseException;
+import Remoa.BE.exception.response.BaseResponse;
+import Remoa.BE.exception.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,6 +24,12 @@ public class CustomizedExceptionHandler {
     /**
      유효성 검사 에러 처리
      */
+    @ExceptionHandler(value = {BaseException.class})
+    protected ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
+        return ResponseEntity.status(e.customMessage.getHttpStatus())
+                .body(new ErrorResponse(e.customMessage.getMessage(), e.customMessage.getDetail()));
+    }
+
     @ExceptionHandler
     public ResponseEntity<Object> methodValidException(MethodArgumentNotValidException ex){
 

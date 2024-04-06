@@ -1,5 +1,6 @@
 package Remoa.BE.Notice.Service;
 
+import Remoa.BE.Notice.Dto.Req.ReqInqueryDto;
 import Remoa.BE.Notice.Dto.Req.ReqNoticeDto;
 import Remoa.BE.Notice.Dto.Res.ResAllInquiryDto;
 import Remoa.BE.Notice.Dto.Res.ResInquiryDto;
@@ -7,6 +8,8 @@ import Remoa.BE.Notice.Dto.Res.ResNoticeDto;
 import Remoa.BE.Notice.Repository.InquiryRepository;
 import Remoa.BE.Notice.domain.Inquiry;
 import Remoa.BE.Notice.domain.Notice;
+import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.exception.response.BaseException;
 import com.amazonaws.services.kms.model.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,11 +31,12 @@ public class InquiryService {
     private final InquiryRepository inquiryRepository;
 
     @Transactional
-    public void registerInquiry(ReqNoticeDto reqNoticeDto){
-        inquiryRepository.save(reqNoticeDto.toEntityInquiry());
+    public void registerInquiry(ReqInqueryDto reqInqueryDto, String enrollNickname) {
+
+        inquiryRepository.save(reqInqueryDto.toEntityInquiry(enrollNickname));
     }
 
-    public HashMap<String, Object> getInquiry(int pageNumber){
+    public HashMap<String, Object> getInquiry(int pageNumber) {
 
         HashMap<String, Object> resultMap = new HashMap<>();
 
@@ -50,13 +54,13 @@ public class InquiryService {
 
     public ResAllInquiryDto getInquiryView(int view) {
         return inquiryRepository.findById((long) view).map(ResAllInquiryDto::new).orElseThrow(() ->
-                new NotFoundException("해당 문의를 찾을 수 없습니다."));
+                new BaseException(CustomMessage.NO_ID));
     }
 
     @Transactional
     public void inquiryViewCount(int view) {
         Inquiry inquiry = inquiryRepository.findById((long) view).orElseThrow(() ->
-                new NotFoundException("해당 문의를 찾을 수 없습니다."));
+                new BaseException(CustomMessage.NO_ID));
         inquiry.addInquiryViewCount(inquiry.getView());
         inquiryRepository.save(inquiry);
 

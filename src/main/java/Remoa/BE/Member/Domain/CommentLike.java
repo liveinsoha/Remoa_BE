@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Member가 Comment를 Like할 때 사용
@@ -33,7 +33,6 @@ public class CommentLike {
         CommentLike commentLike = new CommentLike();
         commentLike.setComment(comment);
         commentLike.setMember(member);
-
         return commentLike;
     }
 }

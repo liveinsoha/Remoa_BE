@@ -4,26 +4,29 @@ import Remoa.BE.Member.Domain.Member;
 import Remoa.BE.Notice.domain.Inquiry;
 import Remoa.BE.Notice.domain.Notice;
 import Remoa.BE.utill.MemberInfo;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
 public class ReqNoticeDto {
 
+    @Schema(description = "제목", example = "공지사항 제목")
     @NotNull
     private String title;
 
+    @Schema(description = "내용", example = "이 공지사항은 중요한 내용을 포함합니다.")
     @NotNull
     private String content;
 
-    public Notice toEntityNotice() {
-        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public Notice toEntityNotice(String enrollNickname) {
+
         return Notice.builder()
-                .author(member.getNickname())
+                .author(enrollNickname)
                 .title(title)
                 .content(content)
                 .postingTime(LocalDateTime.now())
@@ -31,15 +34,5 @@ public class ReqNoticeDto {
                 .build();
     }
 
-    public Inquiry toEntityInquiry() {
-        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return Inquiry.builder()
-                .author(member.getNickname())
-                .title(title)
-                .content(content)
-                .postingTime(LocalDateTime.now())
-                .view(0)
-                .build();
-    }
 
 }

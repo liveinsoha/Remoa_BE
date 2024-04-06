@@ -9,12 +9,12 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.FetchType.LAZY;
+import static jakarta.persistence.FetchType.LAZY;
 
 @Builder
 @AllArgsConstructor
@@ -53,6 +53,7 @@ public class Post {
     /**
      * 유튜브 링크
      */
+    @Builder.Default
     private String youtubeLink="";
 
     /**
@@ -70,6 +71,7 @@ public class Post {
     /**
      * Post에 대한 좋아요 수
      */
+    @Builder.Default
     @Column(name = "like_count")
     private Integer likeCount = 0;
 
@@ -82,23 +84,29 @@ public class Post {
     /**
      * Post의 조회수
      */
+    @Builder.Default
     private Integer views = 0;
 
+    @Builder.Default
     private Integer scrapCount = 0;
 
+    @Builder.Default
     private Integer pageCount = 1;
 
     /**
      * Post에 작성되어진 Comment
      */
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Comment> comments = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Feedback> feedbacks = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CommentFeedback> commentFeedbacks = new ArrayList<>();
@@ -109,10 +117,12 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
     private List<UploadFile> uploadFiles;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<PostScarp> postScarps = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<PostLike> postLikes = new ArrayList<>();
@@ -124,5 +134,6 @@ public class Post {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @Builder.Default
     private Boolean deleted = Boolean.FALSE;
 }

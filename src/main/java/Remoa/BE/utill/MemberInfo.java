@@ -11,15 +11,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 public class MemberInfo {
-    public static Long getMemberId() {
+  /*  public static Long getMemberId() {
         Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return member.getMemberId();
     }
@@ -29,7 +29,7 @@ public class MemberInfo {
         HttpSession session = request.getSession(false);
         return session != null && context.getAuthentication() != null;
     }
-
+*/
 
     /**
      * Spring Security가 기본값으로 form data를 사용해 로그인을 진행하는데, Rest API를 이용해 json을 주고받는 방식으로 로그인을 처리하기 위해

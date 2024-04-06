@@ -1,5 +1,6 @@
 package Remoa.BE.exception;
 
+import Remoa.BE.exception.response.BaseResponse;
 import Remoa.BE.exception.response.ErrorResponse;
 import Remoa.BE.exception.response.FailResponse;
 import Remoa.BE.exception.response.SuccessResponse;
@@ -16,14 +17,16 @@ public class CustomBody {
      get 메소드는 data에 프론트에게 필요한 데이터를 전달
      post 메소드는 data에 저장된 값을 전달
      */
-    public static ResponseEntity<Object> successResponse(CustomMessage customMessage, Object data) {
+    public static  ResponseEntity<Object> successResponse(CustomMessage customMessage, Object  data) {
+        SuccessResponse response = SuccessResponse.builder()
+                .message(customMessage.getMessage())
+                .detail(customMessage.getDetail())
+                .data(data)
+                .build();
 
         return ResponseEntity
                 .status(customMessage.getHttpStatus())
-                .body(SuccessResponse.builder().
-                        message(customMessage.getMessage()).
-                        detail(customMessage.getDetail()).
-                        data(data).build());
+                .body(response);
     }
 
     /**

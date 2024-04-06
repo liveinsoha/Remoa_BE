@@ -1,70 +1,96 @@
 package Remoa.BE.Notice.Controller;
 
+import Remoa.BE.Notice.Dto.Req.ReqInqueryDto;
 import Remoa.BE.Notice.Dto.Req.ReqNoticeDto;
-import Remoa.BE.Notice.Dto.Res.ResNoticeDto;
+import Remoa.BE.Notice.Dto.Res.ResAllInquiryDto;
 import Remoa.BE.Notice.Service.InquiryService;
-import Remoa.BE.Notice.domain.Inquiry;
-import Remoa.BE.Notice.domain.Notice;
+import Remoa.BE.config.auth.MemberDetails;
 import Remoa.BE.exception.CustomMessage;
-import com.amazonaws.services.kms.model.NotFoundException;
+import Remoa.BE.exception.response.BaseException;
+import Remoa.BE.exception.response.BaseResponse;
+import Remoa.BE.exception.response.ErrorResponse;
+import Remoa.BE.utill.MessageUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static Remoa.BE.exception.CustomBody.errorResponse;
 import static Remoa.BE.exception.CustomBody.successResponse;
 
+@Tag(name = "문의 기능", description = "문의 기능 API")
 @RestController
 @RequiredArgsConstructor
 public class InquiryController {
 
     private final InquiryService inquiryService;
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "문의가 성공적으로 등록되었습니다."),
+            @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/inquiry")
     @Operation(summary = "문의 등록", description = "문의를 등록합니다.")
-    public ResponseEntity<Object> postInquiry(@Validated @RequestBody ReqNoticeDto reqNoticeDto){
-        inquiryService.registerInquiry(reqNoticeDto);
+    public ResponseEntity<Object> postInquiry(@Validated @RequestBody ReqInqueryDto inqueryDto,
+                                              @AuthenticationPrincipal MemberDetails memberDetails) {
+
+        inquiryService.registerInquiry(inqueryDto, memberDetails.getNickname());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "문의 목록을 성공적으로 조회했습니다."),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping("/inquiry")
     @Operation(summary = "문의 목록 조회", description = "페이지별 문의 목록을 조회합니다.")
-    public ResponseEntity<Object> getInquiry(@RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber){
+    public ResponseEntity<BaseResponse<HashMap<String, Object>>> getInquiry(@RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber) {
         pageNumber -= 1;
         if (pageNumber < 0) {
-            return errorResponse(CustomMessage.PAGE_NUM_OVER);
+            throw new BaseException(CustomMessage.PAGE_NUM_OVER);
+            //    return errorResponse(CustomMessage.PAGE_NUM_OVER);
         }
 
-        return successResponse(CustomMessage.OK, inquiryService.getInquiry(pageNumber));
-
+        BaseResponse<HashMap<String, Object>> response = new BaseResponse<>(CustomMessage.OK, inquiryService.getInquiry(pageNumber));
+        return ResponseEntity.ok(response);
+        // return successResponse(CustomMessage.OK, inquiryService.getInquiry(pageNumber));
     }
+
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "문의 상세 정보를 성공적으로 조회했습니다."),
+            @ApiResponse(responseCode = "400", description = "해당 문의가 존재하지 않습니다.")
+    })
     @GetMapping("/inquiry/view")
     @Operation(summary = "문의 상세 조회", description = "특정 문의의 상세 정보를 조회합니다.")
-    public ResponseEntity<Object> getInquiryDetail(@RequestParam int view,
-                                                  HttpServletRequest request) {
-        try {
-            HttpSession session = request.getSession();
-            String sessionKey = "InquiryViewed_" + view;
+    public ResponseEntity<BaseResponse<ResAllInquiryDto>> getInquiryDetail(@RequestParam int view,
+                                                                           HttpServletRequest request) {
 
-            if (session.getAttribute(sessionKey) == null) {
-                inquiryService.inquiryViewCount(view);
-                session.setAttribute(sessionKey, true);
-            }
+        HttpSession session = request.getSession();
+        String sessionKey = "InquiryViewed_" + view;
 
-            return successResponse(CustomMessage.OK, inquiryService.getInquiryView(view));
-        } catch (Exception e) {
-            return errorResponse(CustomMessage.NO_ID);
+        if (session.getAttribute(sessionKey) == null) {
+            inquiryService.inquiryViewCount(view);
+            session.setAttribute(sessionKey, true);
         }
+
+        BaseResponse<ResAllInquiryDto> response = new BaseResponse<>(CustomMessage.OK, inquiryService.getInquiryView(view));
+        return ResponseEntity.ok(response);
+        // return successResponse(CustomMessage.OK, inquiryService.getInquiryView(view));
+
     }
 }
