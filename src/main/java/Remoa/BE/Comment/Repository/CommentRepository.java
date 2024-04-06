@@ -1,5 +1,6 @@
-package Remoa.BE.Post.Repository;
+package Remoa.BE.Comment.Repository;
 
+import Remoa.BE.Comment.Domain.CommentLike;
 import Remoa.BE.Member.Domain.*;
 import Remoa.BE.Post.Domain.Post;
 import lombok.RequiredArgsConstructor;

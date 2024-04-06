@@ -1,4 +1,4 @@
-package Remoa.BE.Post.Controller;
+package Remoa.BE.Comment.Controller;
 
 import Remoa.BE.Member.Domain.Comment;
 import Remoa.BE.Member.Domain.Member;
@@ -9,7 +9,7 @@ import Remoa.BE.Post.Domain.Post;
 import Remoa.BE.Post.Dto.Request.ReqCommentDto;
 import Remoa.BE.Post.Dto.Response.ResCommentDto;
 import Remoa.BE.Post.Dto.Response.ResReplyDto;
-import Remoa.BE.Post.Service.CommentService;
+import Remoa.BE.Comment.Service.CommentService;
 import Remoa.BE.Post.Service.PostService;
 import Remoa.BE.config.auth.MemberDetails;
 import Remoa.BE.exception.CustomMessage;

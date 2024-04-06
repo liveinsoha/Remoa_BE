@@ -1,8 +1,6 @@
-package Remoa.BE.Post.Repository;
+package Remoa.BE.Comment.Repository;
 
-import Remoa.BE.Member.Domain.Comment;
-import Remoa.BE.Member.Domain.CommentLike;
-import Remoa.BE.Member.Domain.FeedbackLike;
+import Remoa.BE.Comment.Domain.CommentLike;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,12 +1,14 @@
-package Remoa.BE.Post.Service;
+package Remoa.BE.Comment.Service;
 
+import Remoa.BE.Comment.Domain.CommentLike;
 import Remoa.BE.Member.Domain.*;
 import Remoa.BE.Member.Service.MemberService;
 import Remoa.BE.Post.Domain.Post;
-import Remoa.BE.Post.Repository.CommentPagingRepository;
-import Remoa.BE.Post.Repository.CommentLikeRepository;
-import Remoa.BE.Post.Repository.CommentRepository;
-import Remoa.BE.Post.Repository.FeedbackRepository;
+import Remoa.BE.Comment.Repository.CommentPagingRepository;
+import Remoa.BE.Comment.Repository.CommentLikeRepository;
+import Remoa.BE.Comment.Repository.CommentRepository;
+import Remoa.BE.Post.Service.CommentFeedbackService;
+import Remoa.BE.Post.Service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

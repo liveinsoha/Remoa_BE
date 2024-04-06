@@ -1,16 +1,13 @@
 package Remoa.BE.Member.Domain;
 
+import Remoa.BE.Comment.Domain.CommentLike;
 import Remoa.BE.Post.Domain.Post;
 import lombok.*;
 import org.hibernate.annotations.Where;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 

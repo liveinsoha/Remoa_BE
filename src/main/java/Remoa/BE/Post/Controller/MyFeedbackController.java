@@ -10,7 +10,7 @@ import Remoa.BE.Post.Dto.Response.ReceivedFeedbackResponse;
 import Remoa.BE.Post.Dto.Response.ResCommentDto;
 import Remoa.BE.Post.Dto.Response.ResReceivedCommentDto;
 import Remoa.BE.Post.Dto.Response.ResReplyDto;
-import Remoa.BE.Post.Service.CommentService;
+import Remoa.BE.Comment.Service.CommentService;
 import Remoa.BE.Post.Service.MyPostService;
 import Remoa.BE.config.auth.MemberDetails;
 import Remoa.BE.exception.CustomMessage;

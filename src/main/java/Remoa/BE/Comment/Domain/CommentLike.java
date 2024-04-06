@@ -1,5 +1,7 @@
-package Remoa.BE.Member.Domain;
+package Remoa.BE.Comment.Domain;
 
+import Remoa.BE.Member.Domain.Comment;
+import Remoa.BE.Member.Domain.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
