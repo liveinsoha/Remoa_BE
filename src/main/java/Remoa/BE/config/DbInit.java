@@ -1,13 +1,11 @@
 package Remoa.BE.config;
 
-import Remoa.BE.Member.Dto.GerneralLoginDto.AdminSignUpReq;
-import Remoa.BE.Post.Domain.Category;
-import Remoa.BE.Member.Domain.Member;
-import Remoa.BE.Post.Service.CategoryService;
-import Remoa.BE.Member.Service.MemberService;
+import Remoa.BE.Web.Member.Dto.GerneralLoginDto.AdminSignUpReq;
+import Remoa.BE.Web.Post.Domain.Category;
+import Remoa.BE.Web.Post.Service.CategoryService;
+import Remoa.BE.Web.Member.Service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.support.WindowIterator;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;

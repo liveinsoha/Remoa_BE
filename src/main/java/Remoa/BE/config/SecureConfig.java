@@ -1,7 +1,6 @@
 package Remoa.BE.config;
 
-import Remoa.BE.Member.Domain.Role;
-import Remoa.BE.config.auth.AuthConstant;
+import Remoa.BE.Web.Member.Domain.Role;
 import Remoa.BE.config.jwt.CustomAuthenticationEntryPoint;
 import Remoa.BE.config.jwt.JwtAccessDeniedHandler;
 import Remoa.BE.config.jwt.JwtAuthenticationFilter;

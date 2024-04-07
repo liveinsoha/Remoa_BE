@@ -1,7 +1,7 @@
 package Remoa.BE.config.auth;
 
-import Remoa.BE.Member.Domain.Member;
-import Remoa.BE.Member.Repository.MemberRepository;
+import Remoa.BE.Web.Member.Domain.Member;
+import Remoa.BE.Web.Member.Repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

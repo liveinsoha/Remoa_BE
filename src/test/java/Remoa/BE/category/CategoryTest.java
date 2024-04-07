@@ -1,10 +1,10 @@
 package Remoa.BE.category;
 
-import Remoa.BE.Member.Repository.MemberRepository;
-import Remoa.BE.Post.Domain.Category;
-import Remoa.BE.Member.Domain.Member;
-import Remoa.BE.Post.Service.CategoryService;
-import Remoa.BE.Member.Service.MemberService;
+import Remoa.BE.Web.Member.Repository.MemberRepository;
+import Remoa.BE.Web.Post.Domain.Category;
+import Remoa.BE.Web.Member.Domain.Member;
+import Remoa.BE.Web.Post.Service.CategoryService;
+import Remoa.BE.Web.Member.Service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

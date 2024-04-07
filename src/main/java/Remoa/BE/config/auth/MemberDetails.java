@@ -1,6 +1,6 @@
 package Remoa.BE.config.auth;
 
-import Remoa.BE.Member.Domain.Member;
+import Remoa.BE.Web.Member.Domain.Member;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
