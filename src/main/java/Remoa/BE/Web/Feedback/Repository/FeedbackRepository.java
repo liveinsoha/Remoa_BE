@@ -18,4 +18,12 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long>, Feedb
             "ORDER BY f.feedbackTime DESC")
     Page<Feedback> findNewestFeedback(Member member, Pageable pageable);
 
+
+    @Query("SELECT f FROM Feedback f " +
+            "INNER JOIN FETCH f.post p " +
+            "WHERE f.member = :member " +
+            "AND f.feedbackTime = (SELECT MIN(f2.feedbackTime) FROM Feedback f2 WHERE f2.post.postId = f.post.postId) " +
+            "ORDER BY f.feedbackTime ASC")
+    Page<Feedback> findOldestFeedback(Member member, Pageable pageable);
+
 }

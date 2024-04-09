@@ -24,6 +24,14 @@ public interface CommentFeedbackRepository extends JpaRepository<CommentFeedback
             "ORDER BY cf.time DESC")
     Page<CommentFeedback> findNewestCommentFeedback(Member member, Pageable pageable);
 
+    @Query("SELECT cf FROM CommentFeedback cf " +
+            "INNER JOIN FETCH cf.post p " +
+            "WHERE cf.member = :member " +
+            "AND cf.time = (SELECT MIN(cf2.time) FROM CommentFeedback cf2 WHERE cf2.post.postId = cf.post.postId) " +
+            "ORDER BY cf.time ASC")
+    Page<CommentFeedback> findOldestCommentFeedback(Member member, Pageable pageable);
+
+
 
 
 }

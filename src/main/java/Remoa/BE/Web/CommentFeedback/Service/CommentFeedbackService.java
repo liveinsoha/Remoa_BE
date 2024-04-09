@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,10 +47,15 @@ public class CommentFeedbackService {
         return commentFeedbackRepository.save(commentFeedback);
     }
 
-    public Page<CommentFeedback> findNewestCommentOrFeedback(int page, Member member) {
+    public Page<CommentFeedback> findMyCommentOrFeedback(int page, Member member, String sortDirection) {
         Pageable pageable = PageRequest.of(page, CONTENT_PAGE_SIZE);
-        return commentFeedbackRepository.findNewestCommentFeedback(member, pageable);
+        if (sortDirection.equalsIgnoreCase("asc")) {
+            return commentFeedbackRepository.findOldestCommentFeedback(member, pageable);
+        } else {
+            return commentFeedbackRepository.findNewestCommentFeedback(member, pageable);
+        }
     }
+
 
     public CommentFeedback findNewestCommentFeedback(Member member) {
         return commentFeedbackRepository.findByMemberOrderByTime(member).orElse(null);

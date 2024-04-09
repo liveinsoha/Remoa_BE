@@ -122,8 +122,7 @@ public class MyActivityController {
     })
     @GetMapping("/user/scrap") // 내가 스크랩한 게시글 확인
     @Operation(summary = "내가 스크랩한 게시글 조회 Test Completed", description = "내가 스크랩한 게시글들을 확인합니다.")
-    public ResponseEntity<BaseResponse<ResMyScrapDto>> myScrap(HttpServletRequest request,
-                                                               @RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
+    public ResponseEntity<BaseResponse<ResMyScrapDto>> myScrap(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
                                                                @AuthenticationPrincipal MemberDetails memberDetails
     ) {
 
@@ -192,8 +191,11 @@ public class MyActivityController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/comment-feedback")
-    @Operation(summary = "내가 작성한 코멘트/피드백 조회 Test Completed", description = "내가 작성한 최신 코멘트/피드백들을 조회합니다.")
+    @Operation(summary = "내가 작성한 코멘트/피드백 조회 Test Completed", description = "내가 작성한 최신 코멘트/피드백들을 조회합니다." +
+            "<br> asc  : 오래된순(default)" +
+            "<br> desc  : 최신순")
     public ResponseEntity<BaseResponse<ResMyCommentFeedbackPaging>> myCommentFeedback(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
+                                                                                      @RequestParam(name = "sort", defaultValue = "asc", required = false) String sortDirection,
                                                                                       @AuthenticationPrincipal MemberDetails memberDetails) {
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
@@ -206,7 +208,7 @@ public class MyActivityController {
 
         Map<String, Object> result = new HashMap<>();
 
-        Page<CommentFeedback> commentOrFeedback = commentFeedbackService.findNewestCommentOrFeedback(pageNum, myMember);
+        Page<CommentFeedback> commentOrFeedback = commentFeedbackService.findMyCommentOrFeedback(pageNum, myMember, sortDirection);
 
         //조회할 레퍼런스가 db에 있으나, 현재 페이지에 조회할 데이터가 없는 경우 == 페이지 번호를 잘못 입력
         if ((commentOrFeedback.getContent().isEmpty()) && (commentOrFeedback.getTotalElements() > 0)) {
@@ -249,8 +251,11 @@ public class MyActivityController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/comment")
-    @Operation(summary = "내가 작성한 코멘트 조회 Test Completed", description = "내가 작성한 최신 코멘트 조회합니다.")
+    @Operation(summary = "내가 작성한 코멘트 조회 Test Completed", description = "내가 작성한 코멘트 조회합니다." +
+            "<br> asc  : 오래된순(default)" +
+            "<br> desc  : 최신순")
     public ResponseEntity<BaseResponse<ResMyCommentPaging>> myComment(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
+                                                                      @RequestParam(name = "sort", defaultValue = "asc", required = false) String sortDirection,
                                                                       @AuthenticationPrincipal MemberDetails memberDetails) {
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
@@ -263,7 +268,7 @@ public class MyActivityController {
 
         Map<String, Object> result = new HashMap<>();
 
-        Page<Comment> comments = commentService.findNewestComment(pageNum, myMember);
+        Page<Comment> comments = commentService.findMyComment(pageNum, myMember, sortDirection);
 
         //조회할 레퍼런스가 db에 있으나, 현재 페이지에 조회할 데이터가 없는 경우 == 페이지 번호를 잘못 입력
         if ((comments.getContent().isEmpty()) && (comments.getTotalElements() > 0)) {
@@ -301,8 +306,11 @@ public class MyActivityController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/feedback")
-    @Operation(summary = "내가 작성한 피드백 조회 Test Completed", description = "내가 작성한 최신 피드백 조회합니다.")
+    @Operation(summary = "내가 작성한 피드백 조회 Test Completed", description = "내가 작성한 피드백 조회합니다." +
+            "<br> asc  : 오래된순(default)" +
+            "<br> desc  : 최신순")
     public ResponseEntity<BaseResponse<ResMyFeedbackPaging>> myFeedback(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
+                                                                        @RequestParam(name = "sort", defaultValue = "asc", required = false) String sortDirection,
                                                                         @AuthenticationPrincipal MemberDetails memberDetails) {
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
@@ -315,10 +323,7 @@ public class MyActivityController {
 
         Map<String, Object> result = new HashMap<>();
 
-        Page<Feedback> feedbacks = feedbackService.findNewestFeedback(pageNum, myMember);
-
-        System.out.println("Page content:");
-        feedbacks.getContent().forEach(System.out::println);
+        Page<Feedback> feedbacks = feedbackService.findMyFeedback(pageNum, myMember, sortDirection);
 
         //조회할 레퍼런스가 db에 있으나, 현재 페이지에 조회할 데이터가 없는 경우 == 페이지 번호를 잘못 입력
         if ((feedbacks.getContent().isEmpty()) && (feedbacks.getTotalElements() > 0)) {

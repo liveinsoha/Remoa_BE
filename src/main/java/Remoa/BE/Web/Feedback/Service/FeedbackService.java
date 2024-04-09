@@ -1,5 +1,6 @@
 package Remoa.BE.Web.Feedback.Service;
 
+import Remoa.BE.Web.Comment.Domain.Comment;
 import Remoa.BE.Web.CommentFeedback.Domain.CommentFeedback;
 import Remoa.BE.Web.Feedback.Domain.Feedback;
 import Remoa.BE.Web.Feedback.Domain.FeedbackLike;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,9 +47,13 @@ public class FeedbackService {
         return feedback.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Feedback not found"));
     }
 
-    public Page<Feedback> findNewestFeedback(int pageNum, Member member) {
-        Pageable pageable = PageRequest.of(pageNum, CONTENT_PAGE_SIZE);
-        return feedbackRepository.findNewestFeedback(member, pageable);
+    public Page<Feedback> findMyFeedback(int page, Member member, String sortDirection) {
+        Pageable pageable = PageRequest.of(page, CONTENT_PAGE_SIZE);
+        if (sortDirection.equalsIgnoreCase("asc")) {
+            return feedbackRepository.findOldestFeedback(member, pageable);
+        } else {
+            return feedbackRepository.findNewestFeedback(member, pageable);
+        }
     }
 
     public int feedbackLikeCount(Long feedbackId) {

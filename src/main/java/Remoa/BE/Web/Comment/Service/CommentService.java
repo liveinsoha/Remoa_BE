@@ -68,9 +68,14 @@ public class CommentService {
         return comment.getLikeCount();
     }
 
-    public Page<Comment> findNewestComment(int page, Member member) {
+
+    public Page<Comment> findMyComment(int page, Member member, String sortDirection) {
         Pageable pageable = PageRequest.of(page, CONTENT_PAGE_SIZE);
-        return commentRepository.findNewestComment(member, pageable);
+        if (sortDirection.equalsIgnoreCase("asc")) {
+            return commentRepository.findOldestComment(member, pageable);
+        } else {
+            return commentRepository.findNewestComment(member, pageable);
+        }
     }
 
     @Transactional
