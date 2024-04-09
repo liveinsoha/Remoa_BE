@@ -1,5 +1,6 @@
 package Remoa.BE.Web.Notice.Service;
 
+import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Notice.Dto.Req.ReqNoticeDto;
 import Remoa.BE.Web.Notice.Dto.Res.NoticeResponseDto;
 import Remoa.BE.Web.Notice.Dto.Res.ResAllNoticeDto;
@@ -8,6 +9,7 @@ import Remoa.BE.Web.Notice.Repository.NoticeRepository;
 import Remoa.BE.Web.Notice.domain.Notice;
 import Remoa.BE.exception.CustomMessage;
 import Remoa.BE.exception.response.BaseException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +36,18 @@ public class NoticeService {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
         notice.updateNotice(reqNoticeDto, enrollNickname);
+    }
+
+    @Transactional
+    public void deleteNotice(Long noticeId, Member member) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
+
+        // 공지를 작성한 회원과 현재 로그인한 회원이 같은 경우에만 삭제를 허용합니다.
+        if (!notice.getAuthor().equals(member.getNickname())) {
+            throw new BaseException(CustomMessage.CAN_NOT_ACCESS);
+        }
+        noticeRepository.delete(notice);
     }
 
     public NoticeResponseDto getNotice(int pageNumber) {

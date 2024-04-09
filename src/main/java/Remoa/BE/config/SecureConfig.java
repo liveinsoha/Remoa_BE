@@ -49,7 +49,8 @@ public class SecureConfig {
                         .requestMatchers(HttpMethod.PUT, PUT_AUTH_BLACKLIST).authenticated()
                         .requestMatchers(HttpMethod.DELETE, DELETE_AUTH_BLACKLIST).authenticated()
                         .requestMatchers(HttpMethod.POST, ADMIN_POST_AUTH_BLACKLIST).hasAuthority(Role.ADMIN.toString()) // ADMIN 권한
-                        .requestMatchers(HttpMethod.PUT, ADMIN_POST_AUTH_BLACKLIST).hasAuthority(Role.ADMIN.toString()) // ADMIN 권한
+                        .requestMatchers(HttpMethod.PUT, ADMIN_PUT_AUTH_BLACKLIST).hasAuthority(Role.ADMIN.toString()) // ADMIN 권한
+                        .requestMatchers(HttpMethod.DELETE, ADMIN_DELETE_AUTH_BLACKLIST).hasAuthority(Role.ADMIN.toString()) // ADMIN 권한
                         //인증되어야 들어갈 수 있다.
                         .anyRequest().permitAll())
                 // 나머지는 모두 허용

@@ -35,4 +35,6 @@ public class AuthConstant {
     public static final String[] ADMIN_POST_AUTH_BLACKLIST = {"/notice", };
 
     public static final String[] ADMIN_PUT_AUTH_BLACKLIST = {"/notice/{noticeId}", };
+
+    public static final String[] ADMIN_DELETE_AUTH_BLACKLIST = {"/notice/{noticeId}", };
 }

@@ -78,6 +78,25 @@ public class NoticeController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "공지가 성공적으로 삭제되었습니다."),
+            @ApiResponse(responseCode = "400", description = MessageUtils.BAD_REQUEST,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = MessageUtils.FORBIDDEN,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @DeleteMapping("/notice/{noticeId}")
+    @Operation(summary = "공지 삭제 Test Completed", description = "공지를 삭제합니다.")
+    public ResponseEntity<Object> deleteNotice(@PathVariable Long noticeId,
+                                               @AuthenticationPrincipal MemberDetails memberDetails) {
+        Member myMember = memberService.findOne(memberDetails.getMemberId());
+        noticeService.deleteNotice(noticeId, myMember);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/notice")
     @Operation(summary = "공지 목록 조회 Test Completed", description = "페이지별 공지 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<NoticeResponseDto>> getNotice(@RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber) {
