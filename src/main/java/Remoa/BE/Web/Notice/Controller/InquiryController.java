@@ -51,6 +51,24 @@ public class InquiryController {
     }
 
     @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "문의가 성공적으로 수정되었습니다."),
+            @ApiResponse(responseCode = "400", description = MessageUtils.BAD_REQUEST,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PutMapping("/inquiry/{inquiryId}")
+    @Operation(summary = "문의 수정 Test Completed", description = "문의를 수정합니다.")
+    public ResponseEntity<Object> updateInquiry(@PathVariable Long inquiryId,
+                                                @Validated @RequestBody ReqInquiryDto inquiryDto,
+                                                @AuthenticationPrincipal MemberDetails memberDetails) {
+        Member myMember = memberService.findOne(memberDetails.getMemberId());
+        inquiryService.updateInquiry(inquiryId, inquiryDto, myMember);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "문의 목록을 성공적으로 조회했습니다."),
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -68,6 +86,7 @@ public class InquiryController {
         return ResponseEntity.ok(response);
         // return successResponse(CustomMessage.OK, inquiryService.getInquiry(pageNumber));
     }
+
 
 
     @ApiResponses(value = {

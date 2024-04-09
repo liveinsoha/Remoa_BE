@@ -20,21 +20,34 @@ public class AuthConstant {
     };
 
     // GET 메서드에 대한 인증이 필요한 경로
-    public static final String[] GET_AUTH_BLACKLIST = {"/follow/{member_id}", "/following", "/follower", "/user",  "/user/img", "/inquiry", "/inquiry/view", "/user/activity", "/user/scrap", "/user/comment", "/user/receive", "/user/feedback","/user/reference"  };
+    public static final String[] GET_AUTH_BLACKLIST
+            = {"/follow/{member_id}", "/following", "/follower", "/user", "/user/img",
+            "/inquiry", "/inquiry/view", "/user/activity", "/user/scrap", "/user/comment",
+            "/user/receive", "/user/feedback", "/user/reference"};
 
     // POST 메서드에 대한 인증이 필요한 경로
-    public static final String[] POST_AUTH_BLACKLIST = {"/follow/{member_id}", "/inquiry",  "/reference/{reference_id}/comment",  "/reference/{reference_id}/comment/{comment_id}", "/comment/{comment_id}/like", "/reference/{reference_id}/{page_number}","/reference/{reference_id}/feedback/{feedback_id}", "/reference/feedback/{feedback_id}/like", "/reference", "/reference/{reference_id}/like", "/reference/{reference_id}/scrap"};
+    public static final String[] POST_AUTH_BLACKLIST
+            = {"/follow/{member_id}", "/inquiry", "/reference/{reference_id}/comment",
+            "/reference/{reference_id}/comment/{comment_id}", "/comment/{comment_id}/like",
+            "/reference/{reference_id}/{page_number}", "/reference/{reference_id}/feedback/{feedback_id}",
+            "/reference/feedback/{feedback_id}/like", "/reference", "/reference/{reference_id}/like",
+            "/reference/{reference_id}/scrap"};
 
     // PUT 메서드에 대한 인증이 필요한 경로
-    public static final String[] PUT_AUTH_BLACKLIST = {"/user", "/user/img", "/reference/comment/{comment_id}" , "/reference/feedback/{feedback_id}", "/reference/{reference_id}"};
+    public static final String[] PUT_AUTH_BLACKLIST
+            = {"/user", "/user/img", "/reference/comment/{comment_id}", "/reference/feedback/{feedback_id}",
+            "/reference/{reference_id}", "/inquiry/{inquiryId}"};
 
     // DELETE 메서드에 대한 인증이 필요한 경로
-    public static final String[] DELETE_AUTH_BLACKLIST = {"/user/img", "/delete/{member_id}", "/delete", "/reference/comment/{comment_id}", "/reference/feedback/{feedback_id}",  "/user/reference/{reference_id}", "/user/referenceCategory/{category}"};
+    public static final String[] DELETE_AUTH_BLACKLIST
+            = {"/user/img", "/delete/{member_id}", "/delete", "/reference/comment/{comment_id}",
+            "/reference/feedback/{feedback_id}", "/user/reference/{reference_id}", "/user/referenceCategory/{category}",
+            "/inquiry/{inquiryId}"};
 
     // ADMIN 역할에 대한 인증이 필요한 경로
-    public static final String[] ADMIN_POST_AUTH_BLACKLIST = {"/notice", };
+    public static final String[] ADMIN_POST_AUTH_BLACKLIST = {"/notice"};
 
-    public static final String[] ADMIN_PUT_AUTH_BLACKLIST = {"/notice/{noticeId}", };
+    public static final String[] ADMIN_PUT_AUTH_BLACKLIST = {"/notice/{noticeId}"};
 
-    public static final String[] ADMIN_DELETE_AUTH_BLACKLIST = {"/notice/{noticeId}", };
+    public static final String[] ADMIN_DELETE_AUTH_BLACKLIST = {"/notice/{noticeId}"};
 }
