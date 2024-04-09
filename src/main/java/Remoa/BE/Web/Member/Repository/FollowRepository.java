@@ -14,11 +14,22 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query("select f from Follow f where f.fromMember = :fromMember and f.toMember = :toMember")
     List<Follow> findFollows(@Param("fromMember") Member fromMember, @Param("toMember") Member toMember);
 
-    @Query("select f.toMember from Follow f join f.toMember where f.fromMember = :member order by f.toMember.nickname")
+    @Query("SELECT f.toMember FROM Follow f JOIN f.toMember WHERE f.fromMember = :member " +
+            "ORDER BY CASE " +
+            "WHEN ASCII(f.toMember.nickname) BETWEEN 48 AND 57 THEN 1 " + // 숫자
+            "WHEN ASCII(f.toMember.nickname) BETWEEN 97 AND 122 THEN ASCII(f.toMember.nickname) " + // 소문자
+            "WHEN ASCII(f.toMember.nickname) BETWEEN 65 AND 90 THEN ASCII(f.toMember.nickname) + 32 " + // 대문자 -> 소문자로 바꿈
+            "ELSE 999 END")
     List<Member> loadFollows(@Param("member") Member member);
 
-    @Query("select f.fromMember from Follow f join f.fromMember where f.toMember = :member order by f.fromMember.nickname")
+    @Query("SELECT f.fromMember FROM Follow f JOIN f.fromMember WHERE f.toMember = :member " +
+            "ORDER BY CASE " +
+            "WHEN ASCII(f.fromMember.nickname) BETWEEN 48 AND 57 THEN 1 " +
+            "WHEN ASCII(f.fromMember.nickname) BETWEEN 97 AND 122 THEN ASCII(f.fromMember.nickname) " + // 소문자
+            "WHEN ASCII(f.fromMember.nickname) BETWEEN 65 AND 90 THEN ASCII(f.fromMember.nickname) + 32 " + // 대문자 -> 소문자로 바꿈
+            "ELSE 999 END")
     List<Member> loadFollowers(@Param("member") Member member);
+
 
     @Query("select f.toMember.memberId from Follow f where f.fromMember = :member")
     List<Long> loadFollowsId(@Param("member") Member member);
