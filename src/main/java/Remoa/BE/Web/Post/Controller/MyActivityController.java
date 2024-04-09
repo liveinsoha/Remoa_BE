@@ -181,14 +181,14 @@ public class MyActivityController {
 
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "내가 작성한 댓글/피드백을 성공적으로 조회했습니다."),
+            @ApiResponse(responseCode = "200", description = "내가 작성한 코멘트/피드백을 성공적으로 조회했습니다."),
             @ApiResponse(responseCode = "400", description = "페이지 번호가 잘못되었습니다.",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @GetMapping("/user/comment")
-    @Operation(summary = "내가 작성한 댓글/피드백 조회 Test Completed", description = "내가 작성한 최신 댓글/피드백들을 조회합니다.")
+    @GetMapping("/user/comment-feedback")
+    @Operation(summary = "내가 작성한 코멘트/피드백 조회 Test Completed", description = "내가 작성한 최신 코멘트/피드백들을 조회합니다.")
     public ResponseEntity<BaseResponse<ResMyCommentDto>> myComment(HttpServletRequest request,
                                                                    @RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
                                                                    @AuthenticationPrincipal MemberDetails memberDetails) {

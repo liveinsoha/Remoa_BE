@@ -213,32 +213,32 @@ public class PostService {
         return originPost;
     }
 
-    public Page<Post> sortAndPaginatePosts(String sort, int pageNumber, String title) {
+    public Page<Post> sortAndPaginatePosts(String sort, int pageNumber, String searchQuery) {
         Page<Post> Posts;
         Pageable pageable;
         switch (sort) {
             case "likes":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
-                Posts = postPagingRepository.findByTitleContaining(pageable, title);
+                Posts = postPagingRepository.findByMemberNameOrTitleContaining(pageable, searchQuery);
                 break;
             case "scrap":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
-                Posts = postPagingRepository.findByTitleContaining(pageable, title);
+                Posts = postPagingRepository.findByMemberNameOrTitleContaining(pageable, searchQuery);
                 break;
             case "views":
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("views").descending());
-                Posts = postPagingRepository.findByTitleContaining(pageable, title);
+                Posts = postPagingRepository.findByMemberNameOrTitleContaining(pageable, searchQuery);
                 break;
             default:
                 //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
-                Posts = postPagingRepository.findByTitleContaining(pageable, title);
+                Posts = postPagingRepository.findByMemberNameOrTitleContaining(pageable, searchQuery);
                 break;
         }
         return Posts;
     }
 
-    public Page<Post> sortAndPaginatePostsByCategory(String category, String sort, int pageNumber, String title) {
+    public Page<Post> sortAndPaginatePostsByCategory(String category, String sort, int pageNumber, String searchQuery) {
         Page<Post> Posts;
         Pageable pageable;
         switch (sort) {
@@ -256,7 +256,7 @@ public class PostService {
                 pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
                 break;
         }
-        Posts = postPagingRepository.findByCategoryAndTitleContaining(pageable, categoryRepository.findByCategoryName(category), title);
+        Posts = postPagingRepository.findByMemberNameOrTitleContainingAndCategory(pageable, searchQuery, categoryRepository.findByCategoryName(category));
         return Posts;
     }
 

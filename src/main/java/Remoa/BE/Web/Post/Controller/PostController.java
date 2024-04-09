@@ -66,7 +66,7 @@ public class PostController {
                                                                           @RequestParam(required = false, defaultValue = "all") String category,
                                                                           @RequestParam(required = false, defaultValue = "newest") String sort,
                                                                           @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber,
-                                                                          @RequestParam(required = false, defaultValue = "") String title,
+                                                                          @RequestParam(required = false, defaultValue = "") String searchQuery,
                                                                           @AuthenticationPrincipal MemberDetails memberDetails
     ) {
 
@@ -87,10 +87,10 @@ public class PostController {
         Page<Post> allPosts;
         if (categoryList.contains(category)) {
             //sort -> 최신순 : newest, 좋아요순 : like, 스크랩순 : scrap, 조회순 : view
-            allPosts = postService.sortAndPaginatePostsByCategory(category, sort, pageNumber, title);
+            allPosts = postService.sortAndPaginatePostsByCategory(category, sort, pageNumber, searchQuery);
         } else {
             //sort -> 최신순 : newest, 좋아요순 : like, 스크랩순 : scrap, 조회순 : view
-            allPosts = postService.sortAndPaginatePosts(sort, pageNumber, title);
+            allPosts = postService.sortAndPaginatePosts(sort, pageNumber, searchQuery);
         }
 
         if ((allPosts.getContent().isEmpty()) && (allPosts.getTotalElements() > 0)) {
