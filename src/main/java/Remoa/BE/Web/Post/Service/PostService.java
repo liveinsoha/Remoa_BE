@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static Remoa.BE.utill.Constant.HOME_PAGE_SIZE;
 import static Remoa.BE.utill.FileExtension.fileExtension;
 
 @Slf4j
@@ -48,7 +49,6 @@ public class PostService {
     private final PostScrapRepository postScrapRepository;
     private final PostLikeRepository postLikeRepository;
 
-    private static final int HOME_PAGE_SIZE = 12;
 
     public List<Post> findPostsByMember(Member member) {
         return postRepository.findByMember(member);
