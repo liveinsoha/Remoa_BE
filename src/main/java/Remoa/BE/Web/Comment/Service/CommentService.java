@@ -13,7 +13,9 @@ import Remoa.BE.Web.Member.Domain.*;
 import Remoa.BE.exception.CustomMessage;
 import Remoa.BE.exception.response.BaseException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static Remoa.BE.utill.Constant.CONTENT_PAGE_SIZE;
 
 @Service
 @Transactional(readOnly = true)
@@ -64,6 +68,11 @@ public class CommentService {
         return comment.getLikeCount();
     }
 
+    public Page<Comment> findNewestComment(int page, Member member) {
+        Pageable pageable = PageRequest.of(page, CONTENT_PAGE_SIZE);
+        return commentRepository.findNewestComment(member, pageable);
+    }
+
     @Transactional
     public Long commentBookmarkAction(Comment comment, Member member) {
         CommentBookmark commentBookmark = CommentBookmark.createCommentBookmark(member, comment);
@@ -78,7 +87,8 @@ public class CommentService {
     public Comment registerComment(Member member, String content, Long postId) {
 
         LocalDateTime time = LocalDateTime.now();
-        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
+        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
+        ;
 
         Comment commentObj = Comment.createComment(post, member, content, time);
         commentRepository.saveComment(commentObj);

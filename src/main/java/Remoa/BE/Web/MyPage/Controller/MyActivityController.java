@@ -1,14 +1,18 @@
-package Remoa.BE.Web.Post.Controller;
+package Remoa.BE.Web.MyPage.Controller;
 
+import Remoa.BE.Web.Comment.Domain.Comment;
+import Remoa.BE.Web.Comment.Service.CommentService;
 import Remoa.BE.Web.CommentFeedback.Domain.CommentFeedback;
 import Remoa.BE.Web.CommentFeedback.Dto.ResReceivedCommentFeedbackDto;
 import Remoa.BE.Web.CommentFeedback.Service.CommentFeedbackService;
+import Remoa.BE.Web.Feedback.Domain.Feedback;
+import Remoa.BE.Web.Feedback.Service.FeedbackService;
 import Remoa.BE.Web.Member.Domain.ContentType;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Web.Member.Service.FollowService;
 import Remoa.BE.Web.Member.Service.MemberService;
-import Remoa.BE.Web.Post.Domain.Post;
+import Remoa.BE.Web.MyPage.Dto.Res.*;
 import Remoa.BE.Web.Post.Domain.PostScarp;
 import Remoa.BE.Web.Post.Dto.Response.*;
 import Remoa.BE.Web.Post.Service.PostService;
@@ -37,8 +41,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.eclipse.jdt.internal.compiler.problem.ProblemSeverities.Optional;
-
 @Tag(name = "내 활동 기능 Test Completed", description = "내 활동 기능 API")
 @RestController
 @Slf4j
@@ -49,6 +51,8 @@ public class MyActivityController {
     private final CommentFeedbackService commentFeedbackService;
     private final PostService postService;
     private final FollowService followService;
+    private final CommentService commentService;
+    private final FeedbackService feedbackService;
 
     /**
      * 내 활동 관리
@@ -64,7 +68,7 @@ public class MyActivityController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/activity")
-    @Operation(summary = "내 활동 조회 Test Completed", description = "내가 작성한 최신 댓글(Comment, Feedback 무관 1개)와 스크랩한 게시물들을 조회합니다.")
+    @Operation(summary = "내 활동 조회 Test Completed", description = "내가 작성한 최신 코멘트/피드백(Comment, Feedback 무관 1개)와 스크랩한 게시물들을 조회합니다.")
     public ResponseEntity<BaseResponse<ResMyActivityDto>> myActivity(@AuthenticationPrincipal MemberDetails memberDetails) {
 
         Long memberId = memberDetails.getMemberId();
@@ -189,9 +193,8 @@ public class MyActivityController {
     })
     @GetMapping("/user/comment-feedback")
     @Operation(summary = "내가 작성한 코멘트/피드백 조회 Test Completed", description = "내가 작성한 최신 코멘트/피드백들을 조회합니다.")
-    public ResponseEntity<BaseResponse<ResMyCommentDto>> myComment(HttpServletRequest request,
-                                                                   @RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
-                                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
+    public ResponseEntity<BaseResponse<ResMyCommentFeedbackPaging>> myCommentFeedback(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
+                                                                                      @AuthenticationPrincipal MemberDetails memberDetails) {
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
 
@@ -213,32 +216,132 @@ public class MyActivityController {
 
         /**
          * 조회한 가장 최근에 작성한 댓글들을 dto로 mapping
+         * 하나의 게시물에 여러 코멘트, 피드백 모두 단 경우 하나의 최신 하나만 보여주도록 구현
          */
         List<ResCommentFeedbackDto> contents = commentOrFeedback.stream()
-                .collect(Collectors.groupingBy(commentFeedback -> commentFeedback.getPost().getPostId(),
-                        Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(CommentFeedback::getTime)),
-                                java.util.Optional::get)))
-                .values().stream()
                 .map(commentFeedback -> {
-            ResCommentFeedbackDto map = null;
-            if (commentFeedback.getType().equals(ContentType.FEEDBACK)) {
-                map = feedbackBuilder(commentFeedback);
-            } else if (commentFeedback.getType().equals(ContentType.COMMENT)) {
-                map = commentBuilder(commentFeedback);
-            }
-            return map;
-        }).collect(Collectors.toList());
+                    ResCommentFeedbackDto map = null;
+                    if (commentFeedback.getType().equals(ContentType.FEEDBACK)) {
+                        map = feedbackBuilder(commentFeedback);
+                    } else if (commentFeedback.getType().equals(ContentType.COMMENT)) {
+                        map = commentBuilder(commentFeedback);
+                    }
+                    return map;
+                }).collect(Collectors.toList());
 
-        ResMyCommentDto myCommentDto = ResMyCommentDto.builder()
+        ResMyCommentFeedbackPaging myCommentFeedbackPaging = ResMyCommentFeedbackPaging.builder()
                 .contents(contents)
                 .totalPages(commentOrFeedback.getTotalPages())
                 .totalOfAllComments(commentOrFeedback.getTotalElements())
                 .totalOfPageElements(commentOrFeedback.getNumberOfElements())
                 .build();
 
-        BaseResponse<ResMyCommentDto> response = new BaseResponse<>(CustomMessage.OK, myCommentDto);
+        BaseResponse<ResMyCommentFeedbackPaging> response = new BaseResponse<>(CustomMessage.OK, myCommentFeedbackPaging);
         return ResponseEntity.ok(response);
         //  return successResponse(CustomMessage.OK, result);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "내가 작성한 코멘트 성공적으로 조회했습니다."),
+            @ApiResponse(responseCode = "400", description = "페이지 번호가 잘못되었습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/user/comment")
+    @Operation(summary = "내가 작성한 코멘트 조회 Test Completed", description = "내가 작성한 최신 코멘트 조회합니다.")
+    public ResponseEntity<BaseResponse<ResMyCommentPaging>> myComment(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
+                                                                      @AuthenticationPrincipal MemberDetails memberDetails) {
+        Long memberId = memberDetails.getMemberId();
+        Member myMember = memberService.findOne(memberId);
+
+        pageNum -= 1;
+        if (pageNum < 0) {
+            throw new BaseException(CustomMessage.PAGE_NUM_OVER);
+            //  return errorResponse(CustomMessage.PAGE_NUM_OVER);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+
+        Page<Comment> comments = commentService.findNewestComment(pageNum, myMember);
+
+        //조회할 레퍼런스가 db에 있으나, 현재 페이지에 조회할 데이터가 없는 경우 == 페이지 번호를 잘못 입력
+        if ((comments.getContent().isEmpty()) && (comments.getTotalElements() > 0)) {
+            throw new BaseException(CustomMessage.PAGE_NUM_OVER);
+            //  return errorResponse(CustomMessage.PAGE_NUM_OVER);
+        }
+
+        /**
+         * 조회한 가장 최근에 작성한 댓글들을 dto로 mapping
+         * 하나의 게시물에 여러 코멘트 모두 단 경우 하나의 최신 하나만 보여주도록 구현
+         */
+        List<ResMyCommentDto> contents = comments.stream()
+                .map(comment -> {
+                    ResMyCommentDto resMyCommentDto = commentBuilder(comment);
+                    return resMyCommentDto;
+                }).collect(Collectors.toList());
+
+        ResMyCommentPaging myCommentPaging = ResMyCommentPaging.builder()
+                .contents(contents)
+                .totalPages(comments.getTotalPages())
+                .totalOfAllComments(comments.getTotalElements())
+                .totalOfPageElements(comments.getNumberOfElements())
+                .build();
+
+        BaseResponse<ResMyCommentPaging> response = new BaseResponse<>(CustomMessage.OK, myCommentPaging);
+        return ResponseEntity.ok(response);
+        //  return successResponse(CustomMessage.OK, result);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "내가 작성한 피드백 성공적으로 조회했습니다."),
+            @ApiResponse(responseCode = "400", description = "페이지 번호가 잘못되었습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/user/feedback")
+    @Operation(summary = "내가 작성한 피드백 조회 Test Completed", description = "내가 작성한 최신 피드백 조회합니다.")
+    public ResponseEntity<BaseResponse<ResMyFeedbackPaging>> myFeedback(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
+                                                                        @AuthenticationPrincipal MemberDetails memberDetails) {
+        Long memberId = memberDetails.getMemberId();
+        Member myMember = memberService.findOne(memberId);
+
+        pageNum -= 1;
+        if (pageNum < 0) {
+            throw new BaseException(CustomMessage.PAGE_NUM_OVER);
+            //  return errorResponse(CustomMessage.PAGE_NUM_OVER);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+
+        Page<Feedback> feedbacks = feedbackService.findNewestFeedback(pageNum, myMember);
+
+        System.out.println("Page content:");
+        feedbacks.getContent().forEach(System.out::println);
+
+        //조회할 레퍼런스가 db에 있으나, 현재 페이지에 조회할 데이터가 없는 경우 == 페이지 번호를 잘못 입력
+        if ((feedbacks.getContent().isEmpty()) && (feedbacks.getTotalElements() > 0)) {
+            throw new BaseException(CustomMessage.PAGE_NUM_OVER);
+        }
+
+        /**
+         * 조회한 가장 최근에 작성한 피드백들을 dto로 mapping
+         * 하나의 게시물에 여러 피드백 모두 단 경우 하나의 최신 하나만 보여주도록 구현
+         */
+        List<ResMyFeedbackDto> contents = feedbacks.stream()
+                .map(this::feedbackBuilder).toList();
+
+        ResMyFeedbackPaging myFeedbackPaging = ResMyFeedbackPaging.builder()
+                .contents(contents)
+                .totalPages(feedbacks.getTotalPages())
+                .totalOfAllFeedbacks(feedbacks.getTotalElements())
+                .totalOfPageElements(feedbacks.getNumberOfElements())
+                .build();
+
+        BaseResponse<ResMyFeedbackPaging> response = new BaseResponse<>(CustomMessage.OK, myFeedbackPaging);
+        return ResponseEntity.ok(response);
+
     }
 
 
@@ -289,6 +392,35 @@ public class MyActivityController {
         BaseResponse<ResReceivedCommentFeedbackDto> response = new BaseResponse<>(CustomMessage.OK, responseDto);
         return ResponseEntity.ok(response);
         // return successResponse(CustomMessage.OK, result);
+    }
+
+    private ResMyCommentDto commentBuilder(Comment comment) {
+        return ResMyCommentDto.builder()
+                .title(comment.getPost().getTitle())
+                .postId(comment.getPost().getPostId())
+                .commentId(comment.getCommentId())
+                .thumbnail(comment.getPost().getThumbnail().getStoreFileUrl())
+                .member(new ResMemberInfoDto(comment.getMember().getMemberId(),
+                        comment.getMember().getNickname(),
+                        comment.getMember().getProfileImage(),
+                        null))
+                .content(comment.getContent())
+                .likeCount(comment.getLikeCount())
+                .build();
+    }
+
+    private ResMyFeedbackDto feedbackBuilder(Feedback feedback) {
+        return ResMyFeedbackDto.builder()
+                .title(feedback.getPost().getTitle())
+                .postId(feedback.getPost().getPostId())
+                .feedbackId(feedback.getFeedbackId())
+                .thumbnail(feedback.getPost().getThumbnail().getStoreFileUrl())
+                .member(new ResMemberInfoDto(feedback.getMember().getMemberId(),
+                        feedback.getMember().getNickname(),
+                        feedback.getMember().getProfileImage(),
+                        null))
+                .content(feedback.getContent())
+                .likeCount(feedback.getLikeCount()).build();
     }
 
 

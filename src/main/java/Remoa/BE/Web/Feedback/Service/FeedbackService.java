@@ -14,6 +14,9 @@ import Remoa.BE.exception.CustomMessage;
 import Remoa.BE.exception.response.BaseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static Remoa.BE.utill.Constant.CONTENT_PAGE_SIZE;
 
 @Slf4j
 @Service
@@ -40,13 +45,19 @@ public class FeedbackService {
         return feedback.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Feedback not found"));
     }
 
+    public Page<Feedback> findNewestFeedback(int pageNum, Member member) {
+        Pageable pageable = PageRequest.of(pageNum, CONTENT_PAGE_SIZE);
+        return feedbackRepository.findNewestFeedback(member, pageable);
+    }
+
     public int feedbackLikeCount(Long feedbackId) {
         Feedback feedback = findOne(feedbackId);
         return feedback.getLikeCount();
     }
 
     public List<Feedback> findAllFeedbacksOfPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
+        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
+        ;
         return feedbackRepository.findByPost(post);
     }
 
@@ -59,7 +70,8 @@ public class FeedbackService {
     public void registerFeedback(Member member, String content, Long postId, Integer pageNumber) {
 
 
-        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
+        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
+        ;
 
         LocalDateTime time = LocalDateTime.now();
 

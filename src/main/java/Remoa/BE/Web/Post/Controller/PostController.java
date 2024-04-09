@@ -7,7 +7,7 @@ import Remoa.BE.Web.Member.Service.MemberService;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Domain.UploadFile;
 import Remoa.BE.Web.Post.Dto.Request.UploadPostForm;
-import Remoa.BE.Web.Post.Service.MyPostService;
+import Remoa.BE.Web.MyPage.Service.MyPostService;
 import Remoa.BE.Web.Post.Service.PostService;
 import Remoa.BE.Web.Post.Dto.Response.*;
 import Remoa.BE.config.auth.MemberDetails;

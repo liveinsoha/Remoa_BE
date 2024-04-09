@@ -1,5 +1,7 @@
-package Remoa.BE.Web.Post.Dto.Response;
+package Remoa.BE.Web.MyPage.Dto.Res;
 
+import Remoa.BE.Web.Post.Dto.Response.ResCommentFeedbackDto;
+import Remoa.BE.Web.Post.Dto.Response.ResPostDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

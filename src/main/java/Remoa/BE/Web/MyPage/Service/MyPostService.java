@@ -1,4 +1,4 @@
-package Remoa.BE.Web.Post.Service;
+package Remoa.BE.Web.MyPage.Service;
 
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Post;

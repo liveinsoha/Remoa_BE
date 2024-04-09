@@ -21,12 +21,13 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import static Remoa.BE.utill.Constant.CONTENT_PAGE_SIZE;
+import static Remoa.BE.utill.Constant.RECEIVED_PAGE_SIZE;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommentFeedbackService {
-    private static final int CONTENT_PAGE_SIZE = 4;
-    private static final int RECEIVED_PAGE_SIZE = 4;
     private final CommentFeedbackRepository commentFeedbackRepository;
     private final CategoryRepository categoryRepository;
 
@@ -47,14 +48,12 @@ public class CommentFeedbackService {
 
     public Page<CommentFeedback> findNewestCommentOrFeedback(int page, Member member) {
         Pageable pageable = PageRequest.of(page, CONTENT_PAGE_SIZE);
-        return commentFeedbackRepository.findByMemberOrderByTimeDesc(pageable, member);
+        return commentFeedbackRepository.findNewestCommentFeedback(member, pageable);
     }
 
     public CommentFeedback findNewestCommentFeedback(Member member) {
         return commentFeedbackRepository.findByMemberOrderByTime(member).orElse(null);
     }
-
-
 
 
     public CommentFeedback findComment(Comment comment) {

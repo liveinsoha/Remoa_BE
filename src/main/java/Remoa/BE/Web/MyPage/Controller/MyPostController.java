@@ -1,4 +1,4 @@
-package Remoa.BE.Web.Post.Controller;
+package Remoa.BE.Web.MyPage.Controller;
 
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.Dto.Res.ResMemberInfoDto;
@@ -7,7 +7,7 @@ import Remoa.BE.Web.Member.Service.MemberService;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Dto.Response.PostPageResponseDto;
 import Remoa.BE.Web.Post.Dto.Response.ResPostDto;
-import Remoa.BE.Web.Post.Service.MyPostService;
+import Remoa.BE.Web.MyPage.Service.MyPostService;
 import Remoa.BE.Web.Post.Service.PostService;
 import Remoa.BE.config.auth.MemberDetails;
 import Remoa.BE.exception.CustomMessage;
