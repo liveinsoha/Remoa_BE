@@ -32,5 +32,7 @@ public class AuthConstant {
     public static final String[] DELETE_AUTH_BLACKLIST = {"/user/img", "/delete/{member_id}", "/delete", "/reference/comment/{comment_id}", "/reference/feedback/{feedback_id}",  "/user/reference/{reference_id}", "/user/referenceCategory/{category}"};
 
     // ADMIN 역할에 대한 인증이 필요한 경로
-    public static final String[] ADMIN_AUTH_BLACKLIST = {"/notice"};
+    public static final String[] ADMIN_POST_AUTH_BLACKLIST = {"/notice", };
+
+    public static final String[] ADMIN_PUT_AUTH_BLACKLIST = {"/notice/{noticeId}", };
 }

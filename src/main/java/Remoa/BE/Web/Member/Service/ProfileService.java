@@ -41,6 +41,7 @@ public class ProfileService {
 
         String oldNickname = member.getNickname();
         String newNickname = profile.getNickname();
+
         //공지사항 및 문의사항에 변경된 닉네임 반영
         noticeService.modifying_Notice_NickName(oldNickname, newNickname);
         inquiryService.modifying_Inquiry_NickName(oldNickname, newNickname);

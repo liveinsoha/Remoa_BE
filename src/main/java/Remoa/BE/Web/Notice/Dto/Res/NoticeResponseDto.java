@@ -24,5 +24,7 @@ public class NoticeResponseDto {
     @Schema(description = "현재 페이지의 게시물 수", example = "10")
     private int totalOfPageElements;
 
+
+
     // 생성자, getter, setter 등
 }

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @Data
@@ -28,11 +29,19 @@ public class ResNoticeDto {
     @Schema(description = "조회수", example = "100")
     private int view;
 
+    @Schema(description = "수정 여부", example = "true")
+    private boolean modified; // 수정 여부 표시
+
+    @Schema(description = "수정 시각", example = "2024-04-08T10:30:00")
+    private LocalDateTime modifiedTime; // 수정 시각
+
     public ResNoticeDto(Notice entity) {
         this.noticeId = entity.getNoticeId();
         this.author = entity.getAuthor();
         this.title = entity.getTitle();
         this.postingTime = entity.getPostingTime().toLocalDate();
         this.view = entity.getView();
+        this.modified = entity.getModified();
+        this.modifiedTime = entity.getModifiedTime();
     }
 }

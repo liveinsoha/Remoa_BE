@@ -29,6 +29,13 @@ public class NoticeService {
         noticeRepository.save(reqNoticeDto.toEntityNotice(enrollNickname)); //builder를 이용해 객체를 직접 생성하지 않고 Notice 저장
     }
 
+    @Transactional
+    public void updateNotice(Long noticeId, ReqNoticeDto reqNoticeDto, String enrollNickname) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
+        notice.updateNotice(reqNoticeDto, enrollNickname);
+    }
+
     public NoticeResponseDto getNotice(int pageNumber) {
 
         HashMap<String, Object> resultMap = new HashMap<>();

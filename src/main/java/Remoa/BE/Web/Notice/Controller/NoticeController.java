@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,9 +29,12 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import java.util.Date;
+
 @Tag(name = "공지 기능 Test Completed", description = "공지 기능 API")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class NoticeController {
 
     private final NoticeService noticeService;
@@ -51,9 +55,28 @@ public class NoticeController {
                                              @AuthenticationPrincipal MemberDetails memberDetails) {
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         noticeService.registerNotice(reqNoticeDto, myMember.getNickname());
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "공지가 성공적으로 수정되었습니다."),
+            @ApiResponse(responseCode = "400", description = MessageUtils.BAD_REQUEST,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = MessageUtils.FORBIDDEN,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PutMapping("/notice/{noticeId}")
+    @Operation(summary = "공지 수정 Test Completed", description = "공지를 수정합니다.")
+    public ResponseEntity<Object> updateNotice(@PathVariable Long noticeId,
+                                               @Validated @RequestBody ReqNoticeDto reqNoticeDto,
+                                               @AuthenticationPrincipal MemberDetails memberDetails) {
+        Member myMember = memberService.findOne(memberDetails.getMemberId());
+        noticeService.updateNotice(noticeId, reqNoticeDto, myMember.getNickname());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @GetMapping("/notice")
     @Operation(summary = "공지 목록 조회 Test Completed", description = "페이지별 공지 목록을 조회합니다.")
@@ -69,13 +92,13 @@ public class NoticeController {
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "공지 목록을 성공적으로 조회했습니다."),
+            @ApiResponse(responseCode = "200", description = "공지 상세를 성공적으로 조회했습니다."),
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.")
     })
     @GetMapping("/notice/view")
     @Operation(summary = "공지 상세 조회 Test Completed", description = "특정 공지의 상세 정보를 조회합니다.")
-    public ResponseEntity<Object> getNoticeDetail(@RequestParam int view,
-                                                  HttpServletRequest request) {
+    public ResponseEntity<BaseResponse<ResAllNoticeDto>> getNoticeDetail(@RequestParam int view,
+                                                                         HttpServletRequest request) {
 
         HttpSession session = request.getSession();
         String sessionKey = "NoticeViewed_" + view;
