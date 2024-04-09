@@ -9,6 +9,8 @@ import Remoa.BE.Web.Comment.Domain.Comment;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Repository.PostRepository;
+import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.exception.response.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,8 +36,9 @@ public class CommentReplyService {
     }
 
     public CommentReply registerCommentReply(Member member, String content, Long postId, Long commentId) {
-        Post post = postRepository.getReferenceById(postId);
-        Comment comment = commentRepository.getReferenceById(commentId);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
+
         CommentReply commentReply = CommentReply.createCommentReply(post, member, content, comment);
         commentReplyRepository.save(commentReply);
         return commentReply;

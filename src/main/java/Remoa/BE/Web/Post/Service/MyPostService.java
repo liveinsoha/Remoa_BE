@@ -73,6 +73,8 @@ public class MyPostService {
         return posts;
     }
 
+
+
     /**
      * 받은 피드백 관리에서 쓰이는 최신 3개순 포스트
      * @param page

@@ -14,10 +14,10 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query("select f from Follow f where f.fromMember = :fromMember and f.toMember = :toMember")
     List<Follow> findFollows(@Param("fromMember") Member fromMember, @Param("toMember") Member toMember);
 
-    @Query("select f from Follow f where f.fromMember = :member order by f.toMember.nickname")
+    @Query("select f.toMember from Follow f join f.toMember where f.fromMember = :member order by f.toMember.nickname")
     List<Member> loadFollows(@Param("member") Member member);
 
-    @Query("select f.fromMember from Follow f where f.toMember = :member order by f.fromMember.nickname")
+    @Query("select f.fromMember from Follow f join f.fromMember where f.toMember = :member order by f.fromMember.nickname")
     List<Member> loadFollowers(@Param("member") Member member);
 
     @Query("select f.toMember.memberId from Follow f where f.fromMember = :member")

@@ -37,7 +37,7 @@ import java.util.List;
 
 import static Remoa.BE.config.DbInit.categoryList;
 
-@Tag(name = "나의 레퍼런스 조회 기능", description = "나의 레퍼런스 조회 기능 API")
+@Tag(name = "나의 레퍼런스 조회 기능 Test Completed", description = "나의 레퍼런스 조회 기능 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -64,7 +64,9 @@ public class MyPostController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/reference")
-    @Operation(summary = "내 레퍼런스 목록 조회", description = "내가 작성한 레퍼런스 목록을 조회합니다.")
+    @Operation(summary = "내 레퍼런스 목록 조회 Test Completed", description = "내가 작성한 레퍼런스 목록을 조회합니다. " +
+            "<br> category : \"idea\", \"marketing\", \"design\", \"video\", \"digital\", \"etc\"" +
+            "<br> sort : \"views\", \"likes\", \"scrap\"")
     public ResponseEntity<BaseResponse<PostPageResponseDto>> myReference(HttpServletRequest request,
                                                                          @RequestParam(required = false, defaultValue = "all") String category,
                                                                          @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber,
@@ -136,7 +138,9 @@ public class MyPostController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/reference/{member_id}")
-    @Operation(summary = "다른 사용자의 레퍼런스 목록 조회", description = "다른 사용자가 작성한 레퍼런스 목록을 조회합니다.")
+    @Operation(summary = "다른 사용자의 레퍼런스 목록 조회 Test Completed", description = "다른 사용자가 작성한 레퍼런스 목록을 조회합니다." +
+            "<br> category : \"idea\", \"marketing\", \"design\", \"video\", \"digital\", \"etc\"" +
+            "<br> sort : \"views\", \"likes\", \"scrap\"")
     public ResponseEntity<Object> otherReference(HttpServletRequest request,
                                                  @PathVariable("member_id") Long memberId,
                                                  @RequestParam(required = false, defaultValue = "all") String category,
@@ -203,7 +207,7 @@ public class MyPostController {
                 .build();
         BaseResponse<PostPageResponseDto> response = new BaseResponse<>(CustomMessage.OK, responseDto);
         return ResponseEntity.ok(response);
-      //  return successResponse(CustomMessage.OK, referencesAndPageInfo);
+        //  return successResponse(CustomMessage.OK, referencesAndPageInfo);
     }
 
 

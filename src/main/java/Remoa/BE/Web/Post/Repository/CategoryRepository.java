@@ -3,6 +3,8 @@ package Remoa.BE.Web.Post.Repository;
 import Remoa.BE.Web.Post.Domain.Category;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.Domain.MemberCategory;
+import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.exception.response.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -36,7 +38,7 @@ public class CategoryRepository {
         if (category.isPresent()) {
             return category.get();
         } else {
-            throw new RuntimeException("해당 카테고리는 존재하지 않습니다.");
+            throw new BaseException(CustomMessage.NO_CATEGORY);
         }
     }
 

@@ -6,10 +6,12 @@ import Remoa.BE.Web.CommentFeedback.Domain.CommentFeedback;
 import Remoa.BE.Web.Feedback.Domain.Feedback;
 import Remoa.BE.Web.Post.Domain.Post;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +21,18 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Where(clause = "deleted = false")
+@SQLRestriction("deleted = false")
 public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long memberId;
+
+    /**
+     * 카카오 api에서 받아오는 카카오 이메일
+     */
+    private String email;
 
     //23.1.19 추가
     private String nickname;
@@ -35,10 +42,7 @@ public class Member {
     @Column(name = "kakao_id")
     private Long kakaoId;
 
-    /**
-     * 카카오 api에서 받아오는 카카오 이메일
-     */
-    private String email;
+
 
     /**
      * 23.02.04 카카오 로그인 단독 개발로 인해 삭제 예정.
@@ -69,7 +73,7 @@ public class Member {
      */
     @Column(name = "one_line_introduction")
     @Lob
-    private String oneLineIntroduction="";
+    private String oneLineIntroduction = "";
 
     /**
      * 레모아 서비스 이용 약관 동의 여부
@@ -81,27 +85,27 @@ public class Member {
      * 카카오 api에서 받아오는 카카오 프로필 사진 uri
      */
     @Column(name = "profile_image")
-    private String profileImage="https://remoafiles.s3.ap-northeast-2.amazonaws.com/img/profile_img.png";
+    private String profileImage = "https://remoafiles.s3.ap-northeast-2.amazonaws.com/img/profile_img.png";
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<Feedback> feedbacks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<MemberCategory> memberCategories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<CommentBookmark> commentBookmarks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<CommentLike> commentLikes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "fromMember", cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "fromMember", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<Follow> follows = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
@@ -118,6 +122,7 @@ public class Member {
     /**
      * SecureConfig를 통해 Bean에 등록된 passwordEncoder를 이용해 회원가입시 패스워드 암호화.
      * 현재(23.02.13 기준) 카카오 로그인으로 통합되어 kakaoId를 암호화 하는 방향으로 쓰이거나 사용하지 않을 예정
+     *
      * @param passwordEncoder
      * @return
      */

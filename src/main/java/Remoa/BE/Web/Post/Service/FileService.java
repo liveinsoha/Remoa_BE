@@ -81,7 +81,7 @@ public class FileService {
             recentFiles.forEach(file -> {
                 file.setDeleted(true); // DB 삭제 처리(delete 컬럼 update 1)
                 uploadFileRepository.modifyFile(file);
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, file.getSaveFileName())); // S3에서 삭제처리
+          //      amazonS3.deleteObject(new DeleteObjectRequest(bucket, file.getSaveFileName())); // S3에서 삭제처리
             });
         }
 

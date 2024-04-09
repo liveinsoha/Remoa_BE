@@ -4,12 +4,13 @@ import Remoa.BE.Web.Comment.Domain.Comment;
 import Remoa.BE.Web.CommentFeedback.Domain.CommentFeedback;
 import Remoa.BE.Web.Feedback.Domain.Feedback;
 import Remoa.BE.Web.Member.Domain.Member;
+import jakarta.persistence.CascadeType;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.processing.SQL;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,8 @@ import static jakarta.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @Entity
-@Where(clause = "deleted = false")
+@SQLRestriction("deleted = false")
+@SQLDelete(sql = "UPDATE post SET deleted = true WHERE post_id = ?") // 사용자 정의 SQL DELETE 문 설정 sofe delete로 구현
 public class Post {
 
     @Id
@@ -90,6 +92,12 @@ public class Post {
     @Builder.Default
     private Integer scrapCount = 0;
 
+   /* @Builder.Default
+    private Integer commentCount = 0;
+
+    @Builder.Default
+    private Integer feedbackCount = 0;*/
+
     @Builder.Default
     private Integer pageCount = 1;
 
@@ -111,11 +119,7 @@ public class Post {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CommentFeedback> commentFeedbacks = new ArrayList<>();
 
-    /**
-     * Post에서 쓰인 files
-     */
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
-    private List<UploadFile> uploadFiles;
+
 
     @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
@@ -126,6 +130,12 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<PostLike> postLikes = new ArrayList<>();
+
+    /**
+     * Post에서 쓰인 files
+     */
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
+    private List<UploadFile> uploadFiles;
 
     /**
      * 작성한 Post의 카테고리

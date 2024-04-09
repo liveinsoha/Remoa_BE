@@ -1,12 +1,14 @@
 package Remoa.BE.Web.Post.Controller;
 
 import Remoa.BE.Web.CommentFeedback.Domain.CommentFeedback;
+import Remoa.BE.Web.CommentFeedback.Dto.ResReceivedCommentFeedbackDto;
 import Remoa.BE.Web.CommentFeedback.Service.CommentFeedbackService;
 import Remoa.BE.Web.Member.Domain.ContentType;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Web.Member.Service.FollowService;
 import Remoa.BE.Web.Member.Service.MemberService;
+import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Domain.PostScarp;
 import Remoa.BE.Web.Post.Dto.Response.*;
 import Remoa.BE.Web.Post.Service.PostService;
@@ -32,12 +34,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@Tag(name = "내 활동 기능", description = "내 활동 기능 API")
+import static org.eclipse.jdt.internal.compiler.problem.ProblemSeverities.Optional;
+
+@Tag(name = "내 활동 기능 Test Completed", description = "내 활동 기능 API")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -62,7 +64,7 @@ public class MyActivityController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/activity")
-    @Operation(summary = "내 활동 조회", description = "내가 작성한 최신 댓글(Comment, Feedback 무관 1개)와 스크랩한 게시물들을 조회합니다.")
+    @Operation(summary = "내 활동 조회 Test Completed", description = "내가 작성한 최신 댓글(Comment, Feedback 무관 1개)와 스크랩한 게시물들을 조회합니다.")
     public ResponseEntity<BaseResponse<ResMyActivityDto>> myActivity(@AuthenticationPrincipal MemberDetails memberDetails) {
 
         Long memberId = memberDetails.getMemberId();
@@ -115,7 +117,7 @@ public class MyActivityController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/scrap") // 내가 스크랩한 게시글 확인
-    @Operation(summary = "내가 스크랩한 게시글 조회", description = "내가 스크랩한 게시글들을 확인합니다.")
+    @Operation(summary = "내가 스크랩한 게시글 조회 Test Completed", description = "내가 스크랩한 게시글들을 확인합니다.")
     public ResponseEntity<BaseResponse<ResMyScrapDto>> myScrap(HttpServletRequest request,
                                                                @RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
                                                                @AuthenticationPrincipal MemberDetails memberDetails
@@ -146,7 +148,7 @@ public class MyActivityController {
 
         List<ResPostDto> postDtoList = posts.stream()
                 .map(PostScarp::getPost)
-                .collect(Collectors.toList())
+                .toList()
                 .stream()
                 .map(post -> ResPostDto.builder()
                         .postId(post.getPostId())
@@ -168,8 +170,8 @@ public class MyActivityController {
         ResMyScrapDto myScrapDto = ResMyScrapDto.builder()
                 .posts(postDtoList)
                 .totalPages(posts.getTotalPages())  //전체 페이지의 수
-                .totalOfAllPosts(posts.getTotalElements())//모든 코멘트의 수
-                .totalOfPageElements(posts.getNumberOfElements())//현 페이지 피드백의 수
+                .totalOfAllPosts(posts.getTotalElements())//모든 게시글 수
+                .totalOfPageElements(posts.getNumberOfElements())//현 페이지 게시글 수
                 .build();
 
         BaseResponse<ResMyScrapDto> response = new BaseResponse<>(CustomMessage.OK, myScrapDto);
@@ -179,14 +181,14 @@ public class MyActivityController {
 
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "내가 작성한 댓글을 성공적으로 조회했습니다."),
+            @ApiResponse(responseCode = "200", description = "내가 작성한 댓글/피드백을 성공적으로 조회했습니다."),
             @ApiResponse(responseCode = "400", description = "페이지 번호가 잘못되었습니다.",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/comment")
-    @Operation(summary = "내가 작성한 댓글 조회", description = "내가 작성한 최신 댓글들을 조회합니다.")
+    @Operation(summary = "내가 작성한 댓글/피드백 조회 Test Completed", description = "내가 작성한 최신 댓글/피드백들을 조회합니다.")
     public ResponseEntity<BaseResponse<ResMyCommentDto>> myComment(HttpServletRequest request,
                                                                    @RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
                                                                    @AuthenticationPrincipal MemberDetails memberDetails) {
@@ -212,7 +214,12 @@ public class MyActivityController {
         /**
          * 조회한 가장 최근에 작성한 댓글들을 dto로 mapping
          */
-        List<ResCommentFeedbackDto> contents = commentOrFeedback.stream().map(commentFeedback -> {
+        List<ResCommentFeedbackDto> contents = commentOrFeedback.stream()
+                .collect(Collectors.groupingBy(commentFeedback -> commentFeedback.getPost().getPostId(),
+                        Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(CommentFeedback::getTime)),
+                                java.util.Optional::get)))
+                .values().stream()
+                .map(commentFeedback -> {
             ResCommentFeedbackDto map = null;
             if (commentFeedback.getType().equals(ContentType.FEEDBACK)) {
                 map = feedbackBuilder(commentFeedback);
@@ -236,16 +243,15 @@ public class MyActivityController {
 
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "내가 받은 댓글/피드백을 성공적으로 조회했습니다."),
+            @ApiResponse(responseCode = "200", description = "내가 받은 코멘트/피드백을 성공적으로 조회했습니다."),
             @ApiResponse(responseCode = "400", description = "페이지 번호가 잘못되었습니다.",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/receive")
-    @Operation(summary = "내가 받은 댓글/피드백 조회", description = "내가 받은 최신 댓글/피드백들을 조회합니다.")
-    public ResponseEntity<BaseResponse<ResReceivedCommentFeedbackDto>> receivedCommentFeedback(HttpServletRequest request,
-                                                                                               @RequestParam(required = false, defaultValue = "all") String category,
+    @Operation(summary = "내가 받은 코멘트/피드백 조회 Test Completed", description = "내가 받은 최신 코멘트/피드백들을 조회합니다.")
+    public ResponseEntity<BaseResponse<ResReceivedCommentFeedbackDto>> receivedCommentFeedback(@RequestParam(required = false, defaultValue = "all") String category,
                                                                                                @RequestParam(required = false, defaultValue = "1", name = "page") int pageNum,
                                                                                                @AuthenticationPrincipal MemberDetails memberDetails) {
         Long memberId = memberDetails.getMemberId();
@@ -256,6 +262,7 @@ public class MyActivityController {
             throw new BaseException(CustomMessage.PAGE_NUM_OVER);
             //    return errorResponse(CustomMessage.PAGE_NUM_OVER);
         }
+
 
         Page<CommentFeedback> commentOrFeedbacks = commentFeedbackService.findReceivedCommentOrFeedback(myMember, pageNum, category);
 

@@ -31,7 +31,7 @@ public class FeedbackRepositoryCustomImpl implements FeedbackRepositoryCustom {
     }
 
     /**
-     * 포스트 별 댓글을 찾아오기 위한 메서드
+     * 포스트 별 코멘트을 찾아오기 위한 메서드
      * @param post
      * @return List<Feedback>
      */
@@ -78,7 +78,7 @@ public class FeedbackRepositoryCustomImpl implements FeedbackRepositoryCustom {
     }
 
     /**
-     * feedbackBookmarkAction 메서드를 실행하기 전 이미 해당 댓글에 대한 북마크를 했는지 검증->service 단에서 return 값의 null이면 북마크 가능.
+     * feedbackBookmarkAction 메서드를 실행하기 전 이미 해당 코멘트에 대한 북마크를 했는지 검증->service 단에서 return 값의 null이면 북마크 가능.
      * 혹은 북마크 해제를 위해 사용할 수도 있다.
      */
     public Optional<FeedbackBookmark> findMemberCommendBookmark(Member member, Feedback feedback) {

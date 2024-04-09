@@ -1,12 +1,12 @@
 package Remoa.BE.Web.Post.Dto.Response;
 
 import Remoa.BE.Web.Comment.Dto.Res.ResCommentDto;
+import Remoa.BE.Web.Feedback.Dto.ResFeedbackDto;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Domain.UploadFile;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;

@@ -31,7 +31,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     }
 
     /**
-     * 포스트 별 댓글을 찾아오기 위한 메서드
+     * 포스트 별 코멘트을 찾아오기 위한 메서드
      * @param post
      * @return List<Comment>
      */
@@ -47,7 +47,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     }
 
     /**
-     * commentLikeAction 메서드를 실행하기 전 이미 해당 댓글에 대한 좋아요를 했는지 검증->service 단에서 return 값의 null이면 좋아요 가능.
+     * commentLikeAction 메서드를 실행하기 전 이미 해당 코멘트에 대한 좋아요를 했는지 검증->service 단에서 return 값의 null이면 좋아요 가능.
      * 혹은 좋아요 취소를 위해 사용할 수도 있다.
      */
     public Optional<CommentLike> findMemberCommendLike(Member member, Comment comment) {
@@ -71,7 +71,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     }
 
     /**
-     * commentBookmarkAction 메서드를 실행하기 전 이미 해당 댓글에 대한 북마크를 했는지 검증->service 단에서 return 값의 null이면 북마크 가능.
+     * commentBookmarkAction 메서드를 실행하기 전 이미 해당 코멘트에 대한 북마크를 했는지 검증->service 단에서 return 값의 null이면 북마크 가능.
      * 혹은 북마크 해제를 위해 사용할 수도 있다.
      */
     public Optional<CommentBookmark> findMemberCommendBookmark(Member member, Comment comment) {

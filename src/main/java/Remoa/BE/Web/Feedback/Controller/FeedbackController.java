@@ -1,6 +1,7 @@
 package Remoa.BE.Web.Feedback.Controller;
 
 import Remoa.BE.Web.Feedback.Domain.Feedback;
+import Remoa.BE.Web.Feedback.Dto.ResFeedbackLikeDto;
 import Remoa.BE.Web.Feedback.Service.FeedbackReplyService;
 import Remoa.BE.Web.Feedback.Service.FeedbackService;
 import Remoa.BE.Web.Member.Domain.Member;
@@ -8,8 +9,7 @@ import Remoa.BE.Web.Member.MemberUtils;
 import Remoa.BE.Web.Member.Service.MemberService;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Dto.Request.ReqFeedbackDto;
-import Remoa.BE.Web.Post.Dto.Response.ResFeedbackDto;
-import Remoa.BE.Web.Post.Dto.Response.ResLikeFeedbackDto;
+import Remoa.BE.Web.Feedback.Dto.ResFeedbackDto;
 import Remoa.BE.Web.Post.Service.PostService;
 import Remoa.BE.config.auth.MemberDetails;
 import Remoa.BE.exception.CustomMessage;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 
-@Tag(name = "피드백 기능", description = "피드백 기능 API")
+@Tag(name = "레퍼런스 피드백 기능 Test completed", description = "레퍼런스 피드백 기능 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -52,7 +52,7 @@ public class FeedbackController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/reference/{reference_id}/{page_number}") // 레퍼런스에 피드백 등록
-    @Operation(summary = "피드백 등록", description = "특정 게시물 페이지에 피드백을 등록합니다.")
+    @Operation(summary = "피드백 등록 Test completed", description = "특정 게시물 페이지에 피드백을 등록합니다.")
     public ResponseEntity<BaseResponse<List<ResFeedbackDto>>> registerFeedback(@RequestBody ReqFeedbackDto req,
                                                                                @PathVariable("reference_id") Long postId,
                                                                                @PathVariable("page_number") Integer pageNumber,
@@ -84,7 +84,7 @@ public class FeedbackController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/reference/feedback/{feedback_id}") // 피드백 수정
-    @Operation(summary = "피드백 수정", description = "작성한 피드백을 수정합니다.")
+    @Operation(summary = "피드백 수정 Test completed", description = "작성한 피드백을 수정합니다.")
     public ResponseEntity<BaseResponse<List<ResFeedbackDto>>> modifyFeedback(@RequestBody ReqFeedbackDto req,
                                                                              @PathVariable("feedback_id") Long feedbackId,
                                                                              @AuthenticationPrincipal MemberDetails memberDetails) {
@@ -114,7 +114,7 @@ public class FeedbackController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/reference/feedback/{feedback_id}")
-    @Operation(summary = "피드백 삭제", description = "작성한 피드백을 삭제합니다.")
+    @Operation(summary = "피드백 삭제 Test Completed", description = "작성한 피드백을 삭제합니다.")
     public ResponseEntity<BaseResponse<List<ResFeedbackDto>>> deleteFeedback(@PathVariable("feedback_id") Long feedbackId,
                                                                              @AuthenticationPrincipal MemberDetails memberDetails) {
 
@@ -142,16 +142,16 @@ public class FeedbackController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/reference/feedback/{feedback_id}/like") // 피드백 좋아요
-    @Operation(summary = "피드백 좋아요", description = "피드백에 좋아요를 누릅니다.")
-    public ResponseEntity<BaseResponse<ResLikeFeedbackDto>> likeFeedback(@PathVariable("feedback_id") Long feedbackId,
+    @Operation(summary = "피드백 좋아요 Test Completed", description = "피드백에 좋아요를 누릅니다.")
+    public ResponseEntity<BaseResponse<ResFeedbackLikeDto>> likeFeedback(@PathVariable("feedback_id") Long feedbackId,
                                                                          @AuthenticationPrincipal MemberDetails memberDetails) {
 
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
         feedbackService.likeFeedback(memberId, myMember, feedbackId);
         int count = feedbackService.feedbackLikeCount(feedbackId);
-        ResLikeFeedbackDto dto = new ResLikeFeedbackDto(count);
-        BaseResponse<ResLikeFeedbackDto> response = new BaseResponse<>(CustomMessage.OK, dto);
+        ResFeedbackLikeDto dto = new ResFeedbackLikeDto(count);
+        BaseResponse<ResFeedbackLikeDto> response = new BaseResponse<>(CustomMessage.OK, dto);
         return ResponseEntity.ok(response);
         // return successResponse(CustomMessage.OK, map);
     }

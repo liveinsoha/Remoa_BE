@@ -2,6 +2,7 @@ package Remoa.BE.Web.Post.Domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
 import jakarta.persistence.*;
@@ -10,7 +11,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @Table(name = "FILE")
-@Where(clause = "deleted = false")
+@SQLRestriction("deleted = false")
 public class UploadFile {
 
     @Id

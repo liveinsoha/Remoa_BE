@@ -14,7 +14,7 @@ import Remoa.BE.Web.Feedback.Service.FeedbackService;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.Service.FollowService;
 import Remoa.BE.Web.Post.Domain.Post;
-import Remoa.BE.Web.Post.Dto.Response.ResFeedbackDto;
+import Remoa.BE.Web.Feedback.Dto.ResFeedbackDto;
 import Remoa.BE.Web.Post.Service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,8 @@ public class MemberUtils {
     private final FeedbackService feedbackService;
     private final FeedbackReplyService feedbackReplyService;
 
-    public Boolean isMymMemberFollowMember(Member myMember, Member toMember) {
+
+    public Boolean isMyMemberFollowMember(Member myMember, Member toMember) {
         return myMember != null ? followService.isMyMemberFollowMember(myMember, toMember) : null;
     }
 
@@ -73,12 +74,12 @@ public class MemberUtils {
                     List<ResFeedbackReplyDto> resReplies = replies.stream()
                             .map(reply -> new ResFeedbackReplyDto(reply,
                                     isLikedFeedbackReply(myMember, reply),
-                                    isMymMemberFollowMember(myMember, reply.getMember())))
+                                    isMyMemberFollowMember(myMember, reply.getMember())))
                             .collect(Collectors.toList());
 
                     return new ResFeedbackDto(feedback,
                             isLikedFeedback(myMember, feedback),
-                            isMymMemberFollowMember(myMember, feedback.getMember()),
+                            isMyMemberFollowMember(myMember, feedback.getMember()),
                             resReplies);
                 })
                 .toList();
@@ -95,12 +96,12 @@ public class MemberUtils {
                     List<ResCommentReplyDto> resReplies = replies.stream()
                             .map(reply -> new ResCommentReplyDto(reply,
                                     isLikedCommentReply(myMember, reply),
-                                    isMymMemberFollowMember(myMember, reply.getMember())))
+                                    isMyMemberFollowMember(myMember, reply.getMember())))
                             .collect(Collectors.toList());
 
                     return new ResCommentDto(comment,
                             isLikedComment(myMember, comment),
-                            isMymMemberFollowMember(myMember, comment.getMember()),
+                            isMyMemberFollowMember(myMember, comment.getMember()),
                             resReplies);
                 })
                 .toList();

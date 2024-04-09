@@ -77,8 +77,8 @@ public class CommentFeedbackCustomRepositoryImpl implements CommentFeedbackCusto
                     .from(commentFeedback)
                     .join(commentFeedback.post, this.post)
                     .where(
-                            this.post.member.eq(member),
-                            this.post.category.eq(category)
+                            this.post.member.eq(member), // 작성자 본인
+                            this.post.category.eq(category) // 카테고리
                     )
                     .orderBy(commentFeedback.time.desc())
                     .offset(pageable.getOffset())   // 페이지 번호
@@ -88,14 +88,14 @@ public class CommentFeedbackCustomRepositoryImpl implements CommentFeedbackCusto
             resultCommentFeedbacks = jpaQueryFactory.select(commentFeedback)
                     .from(commentFeedback)
                     .join(commentFeedback.post, this.post)
-                    .where(this.post.member.eq(member))
+                    .where(this.post.member.eq(member)) // 작성자 본인
                     .orderBy(commentFeedback.time.desc())
                     .offset(pageable.getOffset())   // 페이지 번호
                     .limit(pageable.getPageSize())  // 페이지 사이즈
                     .fetch();
         }
         // 페이지네이션 기능을 위한 쿼리
-        JPAQuery<CommentFeedback> countQuery = jpaQueryFactory
+        JPAQuery<CommentFeedback> countQuery = jpaQueryFactory // 총 개수
                 .selectFrom(commentFeedback)
                 .join(commentFeedback.post, this.post)
                 .where(this.post.member.eq(member));

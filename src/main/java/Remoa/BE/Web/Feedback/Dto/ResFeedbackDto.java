@@ -1,4 +1,4 @@
-package Remoa.BE.Web.Post.Dto.Response;
+package Remoa.BE.Web.Feedback.Dto;
 
 import Remoa.BE.Web.Feedback.Domain.Feedback;
 import Remoa.BE.Web.Feedback.Domain.FeedbackReply;
@@ -38,6 +38,10 @@ public class ResFeedbackDto {
     @Schema(description = "현재 사용자가 해당 피드백을 좋아하는지 여부", example = "true")
     private Boolean isLiked;
 
+    @Schema(description = "삭제여부", example = "false")
+    private Boolean isDeleted;
+
+
     @Schema(description = "피드백 작성 시간", example = "2024-04-05T08:30:00")
     private LocalDateTime feedbackTime;
 
@@ -53,6 +57,7 @@ public class ResFeedbackDto {
         this.likeCount = feedback.getLikeCount();
         this.feedbackTime = feedback.getFeedbackTime();
         this.isLiked = isLiked;
+        this.isDeleted = feedback.getDeleted();
         this.replies = feedbackReplyDtos;
     }
 }

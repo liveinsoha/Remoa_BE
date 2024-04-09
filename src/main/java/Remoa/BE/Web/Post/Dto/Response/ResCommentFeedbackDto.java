@@ -18,7 +18,7 @@ public class ResCommentFeedbackDto {
     @Schema(description = "게시물 ID", example = "2")
     private Long postId;
 
-    @Schema(description = "댓글 ID")
+    @Schema(description = "코멘트 ID")
     private Long commentId;
 
     @Schema(description = "피드백 ID")
@@ -30,7 +30,7 @@ public class ResCommentFeedbackDto {
     @Schema(description = "게시물 작성자 정보")
     private ResMemberInfoDto member;
 
-    @Schema(description = "댓글/피드백 내용", example = "잘했어요")
+    @Schema(description = "코멘트/피드백 내용", example = "잘했어요")
     private String content;
 
     @Schema(description = "좋아요 수", example = "0")

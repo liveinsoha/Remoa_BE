@@ -5,6 +5,7 @@ import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Post;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
 import jakarta.persistence.*;
@@ -17,7 +18,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
-@Where(clause = "deleted = false")
+@SQLRestriction("deleted = false") // 검색시 deleted = false 조건을 where 절에 추가
 public class Comment {
 
     @Id

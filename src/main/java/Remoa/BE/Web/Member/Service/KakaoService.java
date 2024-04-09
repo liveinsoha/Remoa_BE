@@ -17,10 +17,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Random;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class KakaoService {
+
+    private final Random random = new Random();
 
     //카카오 로그인시 접속해야 할 링크 : https://kauth.kakao.com/oauth/authorize?client_id=139febf9e13da4d124d1c1faafcf3f86&redirect_uri=http://localhost:8080/login/kakao&response_type=code
 
@@ -35,15 +39,27 @@ public class KakaoService {
 
         log.info("kakaoProfile = {}", kakaoProfile);
 
-        KakaoLoginRequestDto kakaoLoginRequestDto = new KakaoLoginRequestDto(kakaoProfile);
+        String uniqueNickname = generateUniqueNickname();
+
+        KakaoLoginRequestDto kakaoLoginRequestDto = new KakaoLoginRequestDto(kakaoProfile, uniqueNickname);
         Member member = memberRepository.findByKakaoId(kakaoLoginRequestDto.getKakaoIdentifier()).orElseGet(() -> null);
         if (member == null) {
             log.info("카카오로 회원가입");
             member = memberRepository.save(kakaoLoginRequestDto.toEntity());
         }
-        String token = jwtTokenProvider.createToken(member.getNickname()); //임의로 만든 account로 토큰 생성.
+        String token = jwtTokenProvider.createToken(member.getEmail()); //임의로 만든 account로 토큰 생성.
         return new KakaoLoginResponseDto(token, member.getName(), member.getMemberId(), member.getNickname());
     } // 그냥 회원 가입 할 경우는 로그인을 따로 진행해야 토큰을 주고, 카카오 로그인을 할 경우 처음 등록시에도 토큰을 부여? -> yes
+
+    private String generateUniqueNickname() {
+        String randomNumber;
+        boolean nicknameDuplicate;
+        do {
+            randomNumber = Integer.toString((random.nextInt(900_000) + 100_000));
+            nicknameDuplicate = memberRepository.existsByNickname("유저-" + randomNumber);
+        } while (nicknameDuplicate);
+        return "유저-" + randomNumber;
+    }
 
     //(2)
     // 발급 받은 accessToken 으로 카카오 회원 정보 얻기

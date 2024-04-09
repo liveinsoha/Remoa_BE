@@ -19,16 +19,20 @@ public class KakaoLoginRequestDto {
 
     private Long kakaoIdentifier;
 
-    public KakaoLoginRequestDto(KakaoProfile profile) {
-        this.nickname = profile.getProperties().getNickname() + profile.getId(); //닉네임과 카카오 식별자를 가지고 임의로 account를 만듦.
+    private String email;
+
+    public KakaoLoginRequestDto(KakaoProfile profile, String uniqueNickname) {
+        this.nickname = uniqueNickname; //닉네임과 카카오 식별자를 가지고 임의로 account를 만듦.
         this.password = "password";
         this.name = profile.getProperties().getNickname();
         this.profileImageFileName = profile.getProperties().getProfile_image();
         this.kakaoIdentifier = profile.getId();
+        this.email = profile.getKakao_account().getEmail();
     }
 
     public Member toEntity() {
         Member member = new Member();
+        member.setEmail(this.email);
         member.setNickname(this.nickname);
         member.setPassword(this.password);
         member.setName(this.name);

@@ -3,10 +3,11 @@ package Remoa.BE.Web.Notice.Dto.Req;
 import Remoa.BE.Web.Notice.domain.Inquiry;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 import java.time.LocalDateTime;
-
-public class ReqInqueryDto {
+@Data
+public class ReqInquiryDto {
 
     @Schema(description = "제목", example = "문의사항 제목")
     @NotNull

@@ -10,6 +10,8 @@ import Remoa.BE.Web.Feedback.Repository.FeedbackRepository;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Repository.PostRepository;
+import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.exception.response.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,8 +33,8 @@ public class FeedbackReplyService {
 
 
     public FeedbackReply registerFeedbackReply(Member member, Long postId, Long feedbackId, String content) {
-        Post post = postRepository.getReferenceById(postId);
-        Feedback feedback = feedbackRepository.getReferenceById(feedbackId);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
+        Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
         FeedbackReply feedbackReply = FeedbackReply.createFeedbackReply(post, member, feedback, content);
         feedbackReplyRepository.save(feedbackReply);
         return feedbackReply;

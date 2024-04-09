@@ -1,5 +1,6 @@
 package Remoa.BE.Web.Post.Dto.Request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @NoArgsConstructor
@@ -7,15 +8,22 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@Schema(description = "게시물 등록 양식")
 public class UploadPostForm {
 
-    private String title; // Post name
+    @Schema(description = "게시물 제목", example = "서울 빅데이터 공모전 최우수상")
+    private String title; // 게시물 제목
 
-    private String contestName;
+    @Schema(description = "공모전명", example = "서울 빅데이터 공모전")
+    private String contestName; // 공모전명
 
-    private String contestAwardType;
+    @Schema(description = "수상 유형", example = "최우수상")
+    private String contestAwardType; // 수상 유형
 
-    private String category; // Category name
+    @Schema(description = "카테고리", example = "etc")
+    private String category; // 카테고리 이름
 
-    private String youtubeLink; // 유튜브 링크
+    @Schema(description = "YouTube 링크", example = "https://www.youtube.com/watch?v=video_id")
+    private String youtubeLink; // YouTube 링크
+
 }

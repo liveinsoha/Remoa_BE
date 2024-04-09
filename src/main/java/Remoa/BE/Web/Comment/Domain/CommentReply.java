@@ -6,6 +6,7 @@ import Remoa.BE.Web.Post.Domain.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +16,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
+@SQLRestriction("deleted = false") // 검색시 deleted = false 조건을 where 절에 추가
 public class CommentReply {
 
     @Id

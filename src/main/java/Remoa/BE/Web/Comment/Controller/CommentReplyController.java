@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 
-@Tag(name = "레퍼런스 대댓글 기능", description = "레퍼런스 댓글 기능 API")
+@Tag(name = "레퍼런스 코멘트 대댓글 기능 Test Completed", description = "레퍼런스 코멘트 대댓글 기능 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -44,12 +44,12 @@ public class CommentReplyController {
 
     //대댓글 작성
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "대댓글을 성공적으로 등록했습니다."),
+            @ApiResponse(responseCode = "200", description = "코멘트 대댓글을 성공적으로 등록했습니다."),
             @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/reference/{reference_id}/comment/{comment_id}")
-    @Operation(summary = "레퍼런스 대댓글 작성", description = "특정 댓글에 대댓글을 작성합니다.")
+    @Operation(summary = "코멘트 대댓글 작성 Test completed", description = "코멘트에 대댓글을 작성합니다.")
     public ResponseEntity<BaseResponse<List<ResCommentDto>>> registerCommentReply(@RequestBody ReqCommentReplyDto req,
                                                                                   @PathVariable("reference_id") Long postId,
                                                                                   @PathVariable("comment_id") Long commentId,
@@ -71,12 +71,12 @@ public class CommentReplyController {
 
     // 대댓글 수정
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "대댓글을 성공적으로 수정했습니다."),
+            @ApiResponse(responseCode = "200", description = "코멘트 대댓글을 성공적으로 수정했습니다."),
             @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/reference/comment/{comment_id}/reply/{reply_id}")
-    @Operation(summary = "레퍼런스 대댓글 수정", description = "작성한 레퍼런스 대댓글을 수정합니다.")
+    @Operation(summary = "코멘트 대댓글 수정 Test completed", description = "작성한 코멘트 대댓글을 수정합니다.")
     public ResponseEntity<BaseResponse<List<ResCommentDto>>> modifyCommentReply(@RequestBody ReqCommentReplyDto req,
                                                                                 @PathVariable("comment_id") Long commentId,
                                                                                 @PathVariable("reply_id") Long replyId,
@@ -99,12 +99,12 @@ public class CommentReplyController {
 
     // 대댓글 삭제
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "레퍼런스 대댓글을 성공적으로 삭제했습니다."),
+            @ApiResponse(responseCode = "200", description = "코멘트 대댓글을 성공적으로 삭제했습니다."),
             @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/reference/comment/{comment_id}/reply/{reply_id}")
-    @Operation(summary = "레퍼런스 대댓글 삭제", description = "작성한 레퍼런스 대댓글을 삭제합니다.")
+    @Operation(summary = "코멘트 대댓글 삭제 Test Completed", description = "작성한 코멘트 대댓글을 삭제합니다.")
     public ResponseEntity<BaseResponse<List<ResCommentDto>>> deleteCommentReply(@PathVariable("reply_id") Long replyId,
                                                                                 @AuthenticationPrincipal MemberDetails memberDetails) {
         CommentReply reply = commentReplyService.findOne(replyId);

@@ -1,6 +1,7 @@
-package Remoa.BE.Web.Post.Dto.Response;
+package Remoa.BE.Web.CommentFeedback.Dto;
 
 
+import Remoa.BE.Web.Post.Dto.Response.ResCommentFeedbackDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResReceivedCommentFeedbackDto {
-    @Schema(description = "내가 받은 최신 댓글/피드백들의 목록")
+    @Schema(description = "내가 받은 최신 코멘트/피드백들의 목록")
     private List<ResCommentFeedbackDto> contents;
 
     @Schema(description = "전체 페이지 수")
@@ -23,6 +24,6 @@ public class ResReceivedCommentFeedbackDto {
     @Schema(description = "모든 코멘트의 수")
     private long totalOfAllComments;
 
-    @Schema(description = "현재 페이지의 댓글/피드백 수")
+    @Schema(description = "현재 페이지의 코멘트/피드백 수")
     private int totalOfPageElements;
 }

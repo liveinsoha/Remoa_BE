@@ -7,6 +7,7 @@ import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
-@Where(clause = "deleted = false")
+@SQLRestriction("deleted = false")
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentFeedback {
@@ -30,7 +31,7 @@ public class CommentFeedback {
     @Column(name = "comment_feedback_id")
     private Long commentFeedbackId;
 
-
+    @Enumerated(EnumType.STRING)
     private ContentType type;
 
     @ManyToOne(fetch = LAZY)

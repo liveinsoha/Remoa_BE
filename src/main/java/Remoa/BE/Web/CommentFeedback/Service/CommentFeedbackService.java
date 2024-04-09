@@ -54,6 +54,9 @@ public class CommentFeedbackService {
         return commentFeedbackRepository.findByMemberOrderByTime(member).orElse(null);
     }
 
+
+
+
     public CommentFeedback findComment(Comment comment) {
         return commentFeedbackRepository.findByComment(comment)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment not found"));

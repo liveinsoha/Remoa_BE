@@ -16,12 +16,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @Transactional(readOnly = true)
 @Slf4j
 @RequiredArgsConstructor
 public class MemberService {
+
+    private final Random random = new Random();
+
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
@@ -36,12 +40,11 @@ public class MemberService {
     }
 
     public GeneralLoginRes generalLogin(GeneralLoginReq loginReq) {
-        Member member = memberRepository.findByNickname(loginReq.getNickname()).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
+        Member member = memberRepository.findByEmail(loginReq.getEmail()).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
         if (!bCryptPasswordEncoder.matches(loginReq.getPassword(), member.getPassword())) {
             throw new BaseException(CustomMessage.UNAUTHORIZED);
         }
-
-        String token = jwtTokenProvider.createToken(member.getNickname());
+        String token = jwtTokenProvider.createToken(member.getEmail());
 
         return new GeneralLoginRes(token, member.getNickname(), member.getName(), member.getMemberId());
     }
@@ -56,21 +59,35 @@ public class MemberService {
 
     public void adminSignUp(AdminSignUpReq adminSignUpReq) {
         adminSignUpReq.setPassword(bCryptPasswordEncoder.encode(adminSignUpReq.getPassword()));
-        if (memberRepository.existsByNickname(adminSignUpReq.getNickname())) {
+        if (memberRepository.existsByEmail(adminSignUpReq.getEmail())) {
             throw new BaseException(CustomMessage.BAD_DUPLICATE);
         }
-
         memberRepository.save(adminSignUpReq.toEntity());
     }
 
-    public GeneralSignUpRes generalSignUp(GeneraSignUpReq signUpReq) {
+    public GeneralSignUpRes generalSignUp(GeneralSignUpReq signUpReq) {
         signUpReq.setPassword(bCryptPasswordEncoder.encode(signUpReq.getPassword()));
-        if (memberRepository.existsByNickname(signUpReq.getNickname())) {
+        if (memberRepository.existsByEmail(signUpReq.getEmail())) {
             throw new BaseException(CustomMessage.BAD_DUPLICATE);
         }
 
-        Member member = memberRepository.save(signUpReq.toEntity());
-        return new GeneralSignUpRes(member.getMemberId());
+        String uniqueNickname = generateUniqueNickname();
+
+        Member member = signUpReq.toEntity();
+        member.setNickname(uniqueNickname);
+        Member savedMember = memberRepository.save(member);
+
+        return new GeneralSignUpRes(savedMember.getMemberId());
+    }
+
+    private String generateUniqueNickname() {
+        String randomNumber;
+        boolean nicknameDuplicate;
+        do {
+            randomNumber = Integer.toString((random.nextInt(900_000) + 100_000));
+            nicknameDuplicate = memberRepository.existsByNickname("유저-" + randomNumber);
+        } while (nicknameDuplicate);
+        return "유저-" + randomNumber;
     }
 
     public Boolean isNicknameDuplicate(String nickname) {

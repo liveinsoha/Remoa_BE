@@ -29,6 +29,9 @@ public class ResFeedbackReplyDto {
     @Schema(description = "좋아요 여부")
     private Boolean isLiked;
 
+    @Schema(description = "삭제여부", example = "false")
+    private Boolean isDeleted;
+
     @Schema(description = "피드백 답글 작성 시간", example = "2023-03-27T23:18:47")
     private LocalDateTime feedbackReplyTime;
 
@@ -38,6 +41,7 @@ public class ResFeedbackReplyDto {
         this.content = feedbackReply.getContent();
         this.likeCount = feedbackReply.getLikeCount();
         this.isLiked = isLiked;
+        this.isDeleted = feedbackReply.getDeleted();
         this.feedbackReplyTime = feedbackReply.getFeedbackReplyTime();
     }
 }

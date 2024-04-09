@@ -1,6 +1,6 @@
 package Remoa.BE.Web.Notice.Service;
 
-import Remoa.BE.Web.Notice.Dto.Req.ReqInqueryDto;
+import Remoa.BE.Web.Notice.Dto.Req.ReqInquiryDto;
 import Remoa.BE.Web.Notice.Dto.Res.ResAllInquiryDto;
 import Remoa.BE.Web.Notice.Dto.Res.ResInquiryDto;
 import Remoa.BE.Web.Notice.Repository.InquiryRepository;
@@ -25,9 +25,9 @@ public class InquiryService {
     private final InquiryRepository inquiryRepository;
 
     @Transactional
-    public void registerInquiry(ReqInqueryDto reqInqueryDto, String enrollNickname) {
+    public void registerInquiry(ReqInquiryDto reqInquiryDto, String enrollNickname) {
 
-        inquiryRepository.save(reqInqueryDto.toEntityInquiry(enrollNickname));
+        inquiryRepository.save(reqInquiryDto.toEntityInquiry(enrollNickname));
     }
 
     public HashMap<String, Object> getInquiry(int pageNumber) {

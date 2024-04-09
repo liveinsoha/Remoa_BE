@@ -29,21 +29,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static Remoa.BE.config.DbInit.categoryList;
 
-@Tag(name = "레퍼런스 관리 기능", description = "레퍼런스 관리 기능 API")
+@Tag(name = "레퍼런스 기능 Test Completed", description = "레퍼런스 기능 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -61,7 +59,9 @@ public class PostController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/reference")
-    @Operation(summary = "레퍼런스 검색", description = "레퍼런스를 검색합니다.")
+    @Operation(summary = "레퍼런스 검색 Test completed", description = "레퍼런스를 검색합니다." +
+            "<br> category : \"idea\", \"marketing\", \"design\", \"video\", \"digital\", \"etc\"" +
+            "<br> sort : \"views\", \"likes\", \"scrap\"")
     public ResponseEntity<BaseResponse<SearchPostResponseDto>> searchPost(HttpServletRequest request,
                                                                           @RequestParam(required = false, defaultValue = "all") String category,
                                                                           @RequestParam(required = false, defaultValue = "newest") String sort,
@@ -137,8 +137,8 @@ public class PostController {
             @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PostMapping("/reference") // 게시물 등록
-    @Operation(summary = "레퍼런스 등록", description = "레퍼런스를 등록합니다.")
+    @PostMapping(value = "/reference", consumes = MediaType.MULTIPART_FORM_DATA_VALUE) //게시물 등록
+    @Operation(summary = "레퍼런스 등록 Test completed", description = "레퍼런스를 등록합니다.")
     public ResponseEntity<BaseResponse<ResReferenceRegisterDto>> share(@RequestPart("data") UploadPostForm uploadPostForm,
                                                                        @RequestPart("thumbnail") MultipartFile thumbnail,
                                                                        @RequestPart(value = "file", required = false) List<MultipartFile> uploadFiles,
@@ -173,8 +173,8 @@ public class PostController {
             @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PutMapping("/reference/{reference_id}") // 게시물 수정
-    @Operation(summary = "레퍼런스 수정", description = "레퍼런스를 수정합니다.")
+    @PutMapping(value = "/reference/{reference_id}" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // 게시물 수정
+    @Operation(summary = "레퍼런스 수정 Test completed", description = "레퍼런스를 수정합니다.")
     public ResponseEntity<BaseResponse<ResReferenceRegisterDto>> modify(@PathVariable("reference_id") Long referenceId,
                                                                         @RequestPart("data") UploadPostForm uploadPostForm,
                                                                         @RequestPart("thumbnail") MultipartFile thumbnail,
@@ -183,7 +183,7 @@ public class PostController {
 
         Long memberId = memberDetails.getMemberId();
         Post post = postService.findOne(referenceId);
-        if (memberId != post.getMember().getMemberId()) {
+        if (!Objects.equals(memberId, post.getMember().getMemberId())) {
             throw new BaseException(CustomMessage.CAN_NOT_ACCESS);
             //return errorResponse(CustomMessage.CAN_NOT_ACCESS);
         }
@@ -218,7 +218,7 @@ public class PostController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/reference/{reference_id}/like")
-    @Operation(summary = "레퍼런스 좋아요", description = "레퍼런스에 좋아요를 합니다.")
+    @Operation(summary = "레퍼런스 좋아요 Test completed", description = "레퍼런스에 좋아요를 합니다.")
     public ResponseEntity<BaseResponse<LikePostResponseDto>> likeReference(@PathVariable("reference_id") Long referenceId,
                                                                            @AuthenticationPrincipal MemberDetails memberDetails) {
 
@@ -229,10 +229,9 @@ public class PostController {
             throw new BaseException(CustomMessage.SELF_LIKE);
             //return errorResponse(CustomMessage.SELF_LIKE);
         }
-        postService.likePost(memberId, myMember, referenceId);
-        int count = postService.findLikeCount(referenceId);
+        Post post = postService.likePost(memberId, myMember, referenceId);
         LikePostResponseDto responseDto = LikePostResponseDto.builder()
-                .likeCount(count)
+                .likeCount(post.getLikeCount())
                 .build();
 
         BaseResponse<LikePostResponseDto> response = new BaseResponse<>(CustomMessage.OK, responseDto);
@@ -251,7 +250,7 @@ public class PostController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/reference/{reference_id}/scrap")
-    @Operation(summary = "레퍼런스 스크랩", description = "레퍼런스를 스크랩합니다.")
+    @Operation(summary = "레퍼런스 스크랩 Test completed", description = "레퍼런스를 스크랩합니다.")
     public ResponseEntity<BaseResponse<ScrapReferenceResponseDto>> scrapReference(@PathVariable("reference_id") Long referenceId,
                                                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
 
@@ -263,9 +262,9 @@ public class PostController {
             //return errorResponse(CustomMessage.SELF_SCRAP);
         }
         boolean isScrapAction = postService.scrapPost(memberId, myMember, referenceId);
-        int count = postService.findScrapCount(referenceId);
+        Post post = postService.findOne(referenceId);
         ScrapReferenceResponseDto responseDto = ScrapReferenceResponseDto.builder()
-                .scrapCount(count)
+                .scrapCount(post.getScrapCount())
                 .build();
         // 스크랩의 경우 : 200 OK, 스크랩 해제의 경우 : 201 CREATED
         CustomMessage customMessage = isScrapAction ? CustomMessage.OK_SCRAP : CustomMessage.OK_UNSCRAP;
@@ -275,14 +274,14 @@ public class PostController {
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "레퍼런스 스크랩 성공"),
+            @ApiResponse(responseCode = "200", description = "레퍼런스 삭제 성공"),
             @ApiResponse(responseCode = "400", description = MessageUtils.BAD_REQUEST,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/user/reference/{reference_id}")
-    @Operation(summary = "레퍼런스 삭제", description = "레퍼런스를 삭제합니다.")
+    @Operation(summary = "레퍼런스 삭제 Test completed", description = "레퍼런스를 삭제합니다.")
     public ResponseEntity<Object> deleteReference(@PathVariable("reference_id") Long[] postId,
                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
         Long memberId = memberDetails.getMemberId();

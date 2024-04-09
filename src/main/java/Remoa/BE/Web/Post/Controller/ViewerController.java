@@ -5,7 +5,7 @@ import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.MemberUtils;
 import Remoa.BE.Web.Member.Service.MemberService;
 import Remoa.BE.Web.Post.Domain.Post;
-import Remoa.BE.Web.Post.Dto.Response.ResFeedbackDto;
+import Remoa.BE.Web.Feedback.Dto.ResFeedbackDto;
 import Remoa.BE.Web.Post.Dto.Response.ResReferenceViewerDto;
 import Remoa.BE.Web.Post.Service.PostService;
 import Remoa.BE.config.auth.MemberDetails;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "레퍼런스 상세 기능", description = "레퍼런스 상세 기능 API")
+@Tag(name = "레퍼런스 상세 기능 Test Completed", description = "레퍼런스 상세 기능 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class ViewerController {
 
 
     @GetMapping("/reference/{reference_id}")
-    @Operation(summary = "레퍼런스 조회", description = "특정 레퍼런스의 상세 정보를 조회합니다.")
+    @Operation(summary = "레퍼런스 조회 Test Completed", description = "특정 레퍼런스의 상세 정보를 조회합니다.")
     public ResponseEntity<BaseResponse<ResReferenceViewerDto>> referenceViewer(@PathVariable("reference_id") Long referenceId,
                                                                                @AuthenticationPrincipal MemberDetails memberDetails) {
 
@@ -59,7 +59,7 @@ public class ViewerController {
         // 위에 생성한 CommentDto, FeedbackDto를 이용해 ReferenceViewerDto 매핑.
         ResReferenceViewerDto resReferenceViewerDto = new ResReferenceViewerDto(post,
                 post.getMember(),
-                memberUtils.isMymMemberFollowMember(myMember, post.getMember()),
+                memberUtils.isMyMemberFollowMember(myMember, post.getMember()),
                 memberUtils.isLikedPost(myMember, post),
                 memberUtils.isScrapedPost(myMember, post),
                 comments,

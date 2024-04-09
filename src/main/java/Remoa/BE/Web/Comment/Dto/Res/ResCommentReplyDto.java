@@ -34,12 +34,16 @@ public class ResCommentReplyDto {
     @Schema(description = "대댓글 작성 시간", example = "2023-03-27T23:18:47")
     private LocalDateTime commentRepliedTime;
 
+    @Schema(description = "삭제여부", example = "false")
+    private Boolean isDeleted;
+
     public ResCommentReplyDto(CommentReply commentReply, Boolean isLiked, Boolean isFollow) {
         this.commentReplyId = commentReply.getCommentReplyId();
         this.member = new ResMemberInfoDto(commentReply.getMember(), isFollow);
         this.content = commentReply.getContent();
         this.likeCount = commentReply.getLikeCount();
         this.isLiked = isLiked;
+        this.isDeleted = commentReply.getDeleted();
         this.commentRepliedTime = commentReply.getCommentRepliedTime();
     }
 

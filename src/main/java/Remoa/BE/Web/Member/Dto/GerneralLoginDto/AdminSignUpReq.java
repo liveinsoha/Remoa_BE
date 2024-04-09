@@ -13,11 +13,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-@Schema(description = "일반 회원가입 요청")
+@Schema(description = "어드민 회원가입 요청")
 public class AdminSignUpReq {
 
     @NotBlank
-    private String nickname;
+    private String email;
 
     @NotBlank
     private String password;
@@ -27,7 +27,8 @@ public class AdminSignUpReq {
 
     public Member toEntity() {
         Member member = new Member();
-        member.setNickname(this.nickname);
+        member.setEmail(this.email);
+        member.setNickname("유저");
         member.setPassword(this.password);
         member.setName(this.name);
         member.setRole(Role.ADMIN);

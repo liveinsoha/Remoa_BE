@@ -2,6 +2,7 @@ package Remoa.BE.Web.Member.Domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
 import jakarta.persistence.*;
@@ -9,7 +10,7 @@ import jakarta.persistence.*;
 @Entity
 @Getter
 @Setter
-@Where(clause = "deleted = false")
+@SQLRestriction("deleted = false")
 @Table(name = "follow", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"from_member_id", "to_member_id"})
 })

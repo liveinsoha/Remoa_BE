@@ -49,7 +49,7 @@ public class SecureConfig {
                         .requestMatchers(HttpMethod.POST, POST_AUTH_BLACKLIST).authenticated()
                         .requestMatchers(HttpMethod.PUT, PUT_AUTH_BLACKLIST).authenticated()
                         .requestMatchers(HttpMethod.DELETE, DELETE_AUTH_BLACKLIST).authenticated().
-                        requestMatchers(ADMIN_AUTH_BLACKLIST).hasAuthority(Role.ADMIN.toString()) // ADMIN 권한
+                        requestMatchers(HttpMethod.POST,ADMIN_AUTH_BLACKLIST).hasAuthority(Role.ADMIN.toString()) // ADMIN 권한
                         //인증되어야 들어갈 수 있다.
                         .anyRequest().permitAll())
                 // 나머지는 모두 허용

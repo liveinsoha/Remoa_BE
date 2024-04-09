@@ -10,6 +10,8 @@ import Remoa.BE.Web.Member.Domain.*;
 import Remoa.BE.Web.CommentFeedback.Service.CommentFeedbackService;
 import Remoa.BE.Web.Post.Repository.PostRepository;
 import Remoa.BE.Web.Post.Service.PostService;
+import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.exception.response.BaseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,7 +46,7 @@ public class FeedbackService {
     }
 
     public List<Feedback> findAllFeedbacksOfPost(Long postId) {
-        Post post = postRepository.getReferenceById(postId);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
         return feedbackRepository.findByPost(post);
     }
 
@@ -57,7 +59,7 @@ public class FeedbackService {
     public void registerFeedback(Member member, String content, Long postId, Integer pageNumber) {
 
 
-        Post post = postRepository.getReferenceById(postId);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
 
         LocalDateTime time = LocalDateTime.now();
 

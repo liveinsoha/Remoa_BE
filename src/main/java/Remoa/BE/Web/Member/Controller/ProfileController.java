@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -58,7 +59,7 @@ public class ProfileController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user")
-    @Operation(summary = "사용자 정보 조회", description = "현재 로그인한 사용자의 정보를 조회합니다.")
+    @Operation(summary = "사용자 정보 조회 Test Completed", description = "현재 로그인한 사용자의 정보를 조회합니다.")
     public ResponseEntity<BaseResponse<ResUserInfoDto>> userInfo(@AuthenticationPrincipal MemberDetails memberDetails) {
 
         Long memberId = memberDetails.getMemberId();
@@ -83,7 +84,7 @@ public class ProfileController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/user")
-    @Operation(summary = "프로필 수정", description = "현재 로그인한 사용자의 프로필 정보를 수정합니다.")
+    @Operation(summary = "프로필 수정 Test Completed", description = "현재 로그인한 사용자의 프로필 정보를 수정합니다.")
     public ResponseEntity<Object> editProfile(@RequestBody EditProfileForm form, @AuthenticationPrincipal MemberDetails memberDetails) {
 
         Long memberId = memberDetails.getMemberId();
@@ -120,7 +121,7 @@ public class ProfileController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/user/img")
-    @Operation(summary = "프로필 사진 조회", description = "현재 로그인한 사용자의 프로필 사진 URL을 조회합니다.")
+    @Operation(summary = "프로필 사진 조회 Test Completed" , description = "현재 로그인한 사용자의 프로필 사진 URL을 조회합니다.")
     public ResponseEntity<Object> showImage(@AuthenticationPrincipal MemberDetails memberDetails) {
 
         Long memberId = memberDetails.getMemberId();
@@ -136,8 +137,8 @@ public class ProfileController {
             @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PutMapping("/user/img")
-    @Operation(summary = "프로필 사진 업로드", description = "현재 로그인한 사용자의 프로필 사진을 업로드합니다.")
+    @PutMapping(value = "/user/img" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "프로필 사진 업로드 Test Completed", description = "현재 로그인한 사용자의 프로필 사진을 업로드합니다.")
     public ResponseEntity<Object> upload(@RequestPart("file") MultipartFile multipartFile, @AuthenticationPrincipal MemberDetails memberDetails) throws IOException {
 
         // 확장자는 jpg, png만 가능
@@ -179,7 +180,7 @@ public class ProfileController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/user/img")
-    @Operation(summary = "프로필 사진 삭제", description = "현재 로그인한 사용자의 프로필 사진을 삭제합니다.")
+    @Operation(summary = "프로필 사진 삭제 Test Completed", description = "현재 로그인한 사용자의 프로필 사진을 삭제합니다.")
     public ResponseEntity<Object> remove(@AuthenticationPrincipal MemberDetails memberDetails) throws MalformedURLException {
 
         Long memberId = memberDetails.getMemberId();
@@ -187,7 +188,7 @@ public class ProfileController {
 
         //유저가 기본프로필이 아니라면
         if (!Objects.equals(myMember.getProfileImage(), "https://remoafiles.s3.ap-northeast-2.amazonaws.com/img/profile_img.png")) {
-            awsS3Service.removeProfileUrl(myMember.getProfileImage());
+      //      awsS3Service.removeProfileUrl(myMember.getProfileImage());
             myMember.setProfileImage("https://remoafiles.s3.ap-northeast-2.amazonaws.com/img/profile_img.png");
             memberService.join(myMember);
         }
@@ -208,7 +209,9 @@ public class ProfileController {
             @ApiResponse(responseCode = "200", description = "닉네임 사용 중인지 확인 성공"),
     })
     @GetMapping("/nickname")
-    @Operation(summary = "닉네임 중복 확인", description = "사용자가 입력한 닉네임이 이미 사용 중인지 확인합니다.")
+    @Operation(summary = "닉네임 중복 확인 Test Completed", description = "사용자가 입력한 닉네임이 이미 사용 중인지 확인합니다." +
+            "<br> true : 사용가능" +
+            "<br> false : 사용불가")
     public ResponseEntity<BaseResponse<Boolean>> checkNicknameDuplicate(@RequestParam String nickname) {
         if (memberService.isNicknameDuplicate(nickname)) {
             BaseResponse<Boolean> response = new BaseResponse<>(CustomMessage.OK, false);

@@ -15,10 +15,10 @@ public class GeneralLoginRes {
     @Schema(description = "JWT 인증 토큰", example = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QWNjb3VudCIsImFjY291bnQiOiJ0ZXN0QWNjb3VudCIsImlhdCI6MTcxMDIyMTI1MCwiZXhwIjoxNzEwODI2MDUwfQ.wpMIUytr8MpqxGpFAJIlF8kG9OSm2KJE7xeUWQHVnAU")
     String token;
 
-    @Schema(description = "회원 닉네임", example = "testNickname")
+    @Schema(description = "회원 닉네임", example = "testNickname1")
     String nickName;
 
-    @Schema(description = "회원 이름", example = "이원준")
+    @Schema(description = "회원 이름", example = "김김김")
     String memberName;
 
     @Schema(description = "회원 번호", example = "1")

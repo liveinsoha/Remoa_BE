@@ -10,6 +10,8 @@ import Remoa.BE.Web.Comment.Repository.CommentLikeRepository;
 import Remoa.BE.Web.CommentFeedback.Service.CommentFeedbackService;
 import Remoa.BE.Web.Post.Repository.PostRepository;
 import Remoa.BE.Web.Member.Domain.*;
+import Remoa.BE.exception.CustomMessage;
+import Remoa.BE.exception.response.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -41,7 +43,7 @@ public class CommentService {
     }
 
     public List<Comment> findAllCommentsOfPost(Long postId) {
-        Post post = postRepository.getReferenceById(postId);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
         return commentRepository.findByPost(post);
     }
 
@@ -70,13 +72,13 @@ public class CommentService {
     }
 
     /**
-     * 댓글 등록
+     * 코멘트 등록
      */
     @Transactional
     public Comment registerComment(Member member, String content, Long postId) {
 
         LocalDateTime time = LocalDateTime.now();
-        Post post = postRepository.getReferenceById(postId);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
 
         Comment commentObj = Comment.createComment(post, member, content, time);
         commentRepository.saveComment(commentObj);
@@ -88,7 +90,7 @@ public class CommentService {
     }
 
     /**
-     * 댓글 수정
+     * 코멘트 수정
      */
     @Transactional
     public void modifyComment(String comment, Long commentId) {

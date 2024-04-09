@@ -50,6 +50,10 @@ public class PostService {
 
     private static final int HOME_PAGE_SIZE = 12;
 
+    public List<Post> findPostsByMember(Member member) {
+        return postRepository.findByMember(member);
+    }
+
     public Post findOne(Long postId) {
         Optional<Post> post = postRepository.findOne(postId);
         return post.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found"));
@@ -62,18 +66,18 @@ public class PostService {
         return findPost.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found"));
     }
 
-    public int findScrapCount(Long postId){
-        Post findPost = findOne(postId);
-        return findPost.getPostScarps().size();
-    }
+//    public int findScrapCount(Long postId){
+//        Post findPost = findOne(postId);
+//        return findPost.getPostScarps().size();
+//    }
 
-    public int findLikeCount(Long postId){
-        Post findPost = findOne(postId);
-        return findPost.getPostLikes().size();
-    }
+//    public int findLikeCount(Long postId){
+//        Post findPost = findOne(postId);
+//        return findPost.getPostLikes().size();
+//    }
 
     @Transactional
-    public void likePost(Long memberId, Member myMember, Long referenceId) {
+    public Post likePost(Long memberId, Member myMember, Long referenceId) {
         Post post = findOne(referenceId);
         Integer postLikeCount = post.getLikeCount(); // 이 게시물을 좋아요한 수
 
@@ -83,9 +87,10 @@ public class PostService {
             PostLike postLikeObj = PostLike.createPostLike(myMember, post);
             postLikeRepository.save(postLikeObj);
         } else {
-            post.setLikeCount(post.getLikeCount() - 1); // 좋아요 + 1
+            post.setLikeCount(post.getLikeCount() - 1); // 좋아요 - 1
             postLikeRepository.deleteById(postLike.getPostLikeId());
         }
+        return post;
     }
 
     @Transactional
@@ -99,7 +104,7 @@ public class PostService {
 
         // 비디오만 따로 처리
         if (category.getName().equals("video")) {
-            if(uploadFiles != null){
+            if (uploadFiles != null) {
                 throw new IOException();
             }
             post = Post.builder()
@@ -117,9 +122,8 @@ public class PostService {
                     .deleted(false)
                     .build();
             fileService.saveUploadFiles(post, thumbnail, null);
-        }
-        else {
-            if(uploadFiles == null){
+        } else {
+            if (uploadFiles == null) {
                 throw new IOException();
             }
             //확장자 확인
@@ -148,8 +152,7 @@ public class PostService {
                         .build();
 
                 fileService.saveUploadFiles(post, thumbnail, uploadFiles);
-            }
-            else {
+            } else {
                 throw new IOException();
             }
         }
@@ -167,7 +170,7 @@ public class PostService {
 
         // 비디오만 따로 처리
         if (category.getName().equals("video")) {
-            if(uploadFiles != null){
+            if (uploadFiles != null) {
                 throw new IOException();
             }
 
@@ -180,9 +183,8 @@ public class PostService {
 
 
             fileService.modifyUploadFiles(originPost, thumbnail, null);
-        }
-        else {
-            if(uploadFiles == null){
+        } else {
+            if (uploadFiles == null) {
                 throw new IOException();
             }
             //확장자 확인
@@ -204,12 +206,10 @@ public class PostService {
                 originPost.setPageCount(pageCount);
 
                 fileService.modifyUploadFiles(originPost, thumbnail, uploadFiles);
-            }
-            else {
+            } else {
                 throw new IOException();
             }
         }
-
         return originPost;
     }
 
@@ -295,7 +295,7 @@ public class PostService {
         return postPagingRepository.findByMemberRecentTwelve(member);
     }
 
-    public boolean checkMemberPost(Member myMember, Long postId){
+    public boolean checkMemberPost(Member myMember, Long postId) {
         // postId를 이용해 Post 엔티티에 등록된 Member를 불러오고 이 Member가 컨트롤러에서 불러온 Member와 맞는지 확인하고 true/false 반환
         Post post = findOne(postId);
         Member member = post.getMember();
@@ -311,7 +311,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deleteReference(Long postId){
+    public void deleteReference(Long postId) {
         postRepository.deletePost(postId);
     }
 

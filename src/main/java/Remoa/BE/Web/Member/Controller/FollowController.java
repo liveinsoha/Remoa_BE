@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Objects;
 
-@Tag(name = "팔로우 기능", description = "팔로우 기능 API")
+@Tag(name = "팔로우 기능 Test Completed", description = "팔로우 기능 API")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -56,7 +56,7 @@ public class FollowController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/follow/{member_id}")
-    @Operation(summary = "팔로우 기능", description = "특정 회원을 팔로우하거나 언팔로우합니다.")
+    @Operation(summary = "팔로우 기능 Test completed", description = "특정 회원을 팔로우하거나 언팔로우합니다.")
     public ResponseEntity<?> follow(@PathVariable("member_id") Long toMemberId,
                                     @AuthenticationPrincipal MemberDetails memberDetails) {
         //나 자신을 팔로우 하는 경우
@@ -85,7 +85,7 @@ public class FollowController {
             @ApiResponse(responseCode = "200", description = "팔로워 및 팔로잉 수 성공적 조회"),
     })
     @GetMapping("/follow/{member_id}")
-    @Operation(summary = "팔로워 및 팔로잉 조회", description = "특정 회원의 팔로워 및 팔로잉 수를 조회합니다.")
+    @Operation(summary = "팔로워 및 팔로잉 조회 Test completed", description = "특정 회원의 팔로워 및 팔로잉 수를 조회합니다.")
     public ResponseEntity<BaseResponse<ResFollowerAndFollowingDto>> showFollowers(@PathVariable("member_id") Long memberId) {
         Member member = memberService.findOne(memberId);
         List<Integer> count = followService.followerAndFollowing(member);

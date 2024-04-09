@@ -1,13 +1,6 @@
-package Remoa.BE.Web.Post.Dto.Response;
+package Remoa.BE.Web.CommentFeedback.Dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
-
+/*
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,7 +8,7 @@ import java.util.List;
 public class ReceivedFeedbackResponse {
 
     @Schema(description = "포스트의 댓글 목록")
-    private List<ResReceivedCommentDto> posts;
+    private List<ResReceivedFeedbackAndComment> posts;
 
     @Schema(description = "총 페이지 수")
     private int totalPages;
@@ -27,4 +20,4 @@ public class ReceivedFeedbackResponse {
     private int totalOfPageElements;
 
     // 생성자, 게터, 세터
-}
+}*/

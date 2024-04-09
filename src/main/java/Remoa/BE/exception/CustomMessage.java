@@ -26,6 +26,7 @@ public enum CustomMessage {
     //400 잘못된 요청
     VALIDATED(HttpStatus.BAD_REQUEST, "잘못된 요청", "요청한 값이 유효성검사를 통과하지 못했습니다"),
     NO_ID(HttpStatus.BAD_REQUEST, "잘못된 요청", "요청한 Id가 존재하지 않습니다"),
+    NO_CATEGORY(HttpStatus.BAD_REQUEST, "잘못된 요청", "요청한 카테고리가 존재하지 않습니다"),
 
     SELF_FOLLOW(HttpStatus.BAD_REQUEST, "서비스 로직상 오류", "자신을 팔로우할 수 없습니다"),
 
@@ -45,6 +46,7 @@ public enum CustomMessage {
 
     FILE_SIZE_OVER(HttpStatus.BAD_REQUEST, "파일 업/다운로드 오류", "파일 사이즈가 최대 허용 크기보다 큽니다."),
     IMAGE_PIXEL_LACK(HttpStatus.BAD_REQUEST, "파일 업/다운로드 오류", "이미지 픽셀이 최소 규격에 미달합니다."),
+    
     //401권한오류
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "권한이 없습니다", "인증에 필요한 쿠키 정보가 없습니다"),
     NOT_VALID_TOKEN(HttpStatus.UNAUTHORIZED, "권한이 없습니다", "토큰이 유효하지 않습니다."),
@@ -54,6 +56,7 @@ public enum CustomMessage {
     CAN_NOT_ACCESS(HttpStatus.FORBIDDEN, "권한이 없습니다", "다른 사람이 작성한 글에 접근할 수 없습니다"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없습니다", "ADMIN 계정만 접근이 가능합니다"),
 
+   
     // 500번대
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류", "서버에서 오류가 발생했습니다.");
 

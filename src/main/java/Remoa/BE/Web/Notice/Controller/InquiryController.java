@@ -1,6 +1,8 @@
 package Remoa.BE.Web.Notice.Controller;
 
-import Remoa.BE.Web.Notice.Dto.Req.ReqInqueryDto;
+import Remoa.BE.Web.Member.Domain.Member;
+import Remoa.BE.Web.Member.Service.MemberService;
+import Remoa.BE.Web.Notice.Dto.Req.ReqInquiryDto;
 import Remoa.BE.Web.Notice.Dto.Res.ResAllInquiryDto;
 import Remoa.BE.Web.Notice.Service.InquiryService;
 import Remoa.BE.config.auth.MemberDetails;
@@ -26,12 +28,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
-@Tag(name = "문의 기능", description = "문의 기능 API")
+@Tag(name = "문의 기능 Test Completed", description = "문의 기능 API")
 @RestController
 @RequiredArgsConstructor
 public class InquiryController {
 
     private final InquiryService inquiryService;
+    private final MemberService memberService;
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "문의가 성공적으로 등록되었습니다."),
@@ -39,11 +42,11 @@ public class InquiryController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/inquiry")
-    @Operation(summary = "문의 등록", description = "문의를 등록합니다.")
-    public ResponseEntity<Object> postInquiry(@Validated @RequestBody ReqInqueryDto inqueryDto,
+    @Operation(summary = "문의 등록 Test Completed", description = "문의를 등록합니다.")
+    public ResponseEntity<Object> postInquiry(@Validated @RequestBody ReqInquiryDto inquiryDto,
                                               @AuthenticationPrincipal MemberDetails memberDetails) {
-
-        inquiryService.registerInquiry(inqueryDto, memberDetails.getNickname());
+        Member myMember = memberService.findOne(memberDetails.getMemberId());
+        inquiryService.registerInquiry(inquiryDto, myMember.getNickname());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -53,7 +56,7 @@ public class InquiryController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/inquiry")
-    @Operation(summary = "문의 목록 조회", description = "페이지별 문의 목록을 조회합니다.")
+    @Operation(summary = "문의 목록 조회 Test Completed", description = "페이지별 문의 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<HashMap<String, Object>>> getInquiry(@RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber) {
         pageNumber -= 1;
         if (pageNumber < 0) {
@@ -72,7 +75,7 @@ public class InquiryController {
             @ApiResponse(responseCode = "400", description = "해당 문의가 존재하지 않습니다.")
     })
     @GetMapping("/inquiry/view")
-    @Operation(summary = "문의 상세 조회", description = "특정 문의의 상세 정보를 조회합니다.")
+    @Operation(summary = "문의 상세 조회 Test Completed", description = "특정 문의의 상세 정보를 조회합니다.")
     public ResponseEntity<BaseResponse<ResAllInquiryDto>> getInquiryDetail(@RequestParam int view,
                                                                            HttpServletRequest request) {
 

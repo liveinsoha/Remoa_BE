@@ -31,7 +31,7 @@ public class AwsS3Service {
 
         if(!Objects.equals(profileImgUrl, "https://remoafiles.s3.ap-northeast-2.amazonaws.com/img/profile_img.png")) {
             //기존 프로필 사진 s3에서 삭제
-            removeProfileUrl(profileImgUrl);
+        //    removeProfileUrl(profileImgUrl);
         }
 
         //파일 타입과 사이즈 저장

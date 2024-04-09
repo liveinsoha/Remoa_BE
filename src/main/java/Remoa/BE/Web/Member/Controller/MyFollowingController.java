@@ -22,7 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "마이페이지 팔로잉", description = "마이페이지 팔로잉 기능 API")
+@Tag(name = "마이페이지 팔로잉 Test Completed", description = "마이페이지 팔로잉 기능 API")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -38,7 +38,7 @@ public class MyFollowingController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/following") // 마이페이지 팔로잉 관리화면
-    @Operation(summary = "마이페이지 팔로잉 관리화면", description = "현재 로그인된 사용자의 팔로잉 목록을 조회합니다.")
+    @Operation(summary = "마이페이지 팔로잉 관리화면 Test Completed", description = "현재 로그인된 사용자의 팔로잉 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<ResMypageFollowing>> mypageFollowing(@AuthenticationPrincipal MemberDetails memberDetails) {
         Long myMemberId = memberDetails.getMemberId();
 
@@ -56,7 +56,7 @@ public class MyFollowingController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/follower") // 마이페이지 팔로워 관리화면
-    @Operation(summary = "마이페이지 팔로워 관리화면", description = "현재 로그인된 사용자의 팔로워 목록을 조회합니다.")
+    @Operation(summary = "마이페이지 팔로워 관리화면 Test Completed", description = "현재 로그인된 사용자의 팔로워 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<ResMypageFollowing>> mypageFollower(@AuthenticationPrincipal MemberDetails memberDetails) {
 
         Long myMemberId = memberDetails.getMemberId();

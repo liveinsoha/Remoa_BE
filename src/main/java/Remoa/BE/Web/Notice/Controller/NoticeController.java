@@ -1,5 +1,7 @@
 package Remoa.BE.Web.Notice.Controller;
 
+import Remoa.BE.Web.Member.Domain.Member;
+import Remoa.BE.Web.Member.Service.MemberService;
 import Remoa.BE.Web.Notice.Dto.Req.ReqNoticeDto;
 import Remoa.BE.Web.Notice.Dto.Res.NoticeResponseDto;
 import Remoa.BE.Web.Notice.Dto.Res.ResAllNoticeDto;
@@ -26,12 +28,13 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-@Tag(name = "공지 기능", description = "공지 기능 API")
+@Tag(name = "공지 기능 Test Completed", description = "공지 기능 API")
 @RestController
 @RequiredArgsConstructor
 public class NoticeController {
 
     private final NoticeService noticeService;
+    private final MemberService memberService;
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "공지가 성공적으로 등록되었습니다."),
@@ -43,17 +46,17 @@ public class NoticeController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/notice")
-    @Operation(summary = "공지 등록", description = "공지를 등록합니다.")
+    @Operation(summary = "공지 등록 Test Completed", description = "공지를 등록합니다.")
     public ResponseEntity<Object> postNotice(@Validated @RequestBody ReqNoticeDto reqNoticeDto,
                                              @AuthenticationPrincipal MemberDetails memberDetails) {
-
-        noticeService.registerNotice(reqNoticeDto, memberDetails.getNickname());
+        Member myMember = memberService.findOne(memberDetails.getMemberId());
+        noticeService.registerNotice(reqNoticeDto, myMember.getNickname());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     @GetMapping("/notice")
-    @Operation(summary = "공지 목록 조회", description = "페이지별 공지 목록을 조회합니다.")
+    @Operation(summary = "공지 목록 조회 Test Completed", description = "페이지별 공지 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<NoticeResponseDto>> getNotice(@RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber) {
         pageNumber -= 1;
         if (pageNumber < 0) {
@@ -70,7 +73,7 @@ public class NoticeController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.")
     })
     @GetMapping("/notice/view")
-    @Operation(summary = "공지 상세 조회", description = "특정 공지의 상세 정보를 조회합니다.")
+    @Operation(summary = "공지 상세 조회 Test Completed", description = "특정 공지의 상세 정보를 조회합니다.")
     public ResponseEntity<Object> getNoticeDetail(@RequestParam int view,
                                                   HttpServletRequest request) {
 

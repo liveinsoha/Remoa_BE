@@ -3,6 +3,7 @@ package Remoa.BE.Web.Member.Service;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.Dto.Res.ResMypageFollowing;
 import Remoa.BE.Web.Member.Dto.Res.ResMypageList;
+import Remoa.BE.Web.Member.MemberUtils;
 import Remoa.BE.Web.Member.Repository.FollowRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,15 +22,15 @@ public class MyFollowingService {
 
     private final FollowService followService;
 
-    public List<ResMypageList> findResMypageList(Member member, int isFollowing){
+    public List<ResMypageList> findResMypageList(Member member, int isFollowing) {
         List<ResMypageList> resMypageLists = new ArrayList<>();
         List<Member> memberList;
 
-        if(isFollowing == 1) { // 마이페이지 팔로잉 관리 화면
+        if (isFollowing == 1) { // 마이페이지 팔로잉 관리 화면
             memberList = followRepository.loadFollows(member); // member가 팔로우하는 유저 확인
             log.warn("followList : ");
             memberList.forEach(m -> log.warn(m.getNickname()));
-        } else{ // 마이페이지 팔로워 관리 화면
+        } else { // 마이페이지 팔로워 관리 화면
             memberList = followRepository.loadFollowers(member);
             log.warn("followerList : ");
             memberList.forEach(m -> log.warn(m.getNickname()));
@@ -49,7 +50,7 @@ public class MyFollowingService {
                         .oneLineIntroduction(followMember.getOneLineIntroduction())
                         .memberId(followMember.getMemberId())
                         // 팔로잉 목록에서는 팔로워를 팔로잉하는지 확인할 필요가 없으므로 null처리
-                        .isFollow(null)
+                        .isFollow(Boolean.TRUE)
                         .build();
                 resMypageLists.add(resMypageList);
             } else { // 마이페이지 팔로워 관리 화면
@@ -72,11 +73,12 @@ public class MyFollowingService {
 
     /**
      * 마이페이지 팔로잉 관리 화면에 사용
+     *
      * @param member
      * @return ResMypageFollowing
      */
     @Transactional
-    public ResMypageFollowing mypageFollowing(Member member){
+    public ResMypageFollowing mypageFollowing(Member member) {
 
         return ResMypageFollowing.builder()
                 .memberId(member.getMemberId())
@@ -88,11 +90,12 @@ public class MyFollowingService {
 
     /**
      * 마이페이지 팔로워 관리 화면에 사용
+     *
      * @param member
      * @return ResMypageFollowing
      */
     @Transactional
-    public ResMypageFollowing mypageFollower(Member member){
+    public ResMypageFollowing mypageFollower(Member member) {
 
         return ResMypageFollowing.builder()
                 .memberId(member.getMemberId())

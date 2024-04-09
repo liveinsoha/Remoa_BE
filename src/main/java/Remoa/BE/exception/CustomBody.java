@@ -1,6 +1,5 @@
 package Remoa.BE.exception;
 
-import Remoa.BE.exception.response.BaseResponse;
 import Remoa.BE.exception.response.ErrorResponse;
 import Remoa.BE.exception.response.FailResponse;
 import Remoa.BE.exception.response.SuccessResponse;
