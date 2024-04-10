@@ -19,23 +19,9 @@ public class BeApplication {
 		System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
 	}
 
-	@Value("${uploadFolder}")
-	private String uploadFolder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(BeApplication.class, args);
-	}
-
-	@PostConstruct
-	public void createUploadFolder() {
-		Path upload = Paths.get(uploadFolder);
-		try {
-			if (!Files.exists(upload)) {
-				Files.createDirectory(upload);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 }
