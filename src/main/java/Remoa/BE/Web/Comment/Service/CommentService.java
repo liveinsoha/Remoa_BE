@@ -126,7 +126,7 @@ public class CommentService {
         CommentFeedback commentOfCommentFeedback = commentFeedbackService.findComment(commentObj);
         commentOfCommentFeedback.setDeleted(true);
 
-        commentObj.setDeleted(true);
+        commentRepository.delete(commentObj);
     }
 
 

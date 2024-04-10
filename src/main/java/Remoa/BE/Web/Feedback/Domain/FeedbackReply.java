@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
+@SQLDelete(sql = "UPDATE feedback_reply SET deleted = true WHERE feedback_reply_id = ?")
 @SQLRestriction("deleted = false") // 검색시 deleted = false 조건을 where 절에 추가
 public class FeedbackReply {
 

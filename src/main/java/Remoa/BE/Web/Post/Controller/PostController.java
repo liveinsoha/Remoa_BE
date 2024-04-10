@@ -282,7 +282,7 @@ public class PostController {
     })
     @DeleteMapping("/user/reference/{reference_id}")
     @Operation(summary = "레퍼런스 삭제 Test completed", description = "레퍼런스를 삭제합니다.")
-    public ResponseEntity<Object> deleteReference(@PathVariable("reference_id") Long[] postId,
+    public ResponseEntity<Void> deleteReference(@PathVariable("reference_id") Long[] postId,
                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
@@ -306,7 +306,7 @@ public class PostController {
     })
     @DeleteMapping("/user/referenceCategory/{category}")
     @Operation(summary = "레퍼런스 카테고리 삭제", description = "레퍼런스 카테고리를 삭제합니다.")
-    public ResponseEntity<Object> deleteReferenceCategory(@PathVariable("category") String category,
+    public ResponseEntity<Void> deleteReferenceCategory(@PathVariable("category") String category,
                                                           @AuthenticationPrincipal MemberDetails memberDetails) {
 
         Long categoryId = CommonFunction.getCategoryId(category); // 카테고리 id 추출.

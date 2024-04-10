@@ -106,8 +106,7 @@ public class FeedbackService {
 
         CommentFeedback feedbackOfCommentFeedback = commentFeedbackService.findFeedback(feedbackObj);
         feedbackOfCommentFeedback.setDeleted(true);
-
-        feedbackObj.setDeleted(true);
+        feedbackRepository.delete(feedbackObj);
     }
 
     @Transactional

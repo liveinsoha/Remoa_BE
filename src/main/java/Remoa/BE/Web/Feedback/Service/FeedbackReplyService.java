@@ -61,7 +61,7 @@ public class FeedbackReplyService {
     public void deleteFeedbackReply(Long feedbackReplyId) {
         FeedbackReply feedbackReply = feedbackReplyRepository.findById(feedbackReplyId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Feedback reply not found"));
-        feedbackReply.setDeleted(true); // 변경 감지
+        feedbackReplyRepository.delete(feedbackReply);
     }
 
     public Optional<FeedbackReplyLike> findFeedbackReplyLike(Member member, FeedbackReply feedbackReply) {

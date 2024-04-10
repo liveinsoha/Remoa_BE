@@ -60,7 +60,7 @@ public class CommentReplyService {
     public void deleteCommentReply(Long commentReplyId) {
         CommentReply commentReply = commentReplyRepository.findById(commentReplyId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment reply not found"));
-        commentReply.setDeleted(true); // 변경 감지
+        commentReplyRepository.delete(commentReply);
     }
 
     public Optional<CommentReplyLike> findCommentReplyLike(Member member, CommentReply commentReply) {

@@ -7,6 +7,7 @@ import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
@@ -22,6 +23,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @SQLRestriction("deleted = false")
+@SQLDelete(sql = "UPDATE comment_feedback SET deleted = true WHERE comment_feedback_id = ?")
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentFeedback {

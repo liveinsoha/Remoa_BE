@@ -44,7 +44,7 @@ public class InquiryController {
     })
     @PostMapping("/inquiry")
     @Operation(summary = "문의 등록 Test Completed", description = "문의를 등록합니다.")
-    public ResponseEntity<Object> postInquiry(@Validated @RequestBody ReqInquiryDto inquiryDto,
+    public ResponseEntity<Void> postInquiry(@Validated @RequestBody ReqInquiryDto inquiryDto,
                                               @AuthenticationPrincipal MemberDetails memberDetails) {
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         inquiryService.registerInquiry(inquiryDto, myMember.getNickname());
@@ -60,7 +60,7 @@ public class InquiryController {
     })
     @PutMapping("/inquiry/{inquiryId}")
     @Operation(summary = "문의 수정 Test Completed", description = "문의를 수정합니다.")
-    public ResponseEntity<Object> updateInquiry(@PathVariable Long inquiryId,
+    public ResponseEntity<Void> updateInquiry(@PathVariable Long inquiryId,
                                                 @Validated @RequestBody ReqInquiryDto inquiryDto,
                                                 @AuthenticationPrincipal MemberDetails memberDetails) {
         Member myMember = memberService.findOne(memberDetails.getMemberId());

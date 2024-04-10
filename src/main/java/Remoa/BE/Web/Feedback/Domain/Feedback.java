@@ -3,12 +3,10 @@ package Remoa.BE.Web.Feedback.Domain;
 import Remoa.BE.Web.CommentFeedback.Domain.CommentFeedback;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Post;
+import jakarta.persistence.CascadeType;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import jakarta.persistence.*;
 
@@ -20,7 +18,8 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
-@SQLRestriction("deleted = false")
+@SQLDelete(sql = "UPDATE feedback SET deleted = true WHERE feedback_id = ?")
+@SQLRestriction("deleted = false") // 검색시 deleted = false 조건을 where 절에 추가
 public class Feedback {
 
     @Id

@@ -141,7 +141,7 @@ public class MyPostController {
     @Operation(summary = "다른 사용자의 레퍼런스 목록 조회 Test Completed", description = "다른 사용자가 작성한 레퍼런스 목록을 조회합니다." +
             "<br> category : \"idea\", \"marketing\", \"design\", \"video\", \"digital\", \"etc\"" +
             "<br> sort : \"views\", \"likes\", \"scrap\"")
-    public ResponseEntity<Object> otherReference(HttpServletRequest request,
+    public ResponseEntity<Void> otherReference(HttpServletRequest request,
                                                  @PathVariable("member_id") Long memberId,
                                                  @RequestParam(required = false, defaultValue = "all") String category,
                                                  @RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber,

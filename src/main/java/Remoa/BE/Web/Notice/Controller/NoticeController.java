@@ -51,7 +51,7 @@ public class NoticeController {
     })
     @PostMapping("/notice")
     @Operation(summary = "공지 등록 Test Completed", description = "공지를 등록합니다.")
-    public ResponseEntity<Object> postNotice(@Validated @RequestBody ReqNoticeDto reqNoticeDto,
+    public ResponseEntity<Void> postNotice(@Validated @RequestBody ReqNoticeDto reqNoticeDto,
                                              @AuthenticationPrincipal MemberDetails memberDetails) {
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         noticeService.registerNotice(reqNoticeDto, myMember.getNickname());
@@ -70,7 +70,7 @@ public class NoticeController {
     })
     @PutMapping("/notice/{noticeId}")
     @Operation(summary = "공지 수정 Test Completed", description = "공지를 수정합니다.")
-    public ResponseEntity<Object> updateNotice(@PathVariable Long noticeId,
+    public ResponseEntity<Void> updateNotice(@PathVariable Long noticeId,
                                                @Validated @RequestBody ReqNoticeDto reqNoticeDto,
                                                @AuthenticationPrincipal MemberDetails memberDetails) {
         Member myMember = memberService.findOne(memberDetails.getMemberId());
@@ -89,7 +89,7 @@ public class NoticeController {
     })
     @DeleteMapping("/notice/{noticeId}")
     @Operation(summary = "공지 삭제 Test Completed", description = "공지를 삭제합니다.")
-    public ResponseEntity<Object> deleteNotice(@PathVariable Long noticeId,
+    public ResponseEntity<Void> deleteNotice(@PathVariable Long noticeId,
                                                @AuthenticationPrincipal MemberDetails memberDetails) {
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         noticeService.deleteNotice(noticeId, myMember);

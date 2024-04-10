@@ -22,7 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "문의 답변 기능", description = "문의 답변 기능 API")
+@Tag(name = "문의 답변 기능 Test Completed", description = "문의 답변 기능 API")
 @RestController
 @RequiredArgsConstructor
 public class InquiryReplyController {
@@ -39,10 +39,11 @@ public class InquiryReplyController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/inquiry/{inquiry_id}/reply")
-    @Operation(summary = "문의 답글 등록 ", description = "문의 답글을 등록합니다.")
-    public ResponseEntity<Object> postInquiry(@Validated @RequestBody ReqInquiryReplyDto inquiryReplyDto,
-                                              @PathVariable("inquiry_id") Long inquiryId,
-                                              @AuthenticationPrincipal MemberDetails memberDetails) {
+    @Operation(summary = "문의 답글 등록 Test Completed", description = "문의 답글을 등록합니다." +
+            "<br> 응답데이터 정의 필요")
+    public ResponseEntity<Void> postInquiry(@Validated @RequestBody ReqInquiryReplyDto inquiryReplyDto,
+                                            @PathVariable("inquiry_id") Long inquiryId,
+                                            @AuthenticationPrincipal MemberDetails memberDetails) {
 
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         inquiryReplyService.registerInquiryReply(inquiryReplyDto, inquiryId, myMember.getNickname());
@@ -60,10 +61,11 @@ public class InquiryReplyController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/inquiry/reply/{reply_id}")
-    @Operation(summary = "문의 답변 수정", description = "기존 문의 답변을 수정합니다.")
-    public ResponseEntity<Object> updateInquiryReply(@PathVariable("reply_id") Long replyId,
-                                                     @Validated @RequestBody ReqInquiryReplyDto updatedReplyDto,
-                                                     @AuthenticationPrincipal MemberDetails memberDetails) {
+    @Operation(summary = "문의 답변 수정 Test Completed", description = "기존 문의 답변을 수정합니다." +
+            "<br> 응답데이터 정의 필요")
+    public ResponseEntity<Void> updateInquiryReply(@PathVariable("reply_id") Long replyId,
+                                                   @Validated @RequestBody ReqInquiryReplyDto updatedReplyDto,
+                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
         // 요청한 멤버 정보 조회
         Member myMember = memberService.findOne(memberDetails.getMemberId());
 

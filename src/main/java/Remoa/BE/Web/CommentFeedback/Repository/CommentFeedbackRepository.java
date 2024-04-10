@@ -1,6 +1,8 @@
 package Remoa.BE.Web.CommentFeedback.Repository;
 
+import Remoa.BE.Web.Comment.Domain.Comment;
 import Remoa.BE.Web.CommentFeedback.Domain.CommentFeedback;
+import Remoa.BE.Web.Feedback.Domain.Feedback;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Category;
 import Remoa.BE.Web.Post.Domain.Post;
@@ -32,6 +34,9 @@ public interface CommentFeedbackRepository extends JpaRepository<CommentFeedback
     Page<CommentFeedback> findOldestCommentFeedback(Member member, Pageable pageable);
 
 
+    void deleteByFeedback(Feedback feedback);
+
+    void deleteByComment(Comment comment);
 
 
 }

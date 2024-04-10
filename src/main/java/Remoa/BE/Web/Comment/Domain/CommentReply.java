@@ -6,6 +6,7 @@ import Remoa.BE.Web.Post.Domain.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
+@SQLDelete(sql = "UPDATE comment_reply SET deleted = true WHERE comment_reply_id = ?")
 @SQLRestriction("deleted = false") // 검색시 deleted = false 조건을 where 절에 추가
 public class CommentReply {
 
@@ -79,7 +81,6 @@ public class CommentReply {
         commentReply.setComment(parentComment);
         commentReply.setLikeCount(0);
         commentReply.setCommentRepliedTime(LocalDateTime.now());
-        commentReply.setDeleted(false);
         return commentReply;
     }
 
