@@ -47,7 +47,7 @@ public class AuthConstant {
     // ADMIN 역할에 대한 인증이 필요한 경로
     public static final String[] ADMIN_POST_AUTH_BLACKLIST = {"/notice", "/inquiry/{inquiry_id}/reply"};
 
-    public static final String[] ADMIN_PUT_AUTH_BLACKLIST = {"/notice/{noticeId}"};
+    public static final String[] ADMIN_PUT_AUTH_BLACKLIST = {"/notice/{noticeId}", "/inquiry/reply/{reply_id}"};
 
     public static final String[] ADMIN_DELETE_AUTH_BLACKLIST = {"/notice/{noticeId}"};
 }

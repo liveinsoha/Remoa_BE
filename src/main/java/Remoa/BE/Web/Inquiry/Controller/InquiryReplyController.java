@@ -1,5 +1,6 @@
 package Remoa.BE.Web.Inquiry.Controller;
 
+import Remoa.BE.Web.Inquiry.Domain.InquiryReply;
 import Remoa.BE.Web.Inquiry.Dto.Req.ReqInquiryDto;
 import Remoa.BE.Web.Inquiry.Dto.Req.ReqInquiryReplyDto;
 import Remoa.BE.Web.Inquiry.Service.InquiryReplyService;
@@ -19,10 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "문의 답변 기능", description = "문의 답변 기능 API")
 @RestController
@@ -50,4 +48,29 @@ public class InquiryReplyController {
         inquiryReplyService.registerInquiryReply(inquiryReplyDto, inquiryId, myMember.getNickname());
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "문의 답변이 성공적으로 수정되었습니다."),
+            @ApiResponse(responseCode = "400", description = MessageUtils.BAD_REQUEST,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = MessageUtils.FORBIDDEN,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PutMapping("/inquiry/reply/{reply_id}")
+    @Operation(summary = "문의 답변 수정", description = "기존 문의 답변을 수정합니다.")
+    public ResponseEntity<Object> updateInquiryReply(@PathVariable("reply_id") Long replyId,
+                                                     @Validated @RequestBody ReqInquiryReplyDto updatedReplyDto,
+                                                     @AuthenticationPrincipal MemberDetails memberDetails) {
+        // 요청한 멤버 정보 조회
+        Member myMember = memberService.findOne(memberDetails.getMemberId());
+
+        // 수정된 내용으로 문의 답변 업데이트
+        inquiryReplyService.updateInquiryReply(replyId, updatedReplyDto, myMember);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
