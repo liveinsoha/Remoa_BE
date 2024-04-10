@@ -36,7 +36,7 @@ public class AuthConstant {
     // PUT 메서드에 대한 인증이 필요한 경로
     public static final String[] PUT_AUTH_BLACKLIST
             = {"/user", "/user/img", "/reference/comment/{comment_id}", "/reference/feedback/{feedback_id}",
-            "/reference/{reference_id}", "/inquiry/{inquiryId}"};
+            "/reference/{reference_id}", "/inquiry/{inquiryId}", "/api/member/logout"};
 
     // DELETE 메서드에 대한 인증이 필요한 경로
     public static final String[] DELETE_AUTH_BLACKLIST

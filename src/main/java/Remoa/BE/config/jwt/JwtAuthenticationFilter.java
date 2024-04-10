@@ -1,5 +1,7 @@
 package Remoa.BE.config.jwt;
 
+import Remoa.BE.Web.Member.Domain.AccessToken;
+import Remoa.BE.Web.Member.Repository.AccessTokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * 만들어둔 jwt 패키지에 OncePerRequestFilter를 상속받는 유효성 체크용 필터를 만든다.
@@ -26,6 +29,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final AccessTokenRepository accessTokenRepository;
 
     // Request로 들어오는 Jwt Token의 유효성을 검증하는 filter를 filterChain에 등록합니다.
     @Override
@@ -40,10 +44,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         try {
             if (token != null) {
                 jwtTokenProvider.validateToken(token); //여기서 만료, 유효성 예외 발생.
-                Authentication auth = jwtTokenProvider.getAuthentication(token);  // 인증 객체 생성
-                SecurityContextHolder.getContext().setAuthentication(auth); // SecurityContext 에 Authentication 객체를 저장
-               log.info("인증 처리 함");//인증 객체를 통해 인증 처리
-
+                if (doNotLogout(token)) { // 토큰이 블랙리스트에 없는 경우에만 인증 처리
+                    Authentication auth = jwtTokenProvider.getAuthentication(token);  // 인증 객체 생성
+                    SecurityContextHolder.getContext().setAuthentication(auth); // SecurityContext 에 Authentication 객체를 저장
+                    log.info("인증 처리 함");//인증 객체를 통해 인증 처리
+                }
             }
         } catch (ExpiredJwtException e) {
             log.info("토큰이 있지만 기간이 만료 됨, 인증 필요한 api 접근시 예외 발생");
@@ -56,5 +61,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         filterChain.doFilter(servletRequest, servletResponse); //토큰이 없는 경우는 바로 다음 필터로 넘어감.
         //토큰 검증에서 예외가 발생하여도 인증이 필요 없는 경로로 요청한 경우 서블릿으로 진입가능하다. -> 정상적인 응답이 가능.
         //토큰 검증에서 예외가 발생하고 인증이 필요한 경로로 요청한 경우 서블릿 진입이 불가하고, -> 인증 예외 발생 ->  예외를 AuthenticationEntryPoint에서 다룬다.
+    }
+
+    private boolean doNotLogout(String accessToken) {
+        return accessTokenRepository.findByToken(accessToken).isEmpty();
     }
 }

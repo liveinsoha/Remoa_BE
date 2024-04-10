@@ -1,6 +1,7 @@
 package Remoa.BE.config;
 
 import Remoa.BE.Web.Member.Domain.Role;
+import Remoa.BE.Web.Member.Repository.AccessTokenRepository;
 import Remoa.BE.config.jwt.CustomAuthenticationEntryPoint;
 import Remoa.BE.config.jwt.JwtAccessDeniedHandler;
 import Remoa.BE.config.jwt.JwtAuthenticationFilter;
@@ -30,6 +31,7 @@ public class SecureConfig {
 
     private final CorsFilter corsFilter;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AccessTokenRepository accessTokenRepository;
 
 
     @Bean
@@ -63,7 +65,7 @@ public class SecureConfig {
          인증이 되지않은 유저가 요청을 했을때 동작함
          */
 
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider,accessTokenRepository), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

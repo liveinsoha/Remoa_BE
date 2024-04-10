@@ -4,7 +4,9 @@ import Remoa.BE.Web.Member.Dto.GerneralLoginDto.GeneralLoginReq;
 import Remoa.BE.Web.Member.Dto.GerneralLoginDto.GeneralLoginRes;
 import Remoa.BE.Web.Member.Dto.GerneralLoginDto.GeneralSignUpReq;
 import Remoa.BE.Web.Member.Dto.GerneralLoginDto.GeneralSignUpRes;
+import Remoa.BE.Web.Member.Service.AuthService;
 import Remoa.BE.Web.Member.Service.MemberService;
+import Remoa.BE.config.jwt.JwtTokenProvider;
 import Remoa.BE.exception.CustomMessage;
 import Remoa.BE.exception.response.BaseResponse;
 import Remoa.BE.exception.response.ErrorResponse;
@@ -16,14 +18,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Random;
 
@@ -36,7 +37,8 @@ import java.util.Random;
 public class GeneralLoginController {
 
     private final MemberService memberService;
-    private final Random random = new Random();
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthService authService;
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = MessageUtils.SUCCESS),
@@ -63,5 +65,20 @@ public class GeneralLoginController {
     public ResponseEntity<BaseResponse<GeneralLoginRes>> login(@Parameter(name = "로그인 위한 회원 정보들", required = true) @RequestBody GeneralLoginReq loginRequestDto) {
         BaseResponse<GeneralLoginRes> response = new BaseResponse<>(CustomMessage.OK, memberService.generalLogin(loginRequestDto));
         return ResponseEntity.ok(response);
+    }
+
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = MessageUtils.SUCCESS),
+            @ApiResponse(responseCode = "401", description = MessageUtils.UNAUTHORIZED,
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @Operation(summary = "로그아웃", description = "로그아웃입니다. ")
+    @PutMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+
+        authService.logout(request);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -66,9 +66,9 @@ public class KakaoController {
 //                .build();
     }
 
-    /**
+   /* *//**
      * front-end에서 회원가입에 필요한 정보를 넘겨주면 KakaoSignupForm으로 받아 회원가입을 진행시켜줌
-     */
+     *//*
     @PostMapping("/signup/kakao")
     @Operation(summary = "카카오 회원가입", description = "카카오에서 제공하는 사용자 정보를 이용하여 회원가입을 진행합니다.")
     public ResponseEntity<BaseResponse<ResSignupDto>> signupKakaoMember(@RequestBody @Validated ReqSignupDto form, HttpServletRequest request) throws IOException {
@@ -110,10 +110,10 @@ public class KakaoController {
         return ResponseEntity.ok().body(response);
     }
 
-    /**
+    *//**
      * 로그아웃 기능
      * 세션무효화, jsession쿠키를 제거,
-     */
+     *//*
     @PostMapping("/user/logout")
     @Operation(summary = "로그아웃", description = "현재 로그인된 사용자를 로그아웃 처리합니다.")
     public ResponseEntity<?> logout(HttpServletRequest request) {
@@ -122,7 +122,7 @@ public class KakaoController {
 
         return new ResponseEntity<>(HttpStatus.OK);
 
-    }
+    }*/
 
 
 }
