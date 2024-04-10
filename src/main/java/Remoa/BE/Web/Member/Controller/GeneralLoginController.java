@@ -60,6 +60,7 @@ public class GeneralLoginController {
             @ApiResponse(responseCode = "404", description = MessageUtils.NOT_FOUND,
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
+
     @Operation(summary = "테스트용 일반 로그인 Test completed", description = "nickname, password 기반 일반 로그인입니다. ")
     @PostMapping("/login")
     public ResponseEntity<BaseResponse<GeneralLoginRes>> login(@Parameter(name = "로그인 위한 회원 정보들", required = true) @RequestBody GeneralLoginReq loginRequestDto) {

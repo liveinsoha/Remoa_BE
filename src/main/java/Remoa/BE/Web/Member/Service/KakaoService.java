@@ -48,7 +48,7 @@ public class KakaoService {
             member = memberRepository.save(kakaoLoginRequestDto.toEntity());
         }
         String token = jwtTokenProvider.createToken(member.getEmail()); //임의로 만든 account로 토큰 생성.
-        return new KakaoLoginResponseDto(token, member.getName(), member.getMemberId(), member.getNickname());
+        return new KakaoLoginResponseDto(token, member);
     } // 그냥 회원 가입 할 경우는 로그인을 따로 진행해야 토큰을 주고, 카카오 로그인을 할 경우 처음 등록시에도 토큰을 부여? -> yes
 
     private String generateUniqueNickname() {

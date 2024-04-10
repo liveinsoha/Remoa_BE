@@ -46,7 +46,7 @@ public class MemberService {
         }
         String token = jwtTokenProvider.createToken(member.getEmail());
 
-        return new GeneralLoginRes(token, member.getNickname(), member.getName(), member.getMemberId());
+        return new GeneralLoginRes(token, member);
     }
 
     private void validateDuplicateMember(Member member) {
