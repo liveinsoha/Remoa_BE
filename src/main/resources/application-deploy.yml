@@ -1,0 +1,66 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: deploy
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER}
+
+  jpa:
+    hibernate:
+      ddl-auto: create #create update none
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        #show-sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+security:
+  jwt:
+    token:
+      secret-key: "remoaremoaremoaremoaremoaremoaremoaremoaremoaremoaremoaremoaremoaremoaremoaremoaremoaremoa"
+      expire-length: "604800000" # 1 week in milliseconds
+
+springdoc:
+  version: '@project.version@'
+  api-docs:
+    path: /api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    groups-order: DESC
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    display-query-params-without-oauth2: true
+    doc-expansion: none # doc-expansion: Swagger UI에서 문서 확장을 비활성화한다.
+  paths-to-match: # 해당 패턴에 매칭되는 controller만 swagger-ui에 노출한다.
+    - /** # 전체 노출
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: remoa
+    stack:
+      auto: false
+
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: ERROR
