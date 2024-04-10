@@ -1,6 +1,6 @@
-package Remoa.BE.Web.Notice.Dto.Req;
+package Remoa.BE.Web.Inquiry.Dto.Req;
 
-import Remoa.BE.Web.Notice.domain.Inquiry;
+import Remoa.BE.Web.Inquiry.Domain.Inquiry;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

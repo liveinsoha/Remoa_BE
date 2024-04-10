@@ -1,14 +1,14 @@
-package Remoa.BE.Web.Notice.Service;
+package Remoa.BE.Web.Inquiry.Service;
 
+import Remoa.BE.Web.Inquiry.Dto.Res.ResInquiryPaging;
 import Remoa.BE.Web.Member.Domain.Member;
-import Remoa.BE.Web.Notice.Dto.Req.ReqInquiryDto;
-import Remoa.BE.Web.Notice.Dto.Res.ResAllInquiryDto;
-import Remoa.BE.Web.Notice.Dto.Res.ResInquiryDto;
-import Remoa.BE.Web.Notice.Repository.InquiryRepository;
-import Remoa.BE.Web.Notice.domain.Inquiry;
+import Remoa.BE.Web.Inquiry.Dto.Req.ReqInquiryDto;
+import Remoa.BE.Web.Inquiry.Dto.Res.ResAllInquiryDto;
+import Remoa.BE.Web.Inquiry.Dto.Res.ResInquiryDto;
+import Remoa.BE.Web.Inquiry.Repository.InquiryRepository;
+import Remoa.BE.Web.Inquiry.Domain.Inquiry;
 import Remoa.BE.exception.CustomMessage;
 import Remoa.BE.exception.response.BaseException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,12 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class InquiryService {
+
+    private static final int INQUIRY_NUMBER = 5;
 
     private final InquiryRepository inquiryRepository;
 
@@ -45,20 +48,19 @@ public class InquiryService {
         inquiry.updateInquiry(inquiryDto);
     }
 
-    public HashMap<String, Object> getInquiry(int pageNumber) {
+    public ResInquiryPaging getInquiry(int pageNumber) {
 
-        HashMap<String, Object> resultMap = new HashMap<>();
+        Page<Inquiry> inquiries = inquiryRepository.findAll(PageRequest.of(pageNumber, INQUIRY_NUMBER, Sort.by("postingTime").descending()));
+        List<ResInquiryDto> contents = inquiries.stream().map(ResInquiryDto::new).toList();
 
-        int INQUIRY_NUMBER = 5;
+        ResInquiryPaging resInquiryPaging = ResInquiryPaging.builder()
+                .inquiries(contents)
+                .totalPages(inquiries.getTotalPages())
+                .totalOfAllInquiries(inquiries.getTotalElements())
+                .totalOfPageElements(inquiries.getNumberOfElements())
+                .build();
 
-        Page<Inquiry> notices = inquiryRepository.findAll(PageRequest.of(pageNumber, INQUIRY_NUMBER, Sort.by("postingTime").descending()));
-
-        resultMap.put("inquiries", notices.stream().map(ResInquiryDto::new).collect(Collectors.toList())); //조회한 레퍼런스들
-        resultMap.put("totalPages", notices.getTotalPages()); //전체 페이지의 수
-        resultMap.put("totalOfAllNotices", notices.getTotalElements()); //모든 레퍼런스의 수
-        resultMap.put("totalOfPageElements", notices.getNumberOfElements()); //현 페이지의 레퍼런스 수
-
-        return resultMap;
+        return resInquiryPaging;
     }
 
     public ResAllInquiryDto getInquiryView(int view) {

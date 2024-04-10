@@ -2,7 +2,7 @@ package Remoa.BE.Web.Member.Service;
 
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.Dto.Req.EditProfileForm;
-import Remoa.BE.Web.Notice.Service.InquiryService;
+import Remoa.BE.Web.Inquiry.Service.InquiryService;
 import Remoa.BE.Web.Notice.Service.NoticeService;
 import Remoa.BE.utill.MemberInfo;
 import com.amazonaws.services.s3.AmazonS3;

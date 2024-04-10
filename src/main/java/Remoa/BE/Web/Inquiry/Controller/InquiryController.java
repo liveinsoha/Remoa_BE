@@ -1,10 +1,11 @@
-package Remoa.BE.Web.Notice.Controller;
+package Remoa.BE.Web.Inquiry.Controller;
 
+import Remoa.BE.Web.Inquiry.Dto.Res.ResInquiryPaging;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.Service.MemberService;
-import Remoa.BE.Web.Notice.Dto.Req.ReqInquiryDto;
-import Remoa.BE.Web.Notice.Dto.Res.ResAllInquiryDto;
-import Remoa.BE.Web.Notice.Service.InquiryService;
+import Remoa.BE.Web.Inquiry.Dto.Req.ReqInquiryDto;
+import Remoa.BE.Web.Inquiry.Dto.Res.ResAllInquiryDto;
+import Remoa.BE.Web.Inquiry.Service.InquiryService;
 import Remoa.BE.config.auth.MemberDetails;
 import Remoa.BE.exception.CustomMessage;
 import Remoa.BE.exception.response.BaseException;
@@ -75,20 +76,23 @@ public class InquiryController {
     })
     @GetMapping("/inquiry")
     @Operation(summary = "문의 목록 조회 Test Completed", description = "페이지별 문의 목록을 조회합니다.")
-    public ResponseEntity<BaseResponse<HashMap<String, Object>>> getInquiry(@RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber) {
+    public ResponseEntity<BaseResponse<ResInquiryPaging>> getInquiry(@RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber) {
         pageNumber -= 1;
         if (pageNumber < 0) {
             throw new BaseException(CustomMessage.PAGE_NUM_OVER);
             //    return errorResponse(CustomMessage.PAGE_NUM_OVER);
         }
 
-        BaseResponse<HashMap<String, Object>> response = new BaseResponse<>(CustomMessage.OK, inquiryService.getInquiry(pageNumber));
+        BaseResponse<ResInquiryPaging> response = new BaseResponse<>(CustomMessage.OK, inquiryService.getInquiry(pageNumber));
         return ResponseEntity.ok(response);
         // return successResponse(CustomMessage.OK, inquiryService.getInquiry(pageNumber));
     }
 
 
-
+    /**
+     *
+     * 리턴할 경우 문의 답변도 함께 리턴해야 하는지 결정해야 함
+     */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "문의 상세 정보를 성공적으로 조회했습니다."),
             @ApiResponse(responseCode = "400", description = "해당 문의가 존재하지 않습니다.")

@@ -321,7 +321,6 @@ public class MyActivityController {
             //  return errorResponse(CustomMessage.PAGE_NUM_OVER);
         }
 
-        Map<String, Object> result = new HashMap<>();
 
         Page<Feedback> feedbacks = feedbackService.findMyFeedback(pageNum, myMember, sortDirection);
 

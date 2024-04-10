@@ -1,6 +1,6 @@
-package Remoa.BE.Web.Notice.Repository;
+package Remoa.BE.Web.Inquiry.Repository;
 
-import Remoa.BE.Web.Notice.domain.Inquiry;
+import Remoa.BE.Web.Inquiry.Domain.Inquiry;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

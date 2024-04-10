@@ -1,7 +1,7 @@
-package Remoa.BE.Web.Notice.Dto.Res;
+package Remoa.BE.Web.Inquiry.Dto.Res;
 
 
-import Remoa.BE.Web.Notice.domain.Inquiry;
+import Remoa.BE.Web.Inquiry.Domain.Inquiry;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +33,9 @@ public class ResAllInquiryDto {
     @Schema(description = "조회 수", example = "50")
     private int view;
 
+    @Schema(description = "답변 여부", example = "true")
+    private Boolean isReplied;
+
     @Schema(description = "수정 여부", example = "true")
     private boolean modified; // 수정 여부 표시
 
@@ -47,6 +50,7 @@ public class ResAllInquiryDto {
         this.content = entity.getContent();
         this.postingTime = entity.getPostingTime().toLocalDate();
         this.view = entity.getView();
+        this.isReplied = entity.getReplied();
         this.modified = entity.getModified();
         this.modifiedTime = entity.getModifiedTime();
     }

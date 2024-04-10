@@ -1,6 +1,6 @@
-package Remoa.BE.Web.Notice.domain;
+package Remoa.BE.Web.Inquiry.Domain;
 
-import Remoa.BE.Web.Notice.Dto.Req.ReqInquiryDto;
+import Remoa.BE.Web.Inquiry.Dto.Req.ReqInquiryDto;
 import lombok.*;
 
 import jakarta.persistence.Entity;
@@ -19,8 +19,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE notice SET deleted = true WHERE notice_id = ?")
+@SQLDelete(sql = "UPDATE inquiry SET deleted = true WHERE inquiry_id = ?")
 public class Inquiry {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inquiryId;
@@ -37,6 +38,9 @@ public class Inquiry {
 
     @Builder.Default
     private Boolean modified = Boolean.FALSE;
+
+    @Builder.Default
+    private Boolean replied = Boolean.FALSE;
 
     @Builder.Default
     private Boolean deleted = Boolean.FALSE;
