@@ -15,7 +15,7 @@ import jakarta.annotation.PostConstruct;
 
 import java.util.List;
 
-@Profile("local")
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
