@@ -2,17 +2,17 @@ package Remoa.BE.Web.CommentFeedback.Service;
 
 import Remoa.BE.Web.Comment.Domain.Comment;
 import Remoa.BE.Web.CommentFeedback.Domain.CommentFeedback;
+import Remoa.BE.Web.CommentFeedback.Repository.CommentFeedbackRepository;
 import Remoa.BE.Web.Feedback.Domain.Feedback;
+import Remoa.BE.Web.Member.Domain.ContentType;
+import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Category;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Repository.CategoryRepository;
-import Remoa.BE.Web.CommentFeedback.Repository.CommentFeedbackRepository;
-import Remoa.BE.Web.Member.Domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static Remoa.BE.utill.Constant.CONTENT_PAGE_SIZE;
-import static Remoa.BE.utill.Constant.RECEIVED_PAGE_SIZE;
 
 @Service
 @RequiredArgsConstructor
@@ -78,7 +77,7 @@ public class CommentFeedbackService {
         if (categoryList.contains(categoryString)) {
             category = categoryRepository.findByCategoryName(categoryString);
         }
-        PageRequest pageable = PageRequest.of(pageNum, RECEIVED_PAGE_SIZE);
+        PageRequest pageable = PageRequest.of(pageNum, CONTENT_PAGE_SIZE);
         return commentFeedbackRepository.findRecentReceivedCommentFeedback(myMember, pageable, category);
     }
 

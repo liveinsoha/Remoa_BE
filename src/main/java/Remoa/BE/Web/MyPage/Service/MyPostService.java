@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static Remoa.BE.utill.Constant.HOME_PAGE_SIZE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,12 +28,12 @@ public class MyPostService {
 
     private final MyReferenceRepository  myReferenceRepository;
 
-    private static final int PAGE_SIZE = 12;
+
     private static final int RECEIVED_COMMENT_PAGE_SIZE = 3;
 
     public Page<Post> sortAndPaginatePostsByMember(int pageNumber, String sort, Member myMember, String title) {
         Page<Post> posts;
-        PageRequest pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+        PageRequest pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE);
         //switch문을 통해 각 옵션에 맞게 sorting
         switch (sort) {
             case "views":
@@ -56,17 +58,17 @@ public class MyPostService {
         PageRequest pageable;
         switch (sort) {
             case "views":
-                pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("views").descending());
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("views").descending());
                 break;
             case "likes":
-                pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("likeCount").descending());
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("likeCount").descending());
                 break;
             case "scrap":
-                pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("scrapCount").descending());
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("scrapCount").descending());
                 break;
             default:
                 //sort 문자열이 잘못됐을 경우 default인 최신순으로 정렬
-                pageable = PageRequest.of(pageNumber, PAGE_SIZE, Sort.by("postingTime").descending());
+                pageable = PageRequest.of(pageNumber, HOME_PAGE_SIZE, Sort.by("postingTime").descending());
                 break;
         }
         posts =  postPagingRepository.findByMemberAndCategoryAndTitleContaining(pageable, myMember, categoryRepository.findByCategoryName(category),title);

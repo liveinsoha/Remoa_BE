@@ -5,6 +5,7 @@ build/
 .vscode/
 *.yml
 
+
 ### STS ###
 .apt_generated
 .classpath
@@ -33,3 +34,4 @@ out/
 /nbdist/
 /.nb-gradle/
 
+/src/main/resources/

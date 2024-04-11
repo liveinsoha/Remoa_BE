@@ -61,7 +61,7 @@ public class PostController {
     @GetMapping("/reference")
     @Operation(summary = "레퍼런스 검색 Test completed", description = "레퍼런스를 검색합니다." +
             "<br> category : \"idea\", \"marketing\", \"design\", \"video\", \"digital\", \"etc\"" +
-            "<br> sort : \"views\", \"likes\", \"scrap\"")
+            "<br> sort : \"views\", \"likes\", \"scrap\", \"newest(default)\" " )
     public ResponseEntity<BaseResponse<SearchPostResponseDto>> searchPost(HttpServletRequest request,
                                                                           @RequestParam(required = false, defaultValue = "all") String category,
                                                                           @RequestParam(required = false, defaultValue = "newest") String sort,

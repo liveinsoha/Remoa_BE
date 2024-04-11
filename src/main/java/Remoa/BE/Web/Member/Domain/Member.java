@@ -85,7 +85,7 @@ public class Member {
      * 카카오 api에서 받아오는 카카오 프로필 사진 uri
      */
     @Column(name = "profile_image")
-    private String profileImage = "https://remoafiles.s3.ap-northeast-2.amazonaws.com/img/profile_img.png";
+    private String profileImage = "https://remoa.s3.ap-northeast-2.amazonaws.com/img/flow_noname_image.png";
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
