@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("deleted = false")
-public class PostScarp {
+public class PostScrap {
 
     @Id
     @GeneratedValue
@@ -36,8 +36,8 @@ public class PostScarp {
 
     private Boolean deleted = Boolean.FALSE;
 
-    public static PostScarp createPostScrap(Member member, Post post) {
-        PostScarp postScrap = new PostScarp();
+    public static PostScrap createPostScrap(Member member, Post post) {
+        PostScrap postScrap = new PostScrap();
         postScrap.setPost(post);
         postScrap.setScrapTime(LocalDateTime.now());
         postScrap.setMember(member);

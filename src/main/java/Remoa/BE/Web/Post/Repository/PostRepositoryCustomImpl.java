@@ -5,7 +5,7 @@ import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Category;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Domain.PostLike;
-import Remoa.BE.Web.Post.Domain.PostScarp;
+import Remoa.BE.Web.Post.Domain.PostScrap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -55,12 +55,12 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom  {
         return em.createQuery(query).getResultList();
     }
 
-    public void savePostScrap(PostScarp postScarp) {
-        em.persist(postScarp);
+    public void savePostScrap(PostScrap postScrap) {
+        em.persist(postScrap);
     }
 
-    public Optional<PostScarp> findScrapedPost(Member member, Post post) {
-        return em.createQuery("select ps from PostScarp ps where ps.member = :member and ps.post = :post", PostScarp.class)
+    public Optional<PostScrap> findScrapedPost(Member member, Post post) {
+        return em.createQuery("select ps from PostScrap ps where ps.member = :member and ps.post = :post", PostScrap.class)
                 .setParameter("member", member)
                 .setParameter("post", post)
                 .getResultStream()

@@ -13,7 +13,7 @@ import Remoa.BE.Web.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Web.Member.Service.FollowService;
 import Remoa.BE.Web.Member.Service.MemberService;
 import Remoa.BE.Web.MyPage.Dto.Res.*;
-import Remoa.BE.Web.Post.Domain.PostScarp;
+import Remoa.BE.Web.Post.Domain.PostScrap;
 import Remoa.BE.Web.Post.Dto.Response.*;
 import Remoa.BE.Web.Post.Service.PostService;
 import Remoa.BE.config.auth.MemberDetails;
@@ -141,7 +141,7 @@ public class MyActivityController {
         /**
          * 조회한 최근에 스크랩한 12개의 post들을 dto로 mapping.
          */
-        Page<PostScarp> posts = postService.findScrapedPost(pageNum, myMember);
+        Page<PostScrap> posts = postService.findScrapedPost(pageNum, myMember);
 
         //조회할 레퍼런스가 db에 있으나, 현재 페이지에 조회할 데이터가 없는 경우 == 페이지 번호를 잘못 입력
         if ((posts.getContent().isEmpty()) && (posts.getTotalElements() > 0)) {
@@ -150,7 +150,7 @@ public class MyActivityController {
         }
 
         List<ResPostDto> postDtoList = posts.stream()
-                .map(PostScarp::getPost)
+                .map(PostScrap::getPost)
                 .toList()
                 .stream()
                 .map(post -> ResPostDto.builder()

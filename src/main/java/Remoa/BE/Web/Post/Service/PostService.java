@@ -5,7 +5,7 @@ import Remoa.BE.Web.Member.Service.MemberService;
 import Remoa.BE.Web.Post.Domain.Category;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Domain.PostLike;
-import Remoa.BE.Web.Post.Domain.PostScarp;
+import Remoa.BE.Web.Post.Domain.PostScrap;
 import Remoa.BE.Web.Post.Dto.Request.UploadPostForm;
 import Remoa.BE.Web.Post.Repository.*;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +68,7 @@ public class PostService {
 
 //    public int findScrapCount(Long postId){
 //        Post findPost = findOne(postId);
-//        return findPost.getPostScarps().size();
+//        return findPost.getPostScraps().size();
 //    }
 
 //    public int findLikeCount(Long postId){
@@ -260,7 +260,7 @@ public class PostService {
         return Posts;
     }
 
-    public PostScarp getPostScrapByMemberIdAndPostId(Long memberId, Long postId) {
+    public PostScrap getPostScrapByMemberIdAndPostId(Long memberId, Long postId) {
         return postScrapRepository.findByMemberMemberIdAndPostPostId(memberId, postId);
     }
 
@@ -272,21 +272,21 @@ public class PostService {
 
         // scrapPost를 db에서 조회해보고 조회 결과가 null이면 scrapCount += 1, PostScrap 생성
         // null이 아니면 scrapCount -= 1, 조회결과인 해당 PostScrap 삭제
-        PostScarp postScarp = getPostScrapByMemberIdAndPostId(memberId, referenceId);
-        if (postScarp == null) {
+        PostScrap postScrap = getPostScrapByMemberIdAndPostId(memberId, referenceId);
+        if (postScrap == null) {
             post.setScrapCount(postScrapCount + 1); // 스크랩 수 1 증가
-            PostScarp postScrapObj = PostScarp.createPostScrap(myMember, post);
+            PostScrap postScrapObj = PostScrap.createPostScrap(myMember, post);
             postScrapRepository.save(postScrapObj);
             isScrapAction = true;
         } else {
             post.setScrapCount(post.getScrapCount() - 1); // 스크랩 수 1 차감
-            postScrapRepository.deleteById(postScarp.getPostScrapId()); // db에서 삭제
+            postScrapRepository.deleteById(postScrap.getPostScrapId()); // db에서 삭제
             isScrapAction = false;
         }
         return isScrapAction;
     }
 
-    public Page<PostScarp> findScrapedPost(int page, Member member) {
+    public Page<PostScrap> findScrapedPost(int page, Member member) {
         Pageable pageable = PageRequest.of(page, HOME_PAGE_SIZE);
         return postScrapRepository.findByMemberOrderByScrapTimeDesc(pageable, member);
     }

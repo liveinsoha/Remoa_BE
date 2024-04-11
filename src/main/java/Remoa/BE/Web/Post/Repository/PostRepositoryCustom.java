@@ -5,7 +5,7 @@ import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Category;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Post.Domain.PostLike;
-import Remoa.BE.Web.Post.Domain.PostScarp;
+import Remoa.BE.Web.Post.Domain.PostScrap;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,9 +23,9 @@ public interface PostRepositoryCustom {
 
     List<Post> findByTitleContaining(String name);
 
-    void savePostScrap(PostScarp postScarp);
+    void savePostScrap(PostScrap postScrap);
 
-    Optional<PostScarp> findScrapedPost(Member member, Post post);
+    Optional<PostScrap> findScrapedPost(Member member, Post post);
 
     Optional<PostLike> findLikedPost(Member myMember, Post post);
 

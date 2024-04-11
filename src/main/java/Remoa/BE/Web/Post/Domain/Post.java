@@ -124,7 +124,7 @@ public class Post {
     @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<PostScarp> postScarps = new ArrayList<>();
+    private List<PostScrap> postScraps = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = LAZY)
