@@ -39,6 +39,7 @@ public class MemberService {
 
     }
 
+
     public GeneralLoginRes generalLogin(GeneralLoginReq loginReq) {
         Member member = memberRepository.findByEmail(loginReq.getEmail()).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
         if (!bCryptPasswordEncoder.matches(loginReq.getPassword(), member.getPassword())) {
@@ -57,6 +58,7 @@ public class MemberService {
         }
     }
 
+    @Transactional
     public void adminSignUp(AdminSignUpReq adminSignUpReq) {
         adminSignUpReq.setPassword(bCryptPasswordEncoder.encode(adminSignUpReq.getPassword()));
         if (memberRepository.existsByEmail(adminSignUpReq.getEmail())) {
@@ -64,7 +66,8 @@ public class MemberService {
         }
         memberRepository.save(adminSignUpReq.toEntity());
     }
-
+    
+    @Transactional
     public GeneralSignUpRes generalSignUp(GeneralSignUpReq signUpReq) {
         signUpReq.setPassword(bCryptPasswordEncoder.encode(signUpReq.getPassword()));
         if (memberRepository.existsByEmail(signUpReq.getEmail())) {
