@@ -20,13 +20,13 @@ import java.util.List;
 public class MemberDetails implements UserDetails {
 
     private final Long memberId;
-    private final String email;
+    private final String account;
     private final String password;
     private final String role;
 
     public MemberDetails(Member member) {
         this.memberId = member.getMemberId();
-        this.email = member.getNickname();
+        this.account = member.getAccount();
         this.password = member.getPassword();
         this.role = member.getRole().toString();
     }
@@ -45,7 +45,7 @@ public class MemberDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return account;
     }
 
     @Override

@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class AdminSignUpReq {
 
     @NotBlank
-    private String email;
+    private String account;
 
     @NotBlank
     private String password;
@@ -27,7 +27,7 @@ public class AdminSignUpReq {
 
     public Member toEntity() {
         Member member = new Member();
-        member.setEmail(this.email);
+        member.setAccount(this.account);
         member.setNickname("유저");
         member.setPassword(this.password);
         member.setName(this.name);

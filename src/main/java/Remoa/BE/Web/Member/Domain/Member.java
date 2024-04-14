@@ -29,6 +29,7 @@ public class Member {
     @Column(name = "member_id")
     private Long memberId;
 
+    private String account;
     /**
      * 카카오 api에서 받아오는 카카오 이메일
      */

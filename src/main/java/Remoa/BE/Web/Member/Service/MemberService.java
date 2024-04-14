@@ -41,18 +41,18 @@ public class MemberService {
 
 
     public GeneralLoginRes generalLogin(GeneralLoginReq loginReq) {
-        Member member = memberRepository.findByEmail(loginReq.getEmail()).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
+        Member member = memberRepository.findByAccount(loginReq.getAccount()).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
         if (!bCryptPasswordEncoder.matches(loginReq.getPassword(), member.getPassword())) {
             throw new BaseException(CustomMessage.UNAUTHORIZED);
         }
-        String token = jwtTokenProvider.createToken(member.getEmail());
+        String token = jwtTokenProvider.createToken(member.getAccount());
 
         return new GeneralLoginRes(token, member);
     }
 
     private void validateDuplicateMember(Member member) {
         log.info("member={}", member.getEmail());
-        Optional<Member> findMembers = memberRepository.findByEmail(member.getEmail());
+        Optional<Member> findMembers = memberRepository.findByAccount(member.getAccount());
         if (findMembers.isPresent()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
@@ -61,7 +61,7 @@ public class MemberService {
     @Transactional
     public void adminSignUp(AdminSignUpReq adminSignUpReq) {
         adminSignUpReq.setPassword(bCryptPasswordEncoder.encode(adminSignUpReq.getPassword()));
-        if (memberRepository.existsByEmail(adminSignUpReq.getEmail())) {
+        if (memberRepository.existsByAccount(adminSignUpReq.getAccount())) {
             throw new BaseException(CustomMessage.BAD_DUPLICATE);
         }
         memberRepository.save(adminSignUpReq.toEntity());
@@ -70,7 +70,7 @@ public class MemberService {
     @Transactional
     public GeneralSignUpRes generalSignUp(GeneralSignUpReq signUpReq) {
         signUpReq.setPassword(bCryptPasswordEncoder.encode(signUpReq.getPassword()));
-        if (memberRepository.existsByEmail(signUpReq.getEmail())) {
+        if (memberRepository.existsByAccount(signUpReq.getAccount())) {
             throw new BaseException(CustomMessage.BAD_DUPLICATE);
         }
 
@@ -109,7 +109,4 @@ public class MemberService {
     }
 
 
-    public Boolean isAdminExist() {
-        return memberRepository.findByEmail("spparta@gmail.com").isPresent();
-    }
 }

@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 public class GeneralSignUpReq {
 
     @NotBlank
-    @Schema(description = "이메일", example = "test1@gmail.com")
-    private String email;
+    @Schema(description = "계정", example = "test1@gmail.com")
+    private String account;
 
     @NotBlank
     @Schema(description = "비밀번호", example = "testPassword1")
@@ -31,7 +31,7 @@ public class GeneralSignUpReq {
 
     public Member toEntity() {
         Member member = new Member();
-        member.setEmail(this.email);
+        member.setAccount(this.account);
         member.setNickname("");
         member.setPassword(this.password);
         member.setName(this.name);

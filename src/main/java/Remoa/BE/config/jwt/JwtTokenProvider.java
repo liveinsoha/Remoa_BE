@@ -42,9 +42,9 @@ public class JwtTokenProvider {
         this.memberDetailsService = memberDetailsService;
     }
 
-    public String createToken(String email) { //email 받음
-        Claims claims = Jwts.claims().setSubject(email); // JWT payload에 저장되는 정보 단위
-        claims.put("email", email); // key/ value 쌍으로 저장
+    public String createToken(String account) { //email 받음
+        Claims claims = Jwts.claims().setSubject(account); // JWT payload에 저장되는 정보 단위
+        claims.put("account", account); // key/ value 쌍으로 저장
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + tokenValidTime); // set Expire Time
@@ -68,7 +68,7 @@ public class JwtTokenProvider {
                 .getSubject());
     }
 
-    // Jwt Token에서 email 추출
+    // Jwt Token에서 account 추출
     public String getUserAccount(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token).getBody().getSubject();

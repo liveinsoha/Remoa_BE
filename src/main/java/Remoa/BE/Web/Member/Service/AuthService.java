@@ -25,8 +25,8 @@ public class AuthService {
     public void logout(HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
 
-        String email = getEmailFromAccessToken(accessToken);
-        Member member = findMemberByEmail(email);
+        String account = getAccountFromAccessToken(accessToken);
+        Member member = findMemberByAccount(account);
 
         // AccessToken을 블랙리스트에 추가
         AccessToken blacklistedToken = AccessToken.builder()
@@ -38,12 +38,12 @@ public class AuthService {
         accessTokenRepository.save(blacklistedToken);
     }
 
-    private String getEmailFromAccessToken(String accessToken) {
+    private String getAccountFromAccessToken(String accessToken) {
         return jwtTokenProvider.getUserAccount(accessToken);
     }
 
-    private Member findMemberByEmail(String email) {
-        return memberRepository.findByEmail(email)
+    private Member findMemberByAccount(String account) {
+        return memberRepository.findByAccount(account)
                 .orElseThrow(() -> new BaseException(CustomMessage.NO_ID));
     }
 }

@@ -48,7 +48,7 @@ public class DbInit {
     @PostConstruct
     public void initAdmin() {
         AdminSignUpReq adminSignUpReq = AdminSignUpReq.builder()
-                .email("referencemoa")
+                .account("referencemoa")
                 .password("fpahdk2023!")
                 .name("관리자")
                 .build();
@@ -61,25 +61,25 @@ public class DbInit {
     public void initMembers() {
 
         GeneralSignUpReq signUpReq1 = GeneralSignUpReq.builder()
-                .email("test1@gmail.com")
+                .account("test1@gmail.com")
                 .password("testPassword1")
                 .name("김김김")
                 .build();
 
         GeneralSignUpReq signUpReq2 = GeneralSignUpReq.builder()
-                .email("test2@gmail.com")
+                .account("test2@gmail.com")
                 .password("testPassword2")
                 .name("이이이")
                 .build();
 
         GeneralSignUpReq signUpReq3 = GeneralSignUpReq.builder()
-                .email("test3@gmail.com")
+                .account("test3@gmail.com")
                 .password("testPassword3")
                 .name("박박박")
                 .build();
 
         GeneralSignUpReq signUpReq4 = GeneralSignUpReq.builder()
-                .email("test4@gmail.com")
+                .account("test4@gmail.com")
                 .password("testPassword4")
                 .name("최최최")
                 .build();

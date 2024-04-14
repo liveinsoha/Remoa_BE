@@ -10,8 +10,8 @@ import jakarta.validation.constraints.NotNull;
 @Setter
 public class ReqSignupDto {
 
-    @NotBlank(message = "이메일은 필수값입니다.")
-    private String email;
+    @NotBlank(message = "계정은 필수값입니다.")
+    private String account;
 
     @NotNull(message = "카카오에서 발급받은 id값이 누락되었습니다.")
     private Long kakaoId;
