@@ -19,34 +19,6 @@
 
 
 
-## 🧑‍💻 팀원 소개
-<table>
-  <tbody>
-  <tr>
-      <td align="center"><img src="https://avatars.githubusercontent.com/u/114431007?v=4" width="100px" alt=""/><br /><sub><b>PM  : <a href="https://github.com/PeterRyu">류호경</a></b></sub><br /></td> 
-      </tr>
-      <td align="center">
-          <img src="https://avatars.githubusercontent.com/u/64712993?v=4" width="100px;" alt=""/>
-            <br />
-            <sub>
-            <b>Tech-Leader,<br /> FE-Leader  : <a href="https://github.com/kmyobin">김효빈</a></b>
-            </sub>         
-         <br />
-      </td>
-      <td align="center"><img src="https://avatars.githubusercontent.com/u/103393199?v=4" width="100px;" alt=""/><br /><sub><b>FE : <a href="https://github.com/JOO05">주현정</a></b></sub><br /></td>
-      <td align="center"><img src="https://avatars.githubusercontent.com/u/83554018?v=4" width="100px;" alt=""/><br /><sub><b>FE : <a href="https://github.com/Lim-JiSeon">임지선</a></b></sub><br /></td>
-      <td align="center"><img src="https://avatars.githubusercontent.com/u/94896197?v=4" width="100px;" alt=""/><br /><sub><b>FE : <a href="https://github.com/whitekuj02">김의진</a></b></sub><br /></td>
-     <tr/>
-      <td align="center"><img src="https://avatars.githubusercontent.com/u/69197412?v=4" width="100px;" alt=""/><br /><sub><b>BE-Leader : <a href="https://github.com/jayrhie">이재영</a></b></sub><br /></td>
-      <td align="center"><img src="https://avatars.githubusercontent.com/u/51524745?v=4" width="100px;" alt=""/><br /><sub><b>BE : <a href="https://github.com/jeonkwanghwi">전광휘</a></b></sub><br /></td>
-      <td align="center"><img src="https://avatars.githubusercontent.com/u/88085338?v=4" width="100px;" alt=""/><br /><sub><b>BE : <a href="https://github.com/mintaek22">오민택</a></b></sub><br /></td>
-      <td align="center"><img src="https://avatars.githubusercontent.com/u/79622645?v=4" width="100px;" alt=""/><br /><sub><b>BE : <a href="https://github.com/MIN0225">김광민</a></b></sub><br /></td>
-    </tr>
-  </tbody>
-</table>
-
-
-
 ## ⌨️ 기술 스택
 ### Environment
 ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
