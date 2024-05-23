@@ -21,7 +21,7 @@ public class ResMemberInfoDto {
     @Schema(description = "팔로우 여부")
     private Boolean isFollow;
 
-    public ResMemberInfoDto(Member member, boolean isFollow) {
+    public ResMemberInfoDto(Member member, Boolean isFollow) {
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
         this.profileImage = member.getProfileImage();
