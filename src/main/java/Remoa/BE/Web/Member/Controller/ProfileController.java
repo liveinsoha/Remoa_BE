@@ -185,9 +185,9 @@ public class ProfileController {
         Member myMember = memberService.findOne(memberId);
 
         //유저가 기본프로필이 아니라면
-        if (!Objects.equals(myMember.getProfileImage(), "https://remoafiles.s3.ap-northeast-2.amazonaws.com/img/profile_img.png")) {
+        if (!Objects.equals(myMember.getProfileImage(), "https://remoa.s3.ap-northeast-2.amazonaws.com/img/flow_noname_image.png")) {
             //      awsS3Service.removeProfileUrl(myMember.getProfileImage());
-            myMember.setProfileImage("https://remoafiles.s3.ap-northeast-2.amazonaws.com/img/profile_img.png");
+            myMember.setProfileImage("https://remoa.s3.ap-northeast-2.amazonaws.com/img/flow_noname_image.png");
             memberService.join(myMember);
         }
 
