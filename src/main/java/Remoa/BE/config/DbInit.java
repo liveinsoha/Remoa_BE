@@ -17,7 +17,7 @@ import java.util.List;
 
 
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class DbInit {
     private final CategoryService categoryService;
