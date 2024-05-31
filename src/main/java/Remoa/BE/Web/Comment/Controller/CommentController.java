@@ -50,7 +50,7 @@ public class CommentController {
     public ResponseEntity<BaseResponse<List<ResCommentDto>>> registerComment(@RequestBody ReqCommentDto req,
                                                                              @PathVariable("reference_id") Long postId,
                                                                              @AuthenticationPrincipal MemberDetails memberDetails) {
-        String content = req.getCommentContent();
+        String content = req.getContent();
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         commentService.registerComment(myMember, content, postId);
 
@@ -73,7 +73,7 @@ public class CommentController {
     public ResponseEntity<BaseResponse<List<ResCommentDto>>> modifyComment(@RequestBody ReqCommentDto req,
                                                                            @PathVariable("comment_id") Long commentId,
                                                                            @AuthenticationPrincipal MemberDetails memberDetails) {
-        String content = req.getCommentContent();
+        String content = req.getContent();
         Comment c = commentService.findOne(commentId);
 
         if (!Objects.equals(c.getMember().getMemberId(), memberDetails.getMemberId())) {

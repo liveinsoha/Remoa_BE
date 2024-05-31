@@ -10,5 +10,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReqCommentDto {
-    private String commentContent;
+    private String content;
 }
