@@ -4,6 +4,7 @@ import Remoa.BE.exception.response.BaseException;
 import Remoa.BE.exception.response.BaseResponse;
 import Remoa.BE.exception.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +28,7 @@ public class CustomizedExceptionHandler {
     @ExceptionHandler(value = {BaseException.class})
     protected ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
         return ResponseEntity.status(e.customMessage.getHttpStatus())
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(e.customMessage.getMessage(), e.customMessage.getDetail()));
     }
 

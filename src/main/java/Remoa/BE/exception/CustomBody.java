@@ -5,6 +5,7 @@ import Remoa.BE.exception.response.FailResponse;
 import Remoa.BE.exception.response.SuccessResponse;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 @Getter
@@ -36,6 +37,7 @@ public class CustomBody {
 
         return ResponseEntity
                 .status(customMessage.getHttpStatus())
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(ErrorResponse.builder().
                         message(customMessage.getMessage()).
                         detail(customMessage.getDetail())
@@ -50,6 +52,7 @@ public class CustomBody {
 
         return ResponseEntity
                 .status(customMessage.getHttpStatus())
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(FailResponse.builder().
                         message(customMessage.getMessage()).
                         detail(customMessage.getDetail()).
