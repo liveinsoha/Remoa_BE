@@ -77,40 +77,38 @@ public class MyPostService {
 
 
 
-    /**
+ /*   *//**
      * 받은 피드백 관리에서 쓰이는 최신 3개순 포스트
      * @param page
      * @param member
      * @param category
      * @return member가 작성한 최신 3개의 Post.
-     */
+     *//*
     public Page<Post> getNewestThreePostsSortCategory(int page, Member member, String category) {
         PageRequest pageable = PageRequest.of(page, RECEIVED_COMMENT_PAGE_SIZE, Sort.by("postingTime").descending());
         return postPagingRepository
                 .findByMemberAndCategoryAndCommentsIsNotEmpty(pageable, member, categoryRepository.findByCategoryName(category));
     }
 
-    /**
+    *//**
      * 받은 피드백 관리에서 쓰이는 최신 3개순 포스트
      * @param page
      * @param member
      * @return member가 작성한 최신 3개의 Post.
-     */
+     *//*
     public Page<Post> getNewestThreePosts(int page, Member member) {
         PageRequest pageable = PageRequest.of(page, RECEIVED_COMMENT_PAGE_SIZE, Sort.by("postingTime").descending());
         return postPagingRepository.findByMemberAndCommentsIsNotEmpty(pageable, member);
     }
 
-    /**
+    *//**
      * 내 활동 관리에 쓰이는 코멘트 및 피드백을 단 작업물
-     * @param size
-     * @param member
      * @return Post
-     */
+     *//*
     public Page<Post> getCommentedPost(int size, Member member) {
         PageRequest pageable = PageRequest.of(0, size, Sort.by("postingTime").descending());
         return postPagingRepository.findByMemberAndCommentsIsNotEmpty(pageable, member);
-    }
+    }*/
 
     @Transactional
     public void deleteReferenceCategory(Long memberId, Long categoryId){

@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
 
     List<Post> findByMember(Member member);
+
+
 }

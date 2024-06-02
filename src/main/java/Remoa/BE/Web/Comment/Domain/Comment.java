@@ -3,11 +3,11 @@ package Remoa.BE.Web.Comment.Domain;
 import Remoa.BE.Web.CommentFeedback.Domain.CommentFeedback;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Post.Domain.Post;
+import jakarta.persistence.CascadeType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import jakarta.persistence.*;
 
@@ -60,10 +60,15 @@ public class Comment {
     @Column(name = "like_count")
     private Integer LikeCount = 0;
 
-
-    @OneToMany(mappedBy = "comment", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Builder.Default
+    @OneToMany(mappedBy = "comment", cascade = {CascadeType.REMOVE}, fetch = LAZY)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private List<CommentLike> commentLikes;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "comment", cascade = {CascadeType.REMOVE}, fetch = LAZY)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
+    private List<CommentReply> commentReplies;
 
     private Boolean deleted = Boolean.FALSE;
 

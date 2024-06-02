@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE post_scrap SET deleted = true WHERE post_scrap_id = ?")
 @SQLRestriction("deleted = false")
 public class PostScrap {
 
