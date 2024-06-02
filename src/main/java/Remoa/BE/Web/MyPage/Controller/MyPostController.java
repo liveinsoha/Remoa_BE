@@ -74,6 +74,8 @@ public class MyPostController {
                                                                          @RequestParam(required = false, defaultValue = "") String title,
                                                                          @AuthenticationPrincipal MemberDetails memberDetails) {
 
+        log.info("EndPoint Get /user/reference");
+
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
 
@@ -148,6 +150,7 @@ public class MyPostController {
                                                  @RequestParam(required = false, defaultValue = "newest") String sort,
                                                  @RequestParam(required = false, defaultValue = "") String title,
                                                  @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Get /user/reference/{member_id}");
 
         Member myMember = null;
         if (memberDetails != null) {

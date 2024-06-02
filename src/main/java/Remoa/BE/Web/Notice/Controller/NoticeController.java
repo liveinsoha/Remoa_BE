@@ -53,6 +53,8 @@ public class NoticeController {
     @Operation(summary = "공지 등록 Test Completed", description = "공지를 등록합니다.")
     public ResponseEntity<Void> postNotice(@Validated @RequestBody ReqNoticeDto reqNoticeDto,
                                              @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Post /notice");
+
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         noticeService.registerNotice(reqNoticeDto, myMember.getNickname());
 
@@ -73,6 +75,8 @@ public class NoticeController {
     public ResponseEntity<Void> updateNotice(@PathVariable Long noticeId,
                                                @Validated @RequestBody ReqNoticeDto reqNoticeDto,
                                                @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Put /notice/{noticeId}");
+
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         noticeService.updateNotice(noticeId, reqNoticeDto, myMember.getNickname());
         return new ResponseEntity<>(HttpStatus.OK);
@@ -91,6 +95,8 @@ public class NoticeController {
     @Operation(summary = "공지 삭제 Test Completed", description = "공지를 삭제합니다.")
     public ResponseEntity<Void> deleteNotice(@PathVariable Long noticeId,
                                                @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Delete /notice/{noticeId}");
+
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         noticeService.deleteNotice(noticeId, myMember);
 
@@ -100,6 +106,8 @@ public class NoticeController {
     @GetMapping("/notice")
     @Operation(summary = "공지 목록 조회 Test Completed", description = "페이지별 공지 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<NoticeResponseDto>> getNotice(@RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber) {
+        log.info("EndPoint Get /notice");
+
         pageNumber -= 1;
         if (pageNumber < 0) {
             throw new BaseException(CustomMessage.PAGE_NUM_OVER);
@@ -118,6 +126,7 @@ public class NoticeController {
     @Operation(summary = "공지 상세 조회 Test Completed", description = "특정 공지의 상세 정보를 조회합니다.")
     public ResponseEntity<BaseResponse<ResAllNoticeDto>> getNoticeDetail(@RequestParam int view,
                                                                          HttpServletRequest request) {
+        log.info("EndPoint Get /notice/view");
 
         HttpSession session = request.getSession();
         String sessionKey = "NoticeViewed_" + view;

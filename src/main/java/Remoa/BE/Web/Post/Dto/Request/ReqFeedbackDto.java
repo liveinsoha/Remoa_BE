@@ -10,5 +10,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReqFeedbackDto {
-    private String content;
+    private String feedback;
 }

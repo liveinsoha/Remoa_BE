@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
+@Slf4j
 public class AdminController {
 
     private final AdminService adminService;
@@ -38,6 +40,8 @@ public class AdminController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+        log.info("EndPoint Delete /admin/post/{postId}");
+
         adminService.deletePost(postId);
         return ResponseEntity.ok().build();
     }
@@ -54,6 +58,8 @@ public class AdminController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
+        log.info("EndPoint Delete /admin/comment/{commentId}");
+
         adminService.deleteComment(commentId);
         return ResponseEntity.ok().build();
     }
@@ -70,6 +76,8 @@ public class AdminController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<Void> deleteCommentReply(@PathVariable Long commentReplyId) {
+        log.info("EndPoint Delete /admin/comment-reply/{commentReplyId}");
+
         adminService.deleteCommentReply(commentReplyId);
         return ResponseEntity.ok().build();
     }
@@ -86,6 +94,8 @@ public class AdminController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<Void> deleteFeedback(@PathVariable Long feedbackId) {
+        log.info("EndPoint Delete /admin/feedback/{feedbackId}");
+
         adminService.deleteFeedback(feedbackId);
         return ResponseEntity.ok().build();
     }
@@ -102,6 +112,8 @@ public class AdminController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<Void> deleteFeedbackReply(@PathVariable Long feedbackReplyId) {
+        log.info("EndPoint Delete /admin/feedback-reply/{feedbackReplyId}");
+
         adminService.deleteFeedbackReply(feedbackReplyId);
         return ResponseEntity.ok().build();
     }

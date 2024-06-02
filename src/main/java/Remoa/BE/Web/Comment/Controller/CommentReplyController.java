@@ -54,6 +54,8 @@ public class CommentReplyController {
                                                                                   @PathVariable("reference_id") Long postId,
                                                                                   @PathVariable("comment_id") Long commentId,
                                                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Post /reference/{reference_id}/comment/{comment_id}");
+
         String content = req.getCommentReplyContent();
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
@@ -81,6 +83,8 @@ public class CommentReplyController {
                                                                                 @PathVariable("comment_id") Long commentId,
                                                                                 @PathVariable("reply_id") Long replyId,
                                                                                 @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Put /reference/comment/{comment_id}/reply/{reply_id}");
+
         String content = req.getCommentReplyContent();
         CommentReply reply = commentReplyService.findOne(replyId);
 
@@ -107,6 +111,8 @@ public class CommentReplyController {
     @Operation(summary = "코멘트 대댓글 삭제 Test Completed", description = "작성한 코멘트 대댓글을 삭제합니다.")
     public ResponseEntity<BaseResponse<List<ResCommentDto>>> deleteCommentReply(@PathVariable("reply_id") Long replyId,
                                                                                 @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Delete /reference/comment/{comment_id}/reply/{reply_id}");
+
         CommentReply reply = commentReplyService.findOne(replyId);
 
         if (!Objects.equals(reply.getMember().getMemberId(), memberDetails.getMemberId())) {

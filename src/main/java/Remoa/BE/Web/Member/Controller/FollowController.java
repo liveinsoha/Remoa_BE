@@ -59,6 +59,8 @@ public class FollowController {
     @Operation(summary = "팔로우 기능 Test completed", description = "특정 회원을 팔로우하거나 언팔로우합니다.")
     public ResponseEntity<?> follow(@PathVariable("member_id") Long toMemberId,
                                     @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Post /follow/{member_id}");
+
         //나 자신을 팔로우 하는 경우
         Long myMemberId = memberDetails.getMemberId();
         if (Objects.equals(myMemberId, toMemberId)) {
@@ -87,6 +89,8 @@ public class FollowController {
     @GetMapping("/follow/{member_id}")
     @Operation(summary = "팔로워 및 팔로잉 조회 Test completed", description = "특정 회원의 팔로워 및 팔로잉 수를 조회합니다.")
     public ResponseEntity<BaseResponse<ResFollowerAndFollowingDto>> showFollowers(@PathVariable("member_id") Long memberId) {
+        log.info("EndPoint Get /follow/{member_id}");
+
         Member member = memberService.findOne(memberId);
         List<Integer> count = followService.followerAndFollowing(member);
         ResFollowerAndFollowingDto result = ResFollowerAndFollowingDto.builder()

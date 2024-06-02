@@ -62,6 +62,7 @@ public class ProfileController {
     @GetMapping("/user")
     @Operation(summary = "사용자 정보 조회 Test Completed", description = "현재 로그인한 사용자의 정보를 조회합니다.")
     public ResponseEntity<BaseResponse<ResUserInfoDto>> userInfo(@AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Get /user");
 
         Long memberId = memberDetails.getMemberId();
         // 로그인된 사용자의 정보를 db에서 다시 불러와 띄워줌.
@@ -87,6 +88,7 @@ public class ProfileController {
     @PutMapping("/user")
     @Operation(summary = "프로필 수정 Test Completed", description = "현재 로그인한 사용자의 프로필 정보를 수정합니다.")
     public ResponseEntity<BaseResponse<ResUserInfoDto>> editProfile(@RequestBody EditProfileForm form, @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Put /user");
 
         Long memberId = memberDetails.getMemberId();
 
@@ -121,6 +123,7 @@ public class ProfileController {
     @GetMapping("/user/img")
     @Operation(summary = "프로필 사진 조회 Test Completed", description = "현재 로그인한 사용자의 프로필 사진 URL을 조회합니다.")
     public ResponseEntity<BaseResponse<String>> showImage(@AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Get /user/img");
 
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
@@ -138,6 +141,7 @@ public class ProfileController {
     @PutMapping(value = "/user/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "프로필 사진 업로드 Test Completed", description = "현재 로그인한 사용자의 프로필 사진을 업로드합니다.")
     public ResponseEntity<Object> upload(@RequestPart("file") MultipartFile multipartFile, @AuthenticationPrincipal MemberDetails memberDetails) throws IOException {
+        log.info("EndPoint Put /user/img");
 
         // 확장자는 jpg, png만 가능
         String extension = fileExtension(multipartFile);
@@ -180,6 +184,7 @@ public class ProfileController {
     @DeleteMapping("/user/img")
     @Operation(summary = "프로필 사진 삭제 Test Completed", description = "현재 로그인한 사용자의 프로필 사진을 삭제합니다.")
     public ResponseEntity<Void> remove(@AuthenticationPrincipal MemberDetails memberDetails) throws MalformedURLException {
+        log.info("EndPoint Delete /user/img");
 
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
@@ -211,6 +216,9 @@ public class ProfileController {
             "<br> true : 사용가능" +
             "<br> false : 사용불가")
     public ResponseEntity<BaseResponse<Boolean>> checkNicknameDuplicate(@RequestParam String nickname) {
+        log.info("EndPoint Get /nickname");
+
+
         if (memberService.isNicknameDuplicate(nickname)) {
             BaseResponse<Boolean> response = new BaseResponse<>(CustomMessage.OK, false);
             return ResponseEntity.ok(response);

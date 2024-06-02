@@ -39,6 +39,8 @@ public class ViewerController {
     public ResponseEntity<BaseResponse<ResReferenceViewerDto>> referenceViewer(@PathVariable("reference_id") Long referenceId,
                                                                                @AuthenticationPrincipal MemberDetails memberDetails) {
 
+        log.info("EndPoint Get /reference/{reference_id}");
+
         Long myMemberId;
 
         Member myMember = null;

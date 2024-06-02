@@ -71,6 +71,7 @@ public class MyActivityController {
     @Operation(summary = "내 활동 조회 Test Completed", description = "내가 작성한 최신 코멘트/피드백(Comment, Feedback 무관 1개)와 스크랩한 게시물들을 조회합니다.")
     public ResponseEntity<BaseResponse<ResMyActivityDto>> myActivity(@AuthenticationPrincipal MemberDetails memberDetails) {
 
+        log.info("EndPoint Get /user/activity");
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
 
@@ -125,6 +126,7 @@ public class MyActivityController {
     public ResponseEntity<BaseResponse<ResMyScrapDto>> myScrap(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
                                                                @AuthenticationPrincipal MemberDetails memberDetails
     ) {
+        log.info("EndPoint Get /user/scrap");
 
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
@@ -197,6 +199,8 @@ public class MyActivityController {
     public ResponseEntity<BaseResponse<ResMyCommentFeedbackPaging>> myCommentFeedback(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
                                                                                       @RequestParam(name = "sort", defaultValue = "asc", required = false) String sortDirection,
                                                                                       @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Get /user/comment-feedback");
+
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
 
@@ -257,6 +261,8 @@ public class MyActivityController {
     public ResponseEntity<BaseResponse<ResMyCommentPaging>> myComment(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
                                                                       @RequestParam(name = "sort", defaultValue = "asc", required = false) String sortDirection,
                                                                       @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Get /user/comment");
+
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
 
@@ -312,6 +318,8 @@ public class MyActivityController {
     public ResponseEntity<BaseResponse<ResMyFeedbackPaging>> myFeedback(@RequestParam(name = "page", defaultValue = "1", required = false) int pageNum,
                                                                         @RequestParam(name = "sort", defaultValue = "asc", required = false) String sortDirection,
                                                                         @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Get /user/feedback");
+
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
 
@@ -361,6 +369,8 @@ public class MyActivityController {
     public ResponseEntity<BaseResponse<ResReceivedCommentFeedbackDto>> receivedCommentFeedback(@RequestParam(required = false, defaultValue = "all") String category,
                                                                                                @RequestParam(required = false, defaultValue = "1", name = "page") int pageNum,
                                                                                                @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Get /user/receive");
+
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
 

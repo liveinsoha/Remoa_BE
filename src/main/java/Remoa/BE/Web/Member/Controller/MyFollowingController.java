@@ -40,6 +40,8 @@ public class MyFollowingController {
     @GetMapping("/following") // 마이페이지 팔로잉 관리화면
     @Operation(summary = "마이페이지 팔로잉 관리화면 Test Completed", description = "현재 로그인된 사용자의 팔로잉 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<ResMypageFollowing>> mypageFollowing(@AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Get /following");
+
         Long myMemberId = memberDetails.getMemberId();
 
         Member myMember = memberService.findOne(myMemberId);
@@ -58,6 +60,7 @@ public class MyFollowingController {
     @GetMapping("/follower") // 마이페이지 팔로워 관리화면
     @Operation(summary = "마이페이지 팔로워 관리화면 Test Completed", description = "현재 로그인된 사용자의 팔로워 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<ResMypageFollowing>> mypageFollower(@AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Get /follower");
 
         Long myMemberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(myMemberId);

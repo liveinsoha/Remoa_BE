@@ -53,7 +53,9 @@ public class FeedbackReplyController {
                                                                                     @PathVariable("reference_id") Long postId,
                                                                                     @PathVariable("feedback_id") Long feedbackId,
                                                                                     @AuthenticationPrincipal MemberDetails memberDetails) {
-        String content = req.getContent();
+        log.info("EndPoint Post /reference/{reference_id}/feedback/{feedback_id}");
+
+        String content = req.getFeedback();
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
         feedbackReplyService.registerFeedbackReply(myMember, postId, feedbackId, content);
@@ -77,7 +79,9 @@ public class FeedbackReplyController {
                                                                                   @PathVariable("feedback_id") Long feedbackId,
                                                                                   @PathVariable("reply_id") Long replyId,
                                                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
-        String content = req.getContent();
+        log.info("EndPoint Put /reference/feedback/{feedback_id}/reply/{reply_id}");
+
+        String content = req.getFeedback();
         FeedbackReply reply = feedbackReplyService.findOne(replyId);
         Long myMemberId = memberDetails.getMemberId();
         if (!Objects.equals(reply.getMember().getMemberId(), myMemberId)) {
@@ -105,7 +109,9 @@ public class FeedbackReplyController {
     @Operation(summary = "피드백 대댓글 삭제 Test Completed", description = "작성한 피드백 대댓글을 삭제합니다.")
     public ResponseEntity<BaseResponse<List<ResFeedbackDto>>> deleteFeedbackReply(@PathVariable("reply_id") Long replyId,
                                                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
-        FeedbackReply reply = feedbackReplyService.findOne(replyId);
+        log.info("EndPoint Delete /reference/feedback/{feedback_id}/reply/{reply_id}");
+
+       FeedbackReply reply = feedbackReplyService.findOne(replyId);
 
         Long myMemberId = memberDetails.getMemberId();
         if (!Objects.equals(reply.getMember().getMemberId(),myMemberId)) {

@@ -1,4 +1,4 @@
-package Remoa.BE.Web.CommentFeedback.Comtroller;
+package Remoa.BE.Web.CommentFeedback.Controller;
 
 import Remoa.BE.Web.Comment.Service.CommentReplyService;
 import Remoa.BE.Web.Comment.Service.CommentService;

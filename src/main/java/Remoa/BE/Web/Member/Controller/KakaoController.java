@@ -54,6 +54,8 @@ public class KakaoController {
     @GetMapping("/login/kakao")
     @Operation(summary = "카카오 로그인", description = "카카오 로그인을 통해 사용자를 식별하고 로그인 또는 회원가입 처리합니다.")
     public ResponseEntity<BaseResponse<KakaoLoginResponseDto>> getCI(@RequestParam String code) throws IOException {
+        log.info("EndPoint Get /login/kakao");
+
         log.info("code = " + code);
         KakaoLoginResponseDto kakaoLoginResponseDto = kakaoService.kakaoLogin(code);
 

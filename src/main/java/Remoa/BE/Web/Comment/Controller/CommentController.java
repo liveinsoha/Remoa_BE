@@ -50,6 +50,8 @@ public class CommentController {
     public ResponseEntity<BaseResponse<List<ResCommentDto>>> registerComment(@RequestBody ReqCommentDto req,
                                                                              @PathVariable("reference_id") Long postId,
                                                                              @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint POST /reference/{reference_id}/comment");
+
         String content = req.getComment();
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         commentService.registerComment(myMember, content, postId);
@@ -73,6 +75,8 @@ public class CommentController {
     public ResponseEntity<BaseResponse<List<ResCommentDto>>> modifyComment(@RequestBody ReqCommentDto req,
                                                                            @PathVariable("comment_id") Long commentId,
                                                                            @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint PUT /reference/comment/{comment_id}");
+
         String content = req.getComment();
         Comment c = commentService.findOne(commentId);
 
@@ -99,6 +103,8 @@ public class CommentController {
     @Operation(summary = "코멘트 삭제 Test Completed", description = "작성한 코멘트를 삭제합니다.")
     public ResponseEntity<BaseResponse<List<ResCommentDto>>> deleteComment(@PathVariable("comment_id") Long commentId,
                                                                            @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Delete /reference/comment/{comment_id}");
+
         Comment c = commentService.findOne(commentId);
 
         if (!Objects.equals(c.getMember().getMemberId(), memberDetails.getMemberId())) {
@@ -124,6 +130,7 @@ public class CommentController {
     @Operation(summary = "코멘트 좋아요 Test Completed", description = "코멘트에 좋아요를 누릅니다.")
     public ResponseEntity<ResCommentLikeDto> likeComment(@PathVariable("comment_id") Long commentId,
                                               @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Post /comment/{comment_id}/like");
 
         Long memberId = memberDetails.getMemberId();
         commentService.likeComment(memberId, commentId);

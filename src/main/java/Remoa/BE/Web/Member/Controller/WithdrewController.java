@@ -34,7 +34,6 @@ public class WithdrewController {
      * PathVariable을 이용한 회원 탈퇴 uri.
      * 로그인 된 사용자인지, 해당 사용자의 탈퇴 요청이 맞는지 확인 후 탈퇴 처리.
      * @param memberId
-     * @param request
      * @return 로그인 되지 않은 상태면 403(forbidden), 다른 id 값을 통한 잘못된 요청을 하면 401(Unauthorized), 올바른 탈퇴 요청이면 200(OK)
      */
 
@@ -47,6 +46,7 @@ public class WithdrewController {
     @Operation(summary = "회원 탈퇴 (PathVariable)", description = "로그인한 사용자가 자신의 계정을 탈퇴합니다.")
     public ResponseEntity<String> withdrewRemoa(@PathVariable("member_id") Long memberId,
                                                 @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Delete /delete/{member_id}");
 
         //PathVariable의 id와 로그인된 사용자의 id가 같은지 확인하기 위한 용도.
         if (!Objects.equals(memberId, memberDetails.getMemberId())) {
@@ -74,6 +74,7 @@ public class WithdrewController {
     @DeleteMapping("/delete")
     @Operation(summary = "회원 탈퇴", description = "로그인한 사용자가 자신의 계정을 탈퇴합니다.")
     public ResponseEntity<String> withdrewRemoaWithoutPathVariable(@AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Delete /delete");
 
         Member findMember = memberService.findOne(memberDetails.getMemberId());
 

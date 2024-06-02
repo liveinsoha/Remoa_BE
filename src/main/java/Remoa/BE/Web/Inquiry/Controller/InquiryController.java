@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,6 +33,7 @@ import java.util.HashMap;
 @Tag(name = "문의 기능 Test Completed", description = "문의 기능 API")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class InquiryController {
 
     private final InquiryService inquiryService;
@@ -46,6 +48,8 @@ public class InquiryController {
     @Operation(summary = "문의 등록 Test Completed", description = "문의를 등록합니다.")
     public ResponseEntity<Void> postInquiry(@Validated @RequestBody ReqInquiryDto inquiryDto,
                                               @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Post /inquiry");
+
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         inquiryService.registerInquiry(inquiryDto, myMember.getNickname());
         return new ResponseEntity<>(HttpStatus.OK);
@@ -63,6 +67,8 @@ public class InquiryController {
     public ResponseEntity<Void> updateInquiry(@PathVariable Long inquiryId,
                                                 @Validated @RequestBody ReqInquiryDto inquiryDto,
                                                 @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Put /inquiry/{inquiryId}");
+
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         inquiryService.updateInquiry(inquiryId, inquiryDto, myMember);
 
@@ -77,6 +83,8 @@ public class InquiryController {
     @GetMapping("/inquiry")
     @Operation(summary = "문의 목록 조회 Test Completed", description = "페이지별 문의 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<ResInquiryPaging>> getInquiry(@RequestParam(required = false, defaultValue = "1", name = "page") int pageNumber) {
+        log.info("EndPoint Get /inquiry");
+
         pageNumber -= 1;
         if (pageNumber < 0) {
             throw new BaseException(CustomMessage.PAGE_NUM_OVER);
@@ -101,6 +109,7 @@ public class InquiryController {
     @Operation(summary = "문의 상세 조회 Test Completed", description = "특정 문의의 상세 정보를 조회합니다.")
     public ResponseEntity<BaseResponse<ResAllInquiryDto>> getInquiryDetail(@RequestParam int view,
                                                                            HttpServletRequest request) {
+        log.info("EndPoint Get /inquiry/view");
 
         HttpSession session = request.getSession();
         String sessionKey = "InquiryViewed_" + view;

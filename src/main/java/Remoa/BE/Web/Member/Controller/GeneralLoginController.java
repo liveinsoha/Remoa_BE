@@ -48,6 +48,7 @@ public class GeneralLoginController {
     @Operation(summary = "테스트용 일반 회원가입 Test completed", description = "account, password 기반 일반 회원가입입니다. <br>리턴 데이터는 회원번호입니다")
     @PostMapping("/signUp")
     public ResponseEntity<BaseResponse<GeneralSignUpRes>> signUp(@Parameter(name = "회원가입 위한 회원 정보들", required = true) @Valid @RequestBody GeneralSignUpReq signUpReq) {
+        log.info("EndPoint Post /api/member/signUp");
 
         BaseResponse<GeneralSignUpRes> response = new BaseResponse<>(CustomMessage.OK, memberService.generalSignUp(signUpReq));
 
@@ -64,6 +65,8 @@ public class GeneralLoginController {
     @Operation(summary = "테스트용 일반 로그인 Test completed", description = "account, password 기반 일반 로그인입니다. ")
     @PostMapping("/login")
     public ResponseEntity<BaseResponse<GeneralLoginRes>> login(@Parameter(name = "로그인 위한 회원 정보들", required = true) @RequestBody GeneralLoginReq loginRequestDto) {
+        log.info("EndPoint Post /api/member/login");
+
         BaseResponse<GeneralLoginRes> response = new BaseResponse<>(CustomMessage.OK, memberService.generalLogin(loginRequestDto));
         return ResponseEntity.ok(response);
     }
@@ -77,6 +80,7 @@ public class GeneralLoginController {
     @Operation(summary = "로그아웃", description = "로그아웃입니다. ")
     @PutMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
+        log.info("EndPoint Post /api/member/logout");
 
         authService.logout(request);
 

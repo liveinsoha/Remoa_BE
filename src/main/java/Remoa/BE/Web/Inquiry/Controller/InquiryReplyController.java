@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "문의 답변 기능 Test Completed", description = "문의 답변 기능 API")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class InquiryReplyController {
 
     private final MemberService memberService;
@@ -44,6 +46,7 @@ public class InquiryReplyController {
     public ResponseEntity<Void> postInquiry(@Validated @RequestBody ReqInquiryReplyDto inquiryReplyDto,
                                             @PathVariable("inquiry_id") Long inquiryId,
                                             @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Post /inquiry/{inquiry_id}/reply");
 
         Member myMember = memberService.findOne(memberDetails.getMemberId());
         inquiryReplyService.registerInquiryReply(inquiryReplyDto, inquiryId, myMember.getNickname());
@@ -66,6 +69,8 @@ public class InquiryReplyController {
     public ResponseEntity<Void> updateInquiryReply(@PathVariable("reply_id") Long replyId,
                                                    @Validated @RequestBody ReqInquiryReplyDto updatedReplyDto,
                                                    @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Put /inquiry/reply/{reply_id}");
+
         // 요청한 멤버 정보 조회
         Member myMember = memberService.findOne(memberDetails.getMemberId());
 

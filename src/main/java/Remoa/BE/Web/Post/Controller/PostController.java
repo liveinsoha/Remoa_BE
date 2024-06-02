@@ -69,7 +69,7 @@ public class PostController {
                                                                           @RequestParam(required = false, defaultValue = "") String searchQuery,
                                                                           @AuthenticationPrincipal MemberDetails memberDetails
     ) {
-
+        log.info("EndPoint Get /reference");
         Member myMember = null; //로그인 한 경우 좋아요, 스크랩 표시하기 위한 분기. -> 토큰 방식으로 바뀌어 수정 필요.
         if (memberDetails != null) {
             Long myMemberId = memberDetails.getMemberId();
@@ -143,6 +143,7 @@ public class PostController {
                                                                        @RequestPart("thumbnail") MultipartFile thumbnail,
                                                                        @RequestPart(value = "file", required = false) List<MultipartFile> uploadFiles,
                                                                        @AuthenticationPrincipal MemberDetails memberDetails) throws IOException {
+        log.info("EndPoint Post /reference");
 
         Long memberId = memberDetails.getMemberId();
         Post savePost = postService.registerPost(uploadPostForm, thumbnail, uploadFiles, memberId);
@@ -180,6 +181,7 @@ public class PostController {
                                                                         @RequestPart("thumbnail") MultipartFile thumbnail,
                                                                         @RequestPart(value = "file", required = false) List<MultipartFile> uploadFiles,
                                                                         @AuthenticationPrincipal MemberDetails memberDetails) throws IOException {
+        log.info("EndPoint Put /reference/{reference_id}");
 
         Long memberId = memberDetails.getMemberId();
         Post post = postService.findOne(referenceId);
@@ -221,6 +223,7 @@ public class PostController {
     @Operation(summary = "레퍼런스 좋아요 Test completed", description = "레퍼런스에 좋아요를 합니다.")
     public ResponseEntity<BaseResponse<LikePostResponseDto>> likeReference(@PathVariable("reference_id") Long referenceId,
                                                                            @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Post /reference/{reference_id}/like");
 
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
@@ -253,6 +256,7 @@ public class PostController {
     @Operation(summary = "레퍼런스 스크랩 Test completed", description = "레퍼런스를 스크랩합니다.")
     public ResponseEntity<BaseResponse<ScrapReferenceResponseDto>> scrapReference(@PathVariable("reference_id") Long referenceId,
                                                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Post /reference/{reference_id}/scrap");
 
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
@@ -284,6 +288,8 @@ public class PostController {
     @Operation(summary = "레퍼런스 삭제 Test completed", description = "레퍼런스를 삭제합니다.")
     public ResponseEntity<Void> deleteReference(@PathVariable("reference_id") Long[] postId,
                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Delete /user/reference/{reference_id}");
+
         Long memberId = memberDetails.getMemberId();
         Member myMember = memberService.findOne(memberId);
 
@@ -308,6 +314,7 @@ public class PostController {
     @Operation(summary = "레퍼런스 카테고리 삭제", description = "레퍼런스 카테고리를 삭제합니다.")
     public ResponseEntity<Void> deleteReferenceCategory(@PathVariable("category") String category,
                                                           @AuthenticationPrincipal MemberDetails memberDetails) {
+        log.info("EndPoint Delete /user/referenceCategory/{category}");
 
         Long categoryId = CommonFunction.getCategoryId(category); // 카테고리 id 추출.
         Long memberId = memberDetails.getMemberId();
