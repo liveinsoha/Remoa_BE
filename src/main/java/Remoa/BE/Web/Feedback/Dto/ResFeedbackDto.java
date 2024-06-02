@@ -49,7 +49,7 @@ public class ResFeedbackDto {
     private List<ResFeedbackReplyDto> replies;
 
 
-    public ResFeedbackDto(Feedback feedback, boolean isLiked, boolean isFollow, List<ResFeedbackReplyDto> feedbackReplyDtos) {
+    public ResFeedbackDto(Feedback feedback, Boolean isLiked, Boolean isFollow, List<ResFeedbackReplyDto> feedbackReplyDtos) {
         this.feedbackId = feedback.getFeedbackId();
         this.member = new ResMemberInfoDto(feedback.getMember(), isFollow);
         this.feedback = feedback.getContent();
