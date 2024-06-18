@@ -32,6 +32,7 @@ public class FeedbackReplyService {
     private final FeedBackReplyLikeRepository feedBackReplyLikeRepository;
 
 
+    @Transactional
     public FeedbackReply registerFeedbackReply(Member member, Long postId, Long feedbackId, String content) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
         Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;

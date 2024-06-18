@@ -35,6 +35,8 @@ public class CommentReplyService {
         return commentReplies;
     }
 
+
+    @Transactional
     public CommentReply registerCommentReply(Member member, String content, Long postId, Long commentId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new BaseException(CustomMessage.NO_ID));;
