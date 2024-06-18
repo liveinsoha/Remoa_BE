@@ -1,6 +1,7 @@
 package Remoa.BE.Web.Post.Controller;
 
 import Remoa.BE.Web.Comment.Dto.Res.ResCommentDto;
+import Remoa.BE.Web.Feedback.Dto.ResFeedbackDto2;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.MemberUtils;
 import Remoa.BE.Web.Member.Service.MemberService;
@@ -56,7 +57,7 @@ public class ViewerController {
         List<ResCommentDto> comments = memberUtils.commentList(post.getPostId(), myMember);
 
         // 조회한 post의 feedback 조회 및 각 feedback에 대한 feedbackReply 조회 -> 이후 ResFeedbackDto로 매핑
-        List<ResFeedbackDto> feedbacks = memberUtils.feedbackList(post.getPostId(), myMember);
+        List<ResFeedbackDto2> feedbacks = memberUtils.feedbackList(post.getPostId(), myMember);
 
         // 위에 생성한 CommentDto, FeedbackDto를 이용해 ReferenceViewerDto 매핑.
         ResReferenceViewerDto resReferenceViewerDto = new ResReferenceViewerDto(post,

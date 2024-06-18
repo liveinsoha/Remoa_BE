@@ -2,6 +2,7 @@ package Remoa.BE.Web.Post.Dto.Response;
 
 import Remoa.BE.Web.Comment.Dto.Res.ResCommentDto;
 import Remoa.BE.Web.Feedback.Dto.ResFeedbackDto;
+import Remoa.BE.Web.Feedback.Dto.ResFeedbackDto2;
 import Remoa.BE.Web.Member.Domain.Member;
 import Remoa.BE.Web.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Web.Post.Domain.Post;
@@ -68,9 +69,9 @@ public class ResReferenceViewerDto {
     private List<ResCommentDto> comments;
 
     @Schema(description = "게시물 피드백 목록")
-    private List<ResFeedbackDto> feedbacks;
+    private List<ResFeedbackDto2> feedbacks;
 
-    public ResReferenceViewerDto(Post post, Member postMember, Boolean isFollow, Boolean isLiked, Boolean isScraped, List<ResCommentDto> comments, List<ResFeedbackDto> feedbacks) {
+    public ResReferenceViewerDto(Post post, Member postMember, Boolean isFollow, Boolean isLiked, Boolean isScraped, List<ResCommentDto> comments, List<ResFeedbackDto2> feedbacks) {
         this.postId = post.getPostId();
         this.postMember = new ResMemberInfoDto(postMember, isFollow);
         this.thumbnail = post.getThumbnail().getStoreFileUrl();

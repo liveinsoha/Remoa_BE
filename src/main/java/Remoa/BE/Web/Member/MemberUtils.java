@@ -8,10 +8,13 @@ import Remoa.BE.Web.Comment.Service.CommentReplyService;
 import Remoa.BE.Web.Comment.Service.CommentService;
 import Remoa.BE.Web.Feedback.Domain.Feedback;
 import Remoa.BE.Web.Feedback.Domain.FeedbackReply;
+import Remoa.BE.Web.Feedback.Dto.ResFeedbackDto2;
+import Remoa.BE.Web.Feedback.Dto.ResFeedbackInfoDto;
 import Remoa.BE.Web.Feedback.Dto.ResFeedbackReplyDto;
 import Remoa.BE.Web.Feedback.Service.FeedbackReplyService;
 import Remoa.BE.Web.Feedback.Service.FeedbackService;
 import Remoa.BE.Web.Member.Domain.Member;
+import Remoa.BE.Web.Member.Dto.Res.ResMemberInfoDto;
 import Remoa.BE.Web.Member.Service.FollowService;
 import Remoa.BE.Web.Post.Domain.Post;
 import Remoa.BE.Web.Feedback.Dto.ResFeedbackDto;
@@ -19,7 +22,9 @@ import Remoa.BE.Web.Post.Service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -64,28 +69,48 @@ public class MemberUtils {
 
     // 추가적인 유틸리티 메서드들...
 
-    public List<ResFeedbackDto> feedbackList(Long postId, Member myMember) {
+    public List<ResFeedbackDto2> feedbackList(Long postId, Member myMember) {
 
         List<Feedback> feedbacks = feedbackService.findAllFeedbacksOfPost(postId);
 
-        List<ResFeedbackDto> resFeedbackDtos = feedbacks.stream()
-                .map(feedback -> {
-                    List<FeedbackReply> replies = feedbackReplyService.findFeedbackReplies(feedback);
-                    List<ResFeedbackReplyDto> resReplies = replies.stream()
-                            .map(reply -> new ResFeedbackReplyDto(reply,
-                                    isLikedFeedbackReply(myMember, reply),
-                                    isMyMemberFollowMember(myMember, reply.getMember())))
+        // 피드백을 멤버별로 그룹화
+        Map<Member, List<Feedback>> feedbacksByMember = feedbacks.stream()
+                .collect(Collectors.groupingBy(Feedback::getMember));
+
+        // 멤버별 피드백을 첫 번째 피드백의 작성 시간 기준으로 정렬
+        List<Map.Entry<Member, List<Feedback>>> sortedFeedbacksByMember = feedbacksByMember.entrySet().stream()
+                .sorted(Comparator.comparing(entry -> entry.getValue().get(0).getFeedbackTime()))
+                .toList();
+
+        List<ResFeedbackDto2> resFeedbackDtos = sortedFeedbacksByMember.stream()
+                .map(entry -> {
+                    Member member = entry.getKey();
+                    List<Feedback> memberFeedbacks = entry.getValue();
+
+                    List<ResFeedbackInfoDto> feedbackInfos = memberFeedbacks.stream()
+                            .map(feedback -> {
+                                List<FeedbackReply> replies = feedbackReplyService.findFeedbackReplies(feedback);
+                                List<ResFeedbackReplyDto> resReplies = replies.stream()
+                                        .map(reply -> new ResFeedbackReplyDto(reply,
+                                                isLikedFeedbackReply(myMember, reply),
+                                                isMyMemberFollowMember(myMember, reply.getMember())))
+                                        .collect(Collectors.toList());
+
+                                return new ResFeedbackInfoDto(feedback,
+                                        isLikedFeedback(myMember, feedback),
+                                        resReplies);
+                            })
                             .collect(Collectors.toList());
 
-                    return new ResFeedbackDto(feedback,
-                            isLikedFeedback(myMember, feedback),
-                            isMyMemberFollowMember(myMember, feedback.getMember()),
-                            resReplies);
+                    ResMemberInfoDto memberInfoDto = new ResMemberInfoDto(member, isMyMemberFollowMember(myMember, member));
+
+                    return new ResFeedbackDto2(memberInfoDto, feedbackInfos);
                 })
-                .toList();
+                .collect(Collectors.toList());
 
         return resFeedbackDtos;
     }
+
 
     public List<ResCommentDto> commentList(Long postId, Member myMember) {
 

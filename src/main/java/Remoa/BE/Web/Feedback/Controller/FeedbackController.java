@@ -1,6 +1,7 @@
 package Remoa.BE.Web.Feedback.Controller;
 
 import Remoa.BE.Web.Feedback.Domain.Feedback;
+import Remoa.BE.Web.Feedback.Dto.ResFeedbackDto2;
 import Remoa.BE.Web.Feedback.Dto.ResFeedbackLikeDto;
 import Remoa.BE.Web.Feedback.Service.FeedbackReplyService;
 import Remoa.BE.Web.Feedback.Service.FeedbackService;
@@ -53,7 +54,7 @@ public class FeedbackController {
     })
     @PostMapping("/reference/{reference_id}/{page_number}") // 레퍼런스에 피드백 등록
     @Operation(summary = "피드백 등록 Test completed", description = "특정 게시물 페이지에 피드백을 등록합니다.")
-    public ResponseEntity<BaseResponse<List<ResFeedbackDto>>> registerFeedback(@RequestBody ReqFeedbackDto req,
+    public ResponseEntity<BaseResponse<List<ResFeedbackDto2>>> registerFeedback(@RequestBody ReqFeedbackDto req,
                                                                                @PathVariable("reference_id") Long postId,
                                                                                @PathVariable("page_number") Integer pageNumber,
                                                                                @AuthenticationPrincipal MemberDetails memberDetails) {
@@ -73,10 +74,10 @@ public class FeedbackController {
         feedbackService.registerFeedback(myMember, content, postId, pageNumber);
 
         // 조회한 post의 feedback 조회 및 각 feedback에 대한 feedbackReply 조회 -> 이후 ResFeedbackDto로 매핑
-        List<ResFeedbackDto> resFeedbackDtos = memberUtils.feedbackList(postId, myMember);
+        List<ResFeedbackDto2> resFeedbackDto2s = memberUtils.feedbackList(postId, myMember);
 
-        BaseResponse<List<ResFeedbackDto>> response = new BaseResponse<>(CustomMessage.OK, resFeedbackDtos);
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(new BaseResponse<>(CustomMessage.OK, resFeedbackDto2s));
     }
 
 
@@ -87,7 +88,7 @@ public class FeedbackController {
     })
     @PutMapping("/reference/feedback/{feedback_id}") // 피드백 수정
     @Operation(summary = "피드백 수정 Test completed", description = "작성한 피드백을 수정합니다.")
-    public ResponseEntity<BaseResponse<List<ResFeedbackDto>>> modifyFeedback(@RequestBody ReqFeedbackDto req,
+    public ResponseEntity<BaseResponse<List<ResFeedbackDto2>>> modifyFeedback(@RequestBody ReqFeedbackDto req,
                                                                              @PathVariable("feedback_id") Long feedbackId,
                                                                              @AuthenticationPrincipal MemberDetails memberDetails) {
 
@@ -104,10 +105,9 @@ public class FeedbackController {
 
         Member myMember = memberService.findOne(memberId);
         // 조회한 post의 feedback 조회 및 각 feedback에 대한 feedbackReply 조회 -> 이후 ResFeedbackDto로 매핑
-        List<ResFeedbackDto> resFeedbackDtos = memberUtils.feedbackList(f.getPost().getPostId(), myMember);
+        List<ResFeedbackDto2> resFeedbackDto2s = memberUtils.feedbackList(f.getPost().getPostId(), myMember);
 
-        BaseResponse<List<ResFeedbackDto>> response = new BaseResponse<>(CustomMessage.OK, resFeedbackDtos);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok( new BaseResponse<>(CustomMessage.OK, resFeedbackDto2s));
         // return successResponse(CustomMessage.OK, feedbacks);
     }
 
@@ -119,7 +119,7 @@ public class FeedbackController {
     })
     @DeleteMapping("/reference/feedback/{feedback_id}")
     @Operation(summary = "피드백 삭제 Test Completed", description = "작성한 피드백을 삭제합니다.")
-    public ResponseEntity<BaseResponse<List<ResFeedbackDto>>> deleteFeedback(@PathVariable("feedback_id") Long feedbackId,
+    public ResponseEntity<BaseResponse<List<ResFeedbackDto2>>> deleteFeedback(@PathVariable("feedback_id") Long feedbackId,
                                                                              @AuthenticationPrincipal MemberDetails memberDetails) {
         log.info("EndPoint Delete /reference/feedback/{feedback_id}");
 
@@ -133,10 +133,10 @@ public class FeedbackController {
 
         Member myMember = memberService.findOne(memberId);
         // 조회한 post의 feedback 조회 및 각 feedback에 대한 feedbackReply 조회 -> 이후 ResFeedbackDto로 매핑
-        List<ResFeedbackDto> resFeedbackDtos = memberUtils.feedbackList(f.getPost().getPostId(), myMember);
+        List<ResFeedbackDto2> resFeedbackDtos = memberUtils.feedbackList(f.getPost().getPostId(), myMember);
 
-        BaseResponse<List<ResFeedbackDto>> response = new BaseResponse<>(CustomMessage.OK, resFeedbackDtos);
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(new BaseResponse<>(CustomMessage.OK, resFeedbackDtos));
         // return successResponse(CustomMessage.OK, feedbacks);
 
     }

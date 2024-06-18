@@ -60,12 +60,12 @@ public class Comment {
     @Column(name = "like_count")
     private Integer LikeCount = 0;
 
-    @Builder.Default
+
     @OneToMany(mappedBy = "comment", cascade = {CascadeType.REMOVE}, fetch = LAZY)
     //@OnDelete(action = OnDeleteAction.CASCADE)
     private List<CommentLike> commentLikes;
 
-    @Builder.Default
+
     @OneToMany(mappedBy = "comment", cascade = {CascadeType.REMOVE}, fetch = LAZY)
     //@OnDelete(action = OnDeleteAction.CASCADE)
     private List<CommentReply> commentReplies;
