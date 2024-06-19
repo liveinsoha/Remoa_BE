@@ -43,7 +43,7 @@ public class FeedbackReplyService {
 
 
     public List<FeedbackReply> findFeedbackReplies(Feedback parentFeedback) {
-        return feedbackReplyRepository.findByFeedback(parentFeedback);
+        return feedbackReplyRepository.findByFeedbackOrderByFeedbackReplyTimeAsc(parentFeedback);
     }
 
     public FeedbackReply findOne(Long replyId) {

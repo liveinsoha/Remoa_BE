@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface FeedBackReplyRepository extends JpaRepository<FeedbackReply, Long> {
 
-    List<FeedbackReply> findByFeedback(Feedback feedback);
+    List<FeedbackReply> findByFeedbackOrderByFeedbackReplyTimeAsc(Feedback feedback);
 }

@@ -36,7 +36,7 @@ public class FeedbackRepositoryCustomImpl implements FeedbackRepositoryCustom {
      * @return List<Feedback>
      */
     public List<Feedback> findByPost(Post post) {
-        return em.createQuery("select f from Feedback f where f.post = :post order by f.feedbackTime desc",
+        return em.createQuery("select f from Feedback f where f.post = :post order by f.feedbackTime asc",
                         Feedback.class)
                 .setParameter("post", post)
                 .getResultList();

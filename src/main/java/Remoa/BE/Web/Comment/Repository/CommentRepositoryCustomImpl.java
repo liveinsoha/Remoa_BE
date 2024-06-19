@@ -36,7 +36,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
      * @return List<Comment>
      */
     public List<Comment> findByPost(Post post) {
-        return em.createQuery("select c from Comment c where c.post = :post order by c.commentedTime desc",
+        return em.createQuery("select c from Comment c where c.post = :post order by c.commentedTime asc",
                         Comment.class)
                 .setParameter("post", post)
                 .getResultList();

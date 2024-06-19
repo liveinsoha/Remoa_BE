@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface CommentReplyRepository extends JpaRepository<CommentReply, Long> {
 
-    List<CommentReply> findByComment(Comment comment);
+    List<CommentReply> findByCommentOrderByCommentRepliedTimeAsc(Comment comment);
 }

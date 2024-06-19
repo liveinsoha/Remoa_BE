@@ -31,7 +31,7 @@ public class CommentReplyService {
     private final PostRepository postRepository;
 
     public List<CommentReply> findCommentReplies(Comment comment) {
-        List<CommentReply> commentReplies = commentReplyRepository.findByComment(comment);
+        List<CommentReply> commentReplies = commentReplyRepository.findByCommentOrderByCommentRepliedTimeAsc(comment);
         return commentReplies;
     }
 
